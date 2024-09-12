@@ -40,16 +40,16 @@ const SignUp = () => {
     }
 
     // Validation for phone number
-    if (name === 'phoneNumber') {
-      const phoneRegex = /^\d{10}$/
-      if (!phoneRegex.test(value)) {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Invalid Phone Number',
-          detail: 'Please enter a valid 10-digit phone number',
-        })
-      }
-    }
+    // if (name === 'phoneNumber') {
+    //   const phoneRegex = /^\d{3}-\d{3}-\d{4}$/
+    //   if (!phoneRegex.test(value)) {
+    //     toast.current?.show({
+    //       severity: 'error',
+    //       summary: 'Invalid Phone Number',
+    //       detail: 'Please enter a valid 10-digit phone number',
+    //     })
+    //   }
+    // }
   }
 
   const signUpHandler = async (e: FormEvent) => {

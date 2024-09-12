@@ -1,184 +1,110 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import CustomModal from '../../CustomComponent/CustomModal'
 import AddBoatyards from './AddBoatyards'
 import { InputText } from 'primereact/inputtext'
-import { BoatYardData, BoatYardPayload, BoatYardResponse } from '../../../Type/ApiTypes'
-import { useGetBoatyardsMutation } from '../../../Services/MoorManage/MoormanageApi'
-import DataTableWithToogle from '../../CommonComponent/Table/DataTableWithToogle'
-import { ActionButtonColumnProps, Product } from '../../../Type/Components/TableTypes'
-import { boatyardMooring, getProductsWithOrdersData } from '../../Utils/CustomData'
-import { DataTable } from 'primereact/datatable'
-import { Column } from 'primereact/column'
+import {
+  BoatYardData,
+  BoatYardPayload,
+  BoatYardResponse,
+  DeleteCustomerResponse,
+  ErrorResponse,
+  MooringWithBoatYardResponse,
+} from '../../../Type/ApiTypes'
+import {
+  useDeleteBoatyardsMutation,
+  useGetBoatyardsMutation,
+  useGetMooringWithBoatyardMutation,
+} from '../../../Services/MoorManage/MoormanageApi'
+import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
 import InputTextWithHeader from '../../CommonComponent/Table/InputTextWithHeader'
 import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
-import { FaSearch } from 'react-icons/fa'
-import CustomDisplayPositionMap from '../../Map/CustomDisplayPositionMap'
 import { properties } from '../../Utils/MeassageProperties'
+import Header from '../../Layout/LayoutComponents/Header'
+import { IoSearchSharp } from 'react-icons/io5'
+import '../Boatyards/Boatyard.module.css'
+import CustomDisplayPositionMap from '../../Map/CustomDisplayPositionMap'
+import { Toast } from 'primereact/toast'
+import { Params } from '../../../Type/CommonType'
+import { Dialog } from 'primereact/dialog'
+import { ProgressSpinner } from 'primereact/progressspinner'
+import { useSelector } from 'react-redux'
+import { selectCustomerId } from '../../../Store/Slice/userSlice'
+import { FaEdit } from 'react-icons/fa'
+import { RiDeleteBin5Fill } from 'react-icons/ri'
+import { Paginator } from 'primereact/paginator'
+import React from 'react'
+import MooringInformations from '../../CommonComponent/MooringInformations'
+import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AppContext } from '../../../Services/ContextApi/AppContext'
 
 const Boatyards = () => {
+  const selectedCustomerId = useSelector(selectCustomerId)
+  const userData = useSelector((state: any) => state.user?.userData)
   const [modalVisible, setModalVisible] = useState(false)
   const [boatyardsData, setboatyardsData] = useState<BoatYardPayload[]>([])
+  const [mooringWithBoatyardsData, setMooringWithBoatyardsData] = useState<
+    MooringWithBoatYardResponse[]
+  >([])
   const [filteredboatyardsData, setFilteredboatyardsData] = useState<BoatYardPayload[]>([])
-  const [products, setProducts] = useState<Product[]>([])
-  const [expandedRows, setExpandedRows] = useState<any>(undefined)
-  const [getBoatyards] = useGetBoatyardsMutation()
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(undefined)
+  const [expandedRows, setExpandedRows] = useState<any>()
+  const [selectedBoatYard, setSelectedBoatYard] = useState<any>()
+  const [selectedProduct, setSelectedProduct] = useState()
+  const [selectedMooring, setSelectedMooring] = useState()
   const [editMode, setEditMode] = useState(false)
+  const [searchText, setSearchText] = useState('')
+  const [searchFieldText, setSearchFieldText] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoader, setIsLoader] = useState(false)
+  const [dialogVisible, setDialogVisible] = useState(false)
+  const [mooringRowData, setMooringRowData] = useState<any>([])
+  const [boatYardRecord, setBoatyardRecord] = useState(true)
+  const toast = useRef<Toast>(null)
 
-  const moorings: BoatYardData[] = [
-    {
-      id: '#9715',
-      moorings: 'Pioneer',
-      boatyards: 2,
-      name: 'John smith',
-      phoneNumber: '+1 234 543 4324',
-      email: 'demo@gmail.com',
-      boatyardDetails: [
-        {
-          id: 1,
-          name: 'Pioneer',
-          address: '123 Elm St',
-          phone: '+1 234 543 4324',
-          mooring: 15,
-          mooringDetails: [
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-          ],
-        },
-        {
-          id: 1,
-          name: 'Pioneer',
-          address: '123 Elm St',
-          phone: '+1 234 543 4324',
-          mooring: 15,
-          mooringDetails: [
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: '#9715',
-      moorings: 'Pioneer',
-      boatyards: 2,
-      name: 'John smith',
-      phoneNumber: '+1 234 543 4324',
-      email: 'demo@gmail.com',
-      boatyardDetails: [
-        {
-          id: 1,
-          name: 'Pioneer',
-          address: '123 Elm St',
-          phone: '+1 234 543 4324',
-          mooring: 15,
-          mooringDetails: [
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-          ],
-        },
-        {
-          id: 1,
-          name: 'Pioneer',
-          address: '123 Elm St',
-          phone: '+1 234 543 4324',
-          mooring: 15,
-          mooringDetails: [
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-            {
-              id: '#46645',
-              mainContact: 'Maxwell',
-              mooringNumber: '54345',
-              boatName: 'Sunriase',
-            },
-          ],
-        },
-      ],
-    },
-  ]
+  const [getBoatyards] = useGetBoatyardsMutation()
+  const [deleteBoatyard] = useDeleteBoatyardsMutation()
+  const [getMooringsWithBoatyard] = useGetMooringWithBoatyardMutation()
+
+  const [pageNumber, setPageNumber] = useState(0)
+  const [pageNumber1, setPageNumber1] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalRecords, setTotalRecords] = useState<number>()
+  const [pageNumberTwo, setPageNumberTwo] = useState(0)
+  const [pageNumberOne, setPageNumberOne] = useState(0)
+  const [pageSizeTwo, setPageSizeTwo] = useState(10)
+  const [totalRecordsTwo, setTotalRecordsTwo] = useState<number>()
+
+  const { isMapModalOpen, IsdialogVisible } = useContext(AppContext)
+
+  const onPageChange = (event: any) => {
+    setPageNumber(event.page)
+    setPageNumber1(event.first)
+    setPageSize(event.rows)
+  }
+
+  const onPageChangeTwo = (event: any) => {
+    setPageNumberTwo(event.page)
+    setPageNumberOne(event.first)
+    setPageSizeTwo(event.rows)
+  }
+
+  const handleMooringTableRowClick = (rowData: any) => {
+    setDialogVisible(true)
+    setMooringRowData(rowData)
+  }
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchFieldText('')
+    setSearchText(e.target.value)
+    setSelectedBoatYard('')
+    setMooringRowData('')
+    setPageNumber(0)
+    setPageNumber1(0)
+  }
+
+  const handleSearchField = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText('')
+    setSearchFieldText(e.target.value)
+  }
 
   const handleButtonClick = () => {
     setModalVisible(true)
@@ -186,6 +112,8 @@ const Boatyards = () => {
 
   const handleModalClose = () => {
     setModalVisible(false)
+    setEditMode(false)
+    setMooringRowData('')
   }
 
   const ActionButtonColumn: ActionButtonColumnProps = {
@@ -195,279 +123,608 @@ const Boatyards = () => {
         color: 'red',
         label: 'view',
         underline: true,
+        onClick: (rowData) => {
+          handleMooringTableRowClick(rowData)
+        },
       },
     ],
-    headerStyle: { backgroundColor: '#F2F2F2', color: 'black' },
-    style: { borderBottom: '1px solid #C0C0C0' },
+    headerStyle: { backgroundColor: '#00426F', color: 'black' },
+    style: { borderBottom: '1px solid #D5E1EA' },
   }
-  const tableColumnsTechnicians = useMemo(
+
+  const boatyardTableStyle = {
+    backgroundColor: '#00426F',
+    borderBottom: '1px solid #C0C0C0',
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: '10px',
+  }
+
+  const tableColumnsBoatyards = useMemo(
     () => [
       {
         id: 'id',
         label: 'ID',
-        style: {
-          width: '4vw',
-          backgroundColor: '#F2F2F2',
-          borderBottom: '1px solid #C0C0C0',
-          color: 'black',
-        },
+        style: boatyardTableStyle,
       },
       {
         id: 'mainContact',
         label: 'Main Contact',
-        style: {
-          width: '9vw',
-          backgroundColor: '#F2F2F2',
-          borderBottom: '1px solid #C0C0C0',
-          color: 'black',
-        },
+        style: boatyardTableStyle,
       },
       {
-        id: 'mooringId',
-        label: 'Mooring ID',
-        style: {
-          width: '9vw',
-          backgroundColor: '#F2F2F2',
-          borderBottom: '1px solid #C0C0C0',
-          color: 'black',
-        },
+        id: 'mooringNumber',
+        label: 'Mooring Number',
+        style: boatyardTableStyle,
       },
       {
         id: 'boatName',
         label: 'Boat Name',
-        body: (rowData: { mooringResponseDtoList: any }) =>
-          rowData.mooringResponseDtoList[0].boatName,
-        style: {
-          width: '12vw',
-          backgroundColor: '#F2F2F2',
-          borderBottom: '1px solid #C0C0C0',
-          color: 'black',
-        },
+        style: boatyardTableStyle,
       },
     ],
     [],
   )
-  const getBoatyardsData = async () => {
+
+  const columnStyle = {
+    backgroundColor: '#00426F',
+    fontSize: '12px',
+    fontWeight: '700',
+    color: '#FFFFFF',
+    padding: '15px',
+  }
+
+  const boatYardColumns = useMemo(
+    () => [
+      {
+        id: 'boatyardId',
+        label: 'ID',
+        style: columnStyle,
+      },
+      {
+        id: 'boatyardName',
+        label: 'Name',
+        style: columnStyle,
+      },
+      {
+        id: 'mooringInventoried',
+        label: 'Total Mooring Inventoried',
+        style: columnStyle,
+      },
+    ],
+    // [allowExpansion],
+    [],
+  )
+
+  const handleRowClickBoatYardDetail = (rowData: any) => {
+    setIsLoader(true)
+    setSelectedBoatYard('')
+    setMooringWithBoatyardsData([])
+    setBoatyardRecord(true)
+    const timeoutId = setTimeout(() => {
+      setSelectedBoatYard(rowData.data)
+    }, 600)
+    return () => clearTimeout(timeoutId)
+  }
+
+  const handleEdit = () => {
+    if (boatYardRecord == true) {
+      setModalVisible(true)
+      setEditMode(true)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (boatYardRecord == true) {
+      setIsLoading(true)
+      try {
+        const response = await deleteBoatyard({ id: selectedBoatYard?.id }).unwrap()
+        const { status, message } = response as DeleteCustomerResponse
+        if (status === 200) {
+          toast.current?.show({
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
+            life: 3000,
+          })
+          setSelectedBoatYard('')
+          getBoatyardsData()
+          setIsLoading(false)
+        } else {
+          setIsLoading(false)
+          toast.current?.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: message,
+            life: 3000,
+          })
+        }
+      } catch (error) {
+        const { message } = error as ErrorResponse
+        setIsLoading(false)
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error while deleting customer',
+          life: 3000,
+        })
+      }
+    }
+
+    setBoatyardRecord(false)
+  }
+
+  const parseCoordinates = (coordinates: any) => {
+    if (!coordinates) return null
+    const [latitude, longitude] = coordinates?.split(' ').map(parseFloat)
+    return isNaN(latitude) || isNaN(longitude) ? null : [latitude, longitude]
+  }
+
+  const [latitude, longitude] = parseCoordinates(selectedBoatYard?.gpsCoordinates) || []
+
+  const getBoatyardsData = useCallback(async () => {
+    setIsLoading(true)
     try {
-      await getBoatyards({})
+      let params: Params = {}
+      if (searchText) {
+        params.searchText = searchText
+      }
+      if (searchFieldText) {
+        params.searchText = searchFieldText
+      }
+      if (pageNumber) {
+        params.pageNumber = pageNumber
+      }
+      if (pageSize) {
+        params.pageSize = pageSize
+      }
+
+      await getBoatyards(params)
         .unwrap()
-        .then(async (response) => {
-          const { status, content } = response as BoatYardResponse
+        .then(async (response: any) => {
+          const { status, content, message, totalSize } = response as BoatYardResponse
           if (status === 200 && Array.isArray(content)) {
             setboatyardsData(content)
+            setSelectedBoatYard(content[0])
+            setSelectedMooring(content[0])
+            setTotalRecords(totalSize)
+            if (selectedBoatYard) {
+              const data = content.find((data) => data.id === selectedBoatYard.id)
+              if (data) {
+                setSelectedBoatYard(data)
+              }
+            }
             setFilteredboatyardsData(content)
+
+            const timeoutId = setTimeout(() => {
+              setIsLoading(false)
+            }, 400)
+            return () => {
+              clearTimeout(timeoutId)
+            }
+          } else {
+            setIsLoading(false)
+            toast?.current?.show({
+              severity: 'error',
+              summary: 'Error',
+              detail: message,
+              life: 3000,
+            })
           }
         })
     } catch (error) {
-      console.error('Error fetching getBoatyardsdata:', error)
+      const { message } = error as ErrorResponse
+      setIsLoading(false)
+      console.error('Error fetching getBoatyardsdata:', message)
+    }
+  }, [
+    getBoatyards,
+    searchText,
+    searchFieldText,
+    selectedCustomerId,
+    selectedBoatYard,
+    pageSize,
+    pageNumber,
+  ])
+
+  const getMooringsWithBoatyardData = async () => {
+    try {
+      await getMooringsWithBoatyard({
+        id: selectedBoatYard?.id,
+        pageNumber: pageNumberTwo,
+        pageSize: pageSizeTwo,
+      })
+        .unwrap()
+        .then(async (response: any) => {
+          const { status, content, totalSize } = response as MooringWithBoatYardResponse
+          if (status === 200 && Array.isArray(content) && content.length > 0) {
+            setIsLoading(false)
+            setMooringWithBoatyardsData(content)
+            setTotalRecordsTwo(totalSize)
+          } else {
+            setIsLoading(false)
+          }
+        })
+    } catch (error) {
+      const { message } = error as ErrorResponse
+      setIsLoading(false)
+      console.error('Error fetching getMooringsWithBoatyardData:', error)
     }
   }
-  useEffect(() => {
-    getBoatyardsData()
-  }, [])
 
   useEffect(() => {
-    const productsData = getProductsWithOrdersData()
-    setProducts(productsData)
-  }, [])
+    const timeoutId = setTimeout(() => {
+      getBoatyardsData()
+    }, 2000)
+    return () => clearTimeout(timeoutId)
+  }, [searchText, selectedCustomerId, searchFieldText, pageSize, pageNumber])
 
-  const allowExpansion = (rowData: Product): boolean => {
-    return !!rowData.orders && rowData.orders.length > 0
-  }
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (selectedBoatYard) getMooringsWithBoatyardData()
+    }, 600)
+    return () => clearTimeout(timeoutId)
+  }, [selectedBoatYard, pageSizeTwo, pageNumberTwo])
 
-  const rowExpansionTemplate = (data: Product) => {
+  useEffect(() => {
+    setIsLoader(true)
+    const timeoutId = setTimeout(() => {
+      setIsLoader(false)
+    }, 400)
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [selectedBoatYard])
+
+  const random = useMemo(() => {
     return (
-      <DataTable value={data.orders}>
-        <Column
-          field="address"
-          header="Address"
-          style={{
-            width: '',
-            backgroundColor: '#F2F2F2',
-            fontSize: '0.80rem',
-            borderBottom: '1px solid #C0C0C0',
-          }}
-        />
-        <Column
-          field="mooringInventoried"
-          header="Mooring Inventoried"
-          style={{
-            width: '14rem',
-            backgroundColor: '#F2F2F2',
-            fontSize: '0.80rem',
-            borderBottom: '1px solid #C0C0C0',
-          }}
-        />
-        <Column
-          field="boatyardGpsCoordinates"
-          header="Boatyard GPS Coordinates"
-          style={{
-            width: '14rem',
-            fontSize: '0.80rem',
-            backgroundColor: '#F2F2F2',
-            borderBottom: '1px solid #C0C0C0',
-          }}
-        />
-      </DataTable>
+      <AddBoatyards
+        closeModal={handleModalClose}
+        boatYardData={getBoatyardsData}
+        customerData={selectedBoatYard}
+        editMode={editMode}
+        setModalVisible={setModalVisible}
+        toastRef={toast}
+      />
     )
-  }
+  }, [selectedBoatYard, getBoatyardsData, editMode, toast, setModalVisible, handleModalClose])
 
-  const columns = useMemo(
-    () => [
-      {
-        field: 'id',
-        header: 'ID',
-        style: {
-          width: '8rem',
-          backgroundColor: '#F2F2F2',
-          fontSize: '0.80rem',
-          color: 'black',
-          fontWeight: 'bold',
-        },
-        body: () => { },
-      },
-      {
-        field: 'name',
-        header: 'Name',
-        style: {
-          width: '8rem',
-          backgroundColor: '#F2F2F2',
-          fontSize: '0.80rem',
-          color: 'black',
-          fontWeight: 'bold',
-        },
-      },
-      {
-        field: 'noOfBoatYards',
-        header: 'No.of Boatyards',
-        style: {
-          width: '24rem',
-          backgroundColor: '#F2F2F2',
-          fontSize: '0.80rem',
-          color: 'black',
-          fontWeight: 'bold',
-        },
-      },
-      {
-        field: 'totalMooringInventoried',
-        header: 'Total Mooring Inventoried',
-        style: {
-          width: '28rem',
-          backgroundColor: '#F2F2F2',
-          fontSize: '0.80rem',
-          color: 'black',
-          fontWeight: 'bold',
-        },
-      },
-      {
-        field: '',
-        header: '',
-        expander: allowExpansion,
-        style: { backgroundColor: '#F2F2F2' },
-      },
-    ],
-    [allowExpansion],
-  )
+  const BoatyardMoorings = useMemo(() => {
+    return (
+      <>
+        <div className={`flex justify-between mt-4 p-3 ml-5 font-normal text-[12px]`}>
+          <p className="">
+            {`${selectedBoatYard?.address || '-'}, ${selectedBoatYard?.stateResponseDto?.name || '-'}, ${selectedBoatYard?.countryResponseDto?.name || '-'}`}
+          </p>
+          <p className="mr-[10rem]">{selectedBoatYard?.mooringInventoried || '-'}</p>
+          <p className="underline mr-[4rem]">{selectedBoatYard?.gpsCoordinates || '-'}</p>
+        </div>
+
+        <div
+          className={`h-[150px] mt-[30px] mb-6 sticky`}
+          style={{
+            flexGrow: 1,
+            border: '1px solid #D5E1EA',
+            borderRadius: '10px',
+            padding: '0px',
+            marginLeft: '10px',
+            marginRight: '10px',
+          }}>
+          <CustomDisplayPositionMap position={[latitude, longitude]} zoomLevel={15} />
+        </div>
+
+        <div
+          className={`bg-#00426F overflow-x-hidden h-[360px] mt-[3px] table-container flex flex-col`}>
+          <div className="flex-grow overflow-y-auto">
+            <DataTableComponent
+              tableStyle={{
+                fontSize: '12px',
+                color: '#000000',
+              }}
+              data={mooringWithBoatyardsData || []}
+              columns={tableColumnsBoatyards}
+              actionButtons={ActionButtonColumn}
+              selectionMode="single"
+              dataKey="id"
+              onSelectionChange={(e) => {
+                setSelectedProduct(e.value)
+              }}
+              selection={selectedProduct}
+              rowStyle={(rowData) => rowData}
+              style={{
+                borderBottom: '1px solid #D5E1EA',
+                marginLeft: '5px',
+                fontWeight: '400',
+                color: '#000000',
+              }}
+              emptyMessage={
+                <div className="text-center mt-14">
+                  <img
+                    src="/assets/images/empty.png"
+                    alt="Empty Data"
+                    className="w-20 mx-auto mb-4"
+                  />
+                  <p className="text-gray-500">{properties.noDataMessage}</p>
+                </div>
+              }
+            />
+          </div>
+          {isLoader && (
+            <ProgressSpinner
+              style={{
+                position: 'absolute',
+                top: '80%',
+                left: '60%',
+                transform: 'translate(-50%, -50%)',
+                width: '50px',
+                height: '50px',
+              }}
+              strokeWidth="4"
+            />
+          )}
+          <div className="mt-auto">
+            <Paginator
+              first={pageNumberOne}
+              rows={pageSizeTwo}
+              totalRecords={totalRecordsTwo}
+              rowsPerPageOptions={[5, 10, 20, 30]}
+              onPageChange={onPageChangeTwo}
+              style={{
+                position: 'sticky',
+                bottom: 0,
+                zIndex: 1,
+                backgroundColor: 'white',
+                borderTop: '1px solid #D5E1EA',
+                padding: '0.5rem',
+              }}
+            />
+          </div>
+        </div>
+      </>
+    )
+  }, [selectedBoatYard, boatyardsData, mooringWithBoatyardsData])
+
   return (
-    <>
-      <div className="flex justify-between items-center ml-12">
-        <h1 className="mt-14 ml-28 opacity-30 text-2xl font-normal">{properties.header}</h1>
-        <div className="flex gap-4 items-center mr-12 mt-14">
-          <div className="flex mr-24">
-            <div className="mr-5 relative">
-              <FaSearch className="absolute z-10 top-[1.5rem] left-2 text-gray-500" />
+    <div
+      style={{ height: '150vh' }}
+      className={modalVisible || IsdialogVisible ? 'backdrop-blur-lg' : ''}>
+      <Toast ref={toast} />
+      <Header header="MOORMANAGE/Boatyards" />
+      <div className="flex justify-end mr-14 mt-6 ">
+        <div className="flex gap-6 ">
+          <div>
+            <div className="p-input-icon-left">
               <InputText
+                value={searchFieldText}
+                onChange={handleSearchField}
                 placeholder="Search"
+                className="h-[44px] w-[237px] cursor-pointer pl-8 rounded-lg text-bold "
+              />
+              <img
+                src="/assets/images/Search.svg"
+                alt="Search Icon"
+                className="p-clickable"
                 style={{
-                  width: '15vw',
-                  height: '7vh',
-                  padding: '0 4rem 0 3rem',
-                  border: '1px solid gray',
-                  fontSize: '1.10vw',
+                  position: 'absolute',
+                  left: '10px',
+                  right: '-10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '18px',
+                  height: '18px',
                 }}
               />
             </div>
-
-            <CustomModal
-              label={'ADD NEW'}
-              style={{
-                width: '8vw',
-                height: '7vh',
-                backgroundColor: 'black',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                color: 'white',
-              }}
-              onClick={handleButtonClick}
-              visible={false}
-              onHide={handleModalClose}>
-              <AddBoatyards closeModal={handleModalClose} boatYardData={getBoatyardsData} customerData={selectedCustomer} editMode={editMode} />
-            </CustomModal>
           </div>
-        </div>
-      </div>
-      <div className="ml-8 flex gap-4">
-        <div
-          data-testid="dataTable"
-          className="bg-[F2F2F2] overflow-x-hidden overflow-y-scroll  rounded-md border-[1px]  border-gray-300 w-[40vw] h-[55vh] mb-60">
-          <InputTextWithHeader
-            header={properties.boatyardDeatile}
-            placeholder={'Search by name, ID,address...'}
-            style={{ marginLeft: '1rem', color: '#A4A4A4' }}
-            inputTextStyle={{
-              height: '5vh',
-              width: '80vh',
-              cursor: 'pointer',
-              color: '#A4A4A4',
-              border: '1px solid  #9F9F9F',
-              paddingLeft: '3rem',
-              borderRadius: '0.45rem',
-              fontSize: '0.80rem',
+          <CustomModal
+            buttonText={'ADD NEW'}
+            buttonStyle={AddNewButtonStyle}
+            icon={<img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />}
+            children={random}
+            headerText={<h1 className="text-xl font-extrabold text-black ml-4">Add Boatyard</h1>}
+            visible={modalVisible}
+            onClick={handleButtonClick}
+            onHide={handleModalClose}
+            dialogStyle={{
+              height: '550px',
+              minHeight: '550px',
+              ...DialogStyle,
             }}
           />
-          <div></div>
-          <DataTableWithToogle
-            data={products}
-            rowExpansionTemplate={rowExpansionTemplate}
-            onRowToggle={(e: any) => setExpandedRows(e.data)}
-            expandedRows={expandedRows}
-            dataKey="id"
-            columns={columns}
-          />
         </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row mt-3">
+        <div
+          style={{
+            borderRadius: '5px',
+            marginLeft: '1.7rem',
+          }}>
+          {/* Left Panel */}
+          <div className="bg-white rounded-xl border-[1px] border-[#D5E1EA] mb-4 ml-6 md:mb-0 w-[700px]">
+            {/* Header */}
+            <div className="bg-[#00426F] rounded-tl-[10px] rounded-tr-[10px] text-white">
+              <h1 className="p-4 text-xl font-extrabold">{properties.boatyardDetail}</h1>
+            </div>
+
+            <InputTextWithHeader
+              value={searchText}
+              onChange={handleSearch}
+              placeholder={'Search by name, ID,address...'}
+              iconStyle={{
+                position: 'absolute',
+                left: '15px',
+                top: '65%',
+                transform: 'translateY(-50%)',
+                width: '16px',
+                height: '16px',
+                fontWeight: 'bold',
+              }}
+              inputTextStyle={{
+                flexGrow: 1,
+                marginTop: '10px',
+                height: '44px',
+                border: '1px solid #C5D9E0',
+                padding: '0 2rem 0 2.5rem',
+                fontSize: '14px',
+                color: '#000000',
+                borderRadius: '4px',
+                minHeight: '44px',
+                fontWeight: 400,
+                backgroundColor: '#FFFFFF',
+              }}
+            />
+            <div
+              className={`bg-#00426F overflow-x-hidden h-[590px] mt-[3px] table-container flex flex-col`}>
+              <div className="flex-grow overflow-auto">
+                <DataTableComponent
+                  tableStyle={{
+                    fontSize: '12px',
+                    color: '#000000',
+                    fontWeight: 500,
+                    backgroundColor: '#D9D9D9',
+                  }}
+                  data={boatyardsData}
+                  selectionMode="single"
+                  onSelectionChange={(e: any) => {
+                    setSelectedMooring(e.value)
+                  }}
+                  selection={selectedMooring}
+                  rowStyle={(rowData: any) => rowData}
+                  dataKey="id"
+                  columns={boatYardColumns}
+                  onRowClick={(e: any) => handleRowClickBoatYardDetail(e)}
+                  emptyMessage={
+                    <div className="text-center mt-14">
+                      <img
+                        src="/assets/images/empty.png"
+                        alt="Empty Data"
+                        className="w-20 mx-auto mb-4"
+                      />
+                      <p className="text-gray-500 text-lg ">{properties.noDataMessage}</p>
+                    </div>
+                  }
+                />
+              </div>
+
+              <div>
+                <Paginator
+                  first={pageNumber1}
+                  rows={pageSize}
+                  totalRecords={totalRecords}
+                  rowsPerPageOptions={[5, 10, 20, 30]}
+                  onPageChange={onPageChange}
+                  style={{
+                    position: 'sticky',
+                    bottom: 0,
+                    zIndex: 1,
+                    backgroundColor: 'white',
+                    borderTop: '1px solid #D5E1EA',
+                    padding: '0.5rem',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        {isLoading && (
+          <ProgressSpinner
+            style={{
+              position: 'absolute',
+              top: '70%',
+              left: '40%',
+              transform: 'translate(-50%, -50%)',
+              width: '50px',
+              height: '50px',
+            }}
+            strokeWidth="4"
+          />
+        )}
+
         <div
           data-testid="customer-admin-users-table"
-          className="bg-[F2F2F2]  rounded-md border-[1px]  border-gray-300 w-[33vw] h-[55vh] mb-60">
-          <div className="text-sm font-extrabold rounded-sm w-full  bg-[#D9D9D9]">
-            <h1 className="p-4">{properties.boatyardMooringHeader}</h1>
-          </div>
-          <div className="items-center bg-[#F2F2F2] mt-2">
-            <div className="flex justify-around">
-              <p>{properties.address}</p>
-              <p>{properties.mooringInventoried}</p>
-              <p>{properties.boatyardGPSCoordinates}</p>
+          className="flex-grow bg-[#FFFFFF] rounded-xl border-[1px] border-gray-300 w-[515px] h-[732px] mr-[50px] ml-[30px] mb-0 ">
+          <div className="flex flex-col h-full">
+            <div className="text-sm font-extrabold rounded-sm w-full bg-[#D9D9D9]">
+              <div
+                className="flex items-center justify-between bg-[#00426F] rounded-tl-[10px] rounded-tr-[10px]"
+                style={{ color: '#FFFFFF' }}>
+                <h1 className="p-4 text-xl font-extrabold">{properties.boatyardMooringHeader}</h1>
+                <div className="flex">
+                  <FaEdit
+                    onClick={handleEdit}
+                    className="mr-4 mt-4 text-[white]"
+                    data-testid="FaEdit"
+                    style={{ cursor: boatYardRecord ? 'pointer' : 'not-allowed' }}
+                  />
+                  <RiDeleteBin5Fill
+                    onClick={handleDelete}
+                    className="text-white mr-4 mt-4"
+                    data-testid="RiDeleteBin5Fill"
+                    style={{ cursor: boatYardRecord ? 'pointer' : 'not-allowed' }}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="border-[1px] border-[#9F9F9F]  w-[] mt-3 "></div>
-            <div className="flex justify-between mt-2">
-              <p className="ml-8">123 Elm St</p>
-              <p>25</p>
-              <p className="mr-[7.50rem]">38 21.806 144</p>
+            <div className="bg-[] mt-2 ml-5">
+              <div
+                className="flex justify-between p-2 mr-10"
+                style={{
+                  fontSize: '13px',
+                  fontWeight: '500',
+                  lineHeight: '11.72px',
+                  marginBottom: '-6px',
+                }}>
+                <p>{properties.address}</p>
+                <p>{properties.mooringInventoried}</p>
+                <p>{properties.boatyardGPSCoordinates}</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <hr style={{ border: '1px solid #D5E1EA' }} />
+            </div>
+
+            <div className="flex-grow overflow-auto">
+              {selectedBoatYard ? (
+                BoatyardMoorings
+              ) : (
+                <div className="text-center mt-40 mb-10">
+                  <img
+                    src="/assets/images/empty.png"
+                    alt="Empty Data"
+                    className="w-20 mx-auto mb-4"
+                  />
+                  <p className="text-gray-500 text-lg">{properties.noDataMessage}</p>
+                </div>
+              )}
             </div>
           </div>
-          <DataTableComponent
-            tableStyle={{
-              fontSize: '12px',
-              color: '#000000',
-              fontWeight: 600,
+        </div>
+
+        {/* Mooring Informtaion Dialog BOX */}
+        <div>
+          <Dialog
+            draggable={false}
+            visible={dialogVisible}
+            style={{
+              width: '740px',
+              minWidth: '300px',
+              height: '490px',
+              minHeight: '200px',
+              borderRadius: '1rem',
+              maxHeight: '50% !important',
             }}
-            data={boatyardsData}
-            columns={tableColumnsTechnicians}
-            actionButtons={ActionButtonColumn}
-          />
+            onHide={() => setDialogVisible(false)}
+            header={
+              <div className="flex gap-4">
+                <div className="font-bolder text-[black]">Mooring Information</div>
+              </div>
+            }>
+            <MooringInformations mooringRowData={mooringRowData} />
+          </Dialog>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

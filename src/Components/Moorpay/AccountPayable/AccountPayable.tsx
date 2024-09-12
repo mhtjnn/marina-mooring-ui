@@ -5,161 +5,173 @@ import CustomModal from '../../CustomComponent/CustomModal'
 import { MoorPayProps } from '../../../Type/ComponentBasedType'
 import DataTableSearchFieldComponent from '../../CommonComponent/Table/DataTableComponent'
 import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
+import Header from '../../Layout/LayoutComponents/Header'
+import AddCustomer from '../../Moormanage/Customer/AddCustomer'
+import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
+import { properties } from '../../Utils/MeassageProperties'
+import { AddNewButtonStyle, DialogStyle } from '../../Style'
 
-interface TableColumn {
-  id: string
-  label: string
-  style: {
-    width: string
-    backgroundColor: string
-  }
-}
-
-type TableColumns = TableColumn[]
 const AccountPayable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [accountPayableData, setAccountPayableData] = useState<MoorPayProps[]>([
-    {
-      invoice: '#425',
-      mooringid: '#6658',
-      name: 'John Smith',
-      technicianName: 'jim Carry',
-      services: 'Regular Services',
-      time: '2hrs',
-      amount: '$12',
-    },
-
-    {
-      invoice: '#425',
-      mooringid: '#6658',
-      name: 'John Smith',
-      technicianName: 'jim Carry',
-      services: 'Regular Services',
-      time: '2hrs',
-      amount: '$12',
-    },
-    {
-      invoice: '#425',
-      mooringid: '#6658',
-      name: 'John Smith',
-      technicianName: 'jim Carry',
-      services: 'Regular Services',
-      time: '2hrs',
-      amount: '$12',
-    },
-    {
-      invoice: '#425',
-      mooringid: '#6658',
-      name: 'John Smith',
-      technicianName: 'jim Carry',
-      services: 'Regular Services',
-      time: '2hrs',
-      amount: '$12',
-    },
-  ])
+  const [accountPayableData, setAccountPayableData] = useState<MoorPayProps[]>([])
 
   const handleButtonClick = () => {
-    setIsModalOpen(true)
+    //setIsModalOpen(true)
   }
 
   const handleModalClose = () => {
     setIsModalOpen(false)
   }
 
-  const tableColumns: TableColumns = useMemo<TableColumns>(
+  const columnStyle = {
+    borderBottom: '1px solid #C0C0C0',
+    backgroundColor: '#FFFFFF',
+    color: '#000000',
+    fontWeight: 'bold',
+  }
+
+  const accountPayableTableColumns = useMemo(
     () => [
       {
-        id: 'customerId',
-        label: 'Customer ID',
-        style: { width: '6vw', backgroundColor: '#F2F2F2' },
+        id: 'invoice',
+        label: 'Invoice',
+        style: columnStyle,
       },
       {
         id: 'mooringId',
-        label: 'Mooring ID',
-        style: { width: '12vw', backgroundColor: '#F2F2F2' },
+        label: 'Mooring Number',
+        style: columnStyle,
       },
       {
-        id: 'boatyard',
-        label: 'Boatyard',
-        style: { width: '10vw', backgroundColor: '#F2F2F2' },
+        id: 'customerName',
+        label: 'Customer Name',
+        style: columnStyle,
       },
       {
-        id: 'assignedTo',
-        label: 'Assigned to',
-        style: { width: '12vw', backgroundColor: '#F2F2F2' },
+        id: 'technicianName',
+        label: 'Technician Name',
+        style: columnStyle,
       },
       {
-        id: 'status',
-        label: 'Status',
-        style: { width: '10vw', backgroundColor: '#F2F2F2' },
+        id: 'services',
+        label: 'Services',
+        style: columnStyle,
+      },
+      {
+        id: 'time',
+        label: 'Time',
+        style: columnStyle,
+      },
+      {
+        id: 'amount',
+        label: 'Amount',
+        style: columnStyle,
       },
     ],
     [],
   )
 
-  const CustomersHeader = () => {
-    return (
-      <div className="flex items-center">
-        <div className="">
-          <h1>Account Payable</h1>
-        </div>
-      </div>
-    )
-  }
-
   const ActionButtonColumn: ActionButtonColumnProps = {
     header: 'Action',
+
     buttons: [
       {
         color: 'green',
         label: 'Paid',
         filled: true,
+        fontWeight: 400,
+        style: {
+          width: '46px',
+          height: '17px',
+        },
       },
     ],
-    headerStyle: { backgroundColor: '#F2F2F2' },
+    headerStyle: {
+      backgroundColor: '#FFFFFF',
+      height: '3.50rem',
+      fontWeight: '700',
+      color: 'black',
+      borderBottom: '1px solid #C0C0C0',
+    },
+    style: { borderBottom: '1px solid #D5E1EA ', fontWeight: '500' },
   }
 
   return (
     <>
-      <div className="flex justify-between items-center ml-12">
-        <div>
-          <h1 className="mt-14 ml-8 opacity-30 text-2xl font-normal">Moormanage/Account Payable</h1>
-        </div>
+      <Header header="MOORPAY/Account Payable" />
 
-        <div className="flex gap-1 ml-[18rem] text-[gray] font-extrabold mt-14">
-          <div>
-            <img
-              src="/assets/images/download.png"
-              alt=""
-              className="w-5 "
-              style={{ filter: 'grayscale(100%)', color: 'gray' }}
-            />
+      <div className="flex justify-end mr-16">
+        <div className="flex gap-4 ml-[18rem] text-[gray] font-extrabold mt-14">
+          <div style={{ marginTop: '0.8rem' }}>
+            <img src="/assets/images/downloadIcon.png" alt="" className="w-5 " />
           </div>
-          <div>
-            <h1>DownLoad Excel</h1>
+          <div style={{ marginTop: '0.6rem', color: '#00426F', marginRight: '1.5rem' }}>
+            <h1>Download Excel</h1>
           </div>
         </div>
 
-        <div className="items-center mr-[10rem] mt-14">
+        <div className="mt-14">
           <CustomModal
+            buttonText={'ADD NEW'}
+            children={
+              <AddCustomer
+                customer={undefined}
+                editMode={false}
+                closeModal={() => {}}
+                getCustomer={() => {}}
+              />
+            }
+            headerText={<h1 className="text-xl font-extrabold text-black ml-4">New User</h1>}
+            visible={isModalOpen}
             onClick={handleButtonClick}
-            visible={false}
-            onHide={handleModalClose}></CustomModal>
+            onHide={handleModalClose}
+            buttonStyle={AddNewButtonStyle}
+            dialogStyle={{
+              height: '630px',
+              minHeight: '630px',
+              ...DialogStyle,
+            }}
+          />
         </div>
       </div>
 
-      <div className="bg-[F2F2F2] rounded-md border-[1px] border-gray-300 w-[67vw]  ml-32 mb-80">
-        <DataTableSearchFieldComponent
+      <div
+        style={{
+          height: '648px',
+          gap: '0px',
+          borderRadius: '10px',
+          border: '1px solid #D5E1EA',
+          opacity: '0px',
+          backgroundColor: '#FFFFFF',
+        }}
+        className="bg-[F2F2F2]  ml-12  mt-10 mr-14">
+        <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2   rounded-tl-[10px] rounded-tr-[10px]">
+          <span
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              lineHeight: '21.09px',
+              letterSpacing: '0.4837472140789032px',
+              color: '#FFFFFF',
+              padding: '8px',
+            }}>
+            Account Payable
+          </span>
+        </div>
+        <div className="text-center mt-40">
+          <img src="/assets/images/empty.png" alt="Empty Data" className="w-32 mx-auto mb-4" />
+          <p className="text-gray-500">{properties.noDataMessage}</p>
+        </div>
+        <DataTableComponent
           tableStyle={{
             fontSize: '12px',
             color: '#000000',
-            fontWeight: 600,
+            fontWeight: 700,
           }}
-          data={accountPayableData}
-          columns={tableColumns}
-          header={CustomersHeader}
+          data={undefined}
+          columns={accountPayableTableColumns}
           actionButtons={ActionButtonColumn}
-          style={{ backgroundColor: '#F2F2F2' }}
+          style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '500' }}
         />
       </div>
     </>

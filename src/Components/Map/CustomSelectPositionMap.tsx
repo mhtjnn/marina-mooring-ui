@@ -1,36 +1,46 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MapContainer, Marker, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
 import './CustomMap.css'
 import DisplayPosition from './DisplayPosition'
-import DefaultIcon from './DefaultIcon'
 import { CustomSelectPositionMapProps } from '../../Type/Components/MapTypes'
+import { DefaultIcon } from './DefaultIcon'
+import { Toast } from 'primereact/toast'
 
 const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
   onPositionChange,
-  center = [31.63398, 74.87226],
-  zoomLevel = 13,
+  center,
+  zoomLevel,
 }) => {
-  const [map, setMap] = useState()
+  const [map, setMap] = useState<any>()
+  const markerRef = useRef(null)
+  const toast = useRef<Toast>(null)
 
-  const displayMap = useMemo(
-    () => (
-      <MapContainer
-        center={center}
-        zoom={zoomLevel}
-        scrollWheelZoom={false}
-        attributionControl={false}
-        zoomControl={false}
-        ref={setMap}>
-        <TileLayer url="/assets/images/map.png" noWrap={true} />
-        <Marker position={center} />
+  useEffect(() => {
+    if (map && center) {
+      map.setView(center)
+    }
+  }, [center, map])
+
+  const displayMap = useMemo(() => {
+    return (
+      <MapContainer center={center} zoom={zoomLevel} attributionControl={false} ref={setMap}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        <Marker
+          ref={markerRef}
+          position={center ? center : [30.6983149, 76.656095]}
+          icon={DefaultIcon}></Marker>
       </MapContainer>
-    ),
-    [],
-  )
+    )
+  }, [center, zoomLevel])
+
   return (
     <div>
-      {map ? <DisplayPosition map={map} onPositionChange={onPositionChange} /> : null}
+      <Toast ref={toast} />
+      {map && <DisplayPosition map={map} onPositionChange={onPositionChange} />}
       {displayMap}
     </div>
   )

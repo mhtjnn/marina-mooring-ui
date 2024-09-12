@@ -14,10 +14,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+        
           />
         </Provider>
       </BrowserRouter>
@@ -32,10 +29,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+         
           />
         </Provider>
       </BrowserRouter>
@@ -50,10 +44,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+          
           />
         </Provider>
       </BrowserRouter>
@@ -68,10 +59,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+            
           />
         </Provider>
       </BrowserRouter>
@@ -86,10 +74,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+        
           />
         </Provider>
       </BrowserRouter>
@@ -104,10 +89,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+          
           />
         </Provider>
       </BrowserRouter>
@@ -122,10 +104,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+          
           />
         </Provider>
       </BrowserRouter>
@@ -140,10 +119,7 @@ describe("Login Page testCases", () => {
       <Provider store={store}>
         <BrowserRouter>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+      
           />
         </BrowserRouter>
       </Provider>
@@ -159,10 +135,7 @@ describe("Login Page testCases", () => {
       <BrowserRouter>
         <Provider store={store}>
           <LoginForm
-            Label={Label}
-            typeEmail={typeEmail}
-            typePass={typePass}
-            showSinUp={false}
+         
           />
         </Provider>
       </BrowserRouter>

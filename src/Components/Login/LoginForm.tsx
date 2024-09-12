@@ -1,259 +1,321 @@
-import React, { useEffect, useState } from 'react'
-import {
-  useGetEmployeeMutation,
-  useLoginMutation,
-  useResetPasswordMutation,
-} from '../../Services/Authentication/AuthApi'
+import { useState, useRef } from 'react'
+import { useLoginMutation } from '../../Services/Authentication/AuthApi'
 import { ErrorResponse, LoginResponse, ResetPasswordResponse } from '../../Type/ApiTypes'
 import { useDispatch, useSelector } from 'react-redux'
-import { setUserData } from '../../Store/Slice/userSlice'
+import {
+  selectUserRole,
+  setCustomerId,
+  setCustomerName,
+  setToken,
+  setUserData,
+} from '../../Store/Slice/userSlice'
 import { Link, useNavigate } from 'react-router-dom'
 import { InputText } from 'primereact/inputtext'
-import { LoginFormProps } from '../../Type/ComponentBasedType'
+import { Button } from 'primereact/button'
+import './Login.css'
+import { ProgressSpinner } from 'primereact/progressspinner'
+import { Toast } from 'primereact/toast'
+import { Password } from 'primereact/password'
+import { Divider } from 'primereact/divider'
 
-export default function LoginForm({
-  Label,
-  typeEmail,
-  typePass,
-  showSinUp,
-  admin,
-}: LoginFormProps) {
-  const dispatch = useDispatch()
-  const [loginPayload, setLoginPayload] = useState({
-    username: '',
-    password: '',
-  })
-  const { username, password } = loginPayload
+export default function LoginForm() {
   const userData = useSelector((state: any) => state.user?.userData)
-  const token = useSelector((state: any) => state.user?.token)
+  const role = useSelector(selectUserRole)
+  const dispatch = useDispatch()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
-
+  const [login] = useLoginMutation()
   const [errors, setErrors] = useState({
     email: '',
     password: '',
   })
+  const [isLoading, setIsLoading] = useState(false)
+
+  const toast = useRef<Toast>(null)
 
   const handleChange = (e: any) => {
     const { name, value } = e.target
-    setLoginPayload((prev) => ({
-      ...prev,
-      [name]: value,
+
+    if (name === 'username') {
+      setUsername(value)
+    } else if (name === 'password') {
+      setPassword(value)
+    }
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name === 'username' ? 'email' : 'password']: '',
     }))
   }
-
-  /* ***************************************************
-   * NOTE: API Hooks
-   ****************************************************/
-  const [login] = useLoginMutation()
-  const [getEmployee] = useGetEmployeeMutation()
-  const [resetPassword] = useResetPasswordMutation()
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      signInHandler()
+    }
+  }
 
   const signInHandler = async () => {
-    if (loginPayload.username.length === 0) {
+    setErrors({ email: '', password: '' })
+
+    // if (username.trim().length === 0 && password.trim().length === 0) {
+    //   toast.current?.show({
+    //     severity: 'error',
+    //     summary: 'Error',
+    //     detail: 'Both fields are required',
+    //     life: 3000,
+    //   });
+    //   return;
+    // }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (username.trim().length === 0) {
       setErrors((prev) => ({
         ...prev,
         email: 'Email cannot be empty',
       }))
+      // toast.current?.show({
+      //   severity: 'error',
+      //   summary: 'Error',
+      //   detail: 'Email cannot be empty',
+      //   life: 3000,
+      // })
+      return
     }
-
-    if (loginPayload.password.length === 0) {
+    if (!emailRegex.test(username.trim())) {
+      setErrors((prev) => ({
+        ...prev,
+        email: 'Invalid email format',
+      }))
+      // toast.current?.show({
+      //   severity: 'error',
+      //   summary: 'Error',
+      //   detail: 'Invalid email format',
+      //   life: 3000,
+      // })
+      return
+    }
+    if (password.trim().length === 0) {
       setErrors((prev) => ({
         ...prev,
         password: 'Password cannot be empty',
       }))
+      // toast.current?.show({
+      //   severity: 'error',
+      //   summary: 'Error',
+      //   detail: 'Password cannot be empty',
+      //   life: 3000,
+      // })
+      return
+    }
+    setIsLoading(true)
+
+    const loginPayload = {
+      password: btoa(password),
+      username,
     }
 
-    if (admin) {
-      // try {
-      //   const response = await login(loginPayload).unwrap();
-      //   const { status, user, token, message } = response as LoginResponse;
-      //   if (status === 200) {
-      //     console.log("data", user, response);
-      //     dispatch(setUserData({ ...user }));
-      //     localStorage.setItem("token", token);
-      //     setLoginPayload({
-      //       username: "",
-      //       password: "",
-      //     });
+    try {
+      const response = await login(loginPayload).unwrap()
+      const { status, user, token, message, refreshToken } = response as LoginResponse
+      if (status === 200) {
+        sessionStorage.setItem('token', token)
+        sessionStorage.setItem('refreshToken', refreshToken)
+        sessionStorage.setItem('role', user?.role?.name)
+        dispatch(setUserData(user))
+        dispatch(setToken(token))
+        dispatch(setCustomerId(''))
+        dispatch(setCustomerName(''))
+        setUsername('')
+        setPassword('')
+        setIsLoading(false)
 
-      navigate('/admin/login/permission')
-      //   }
-      // } catch (error: any) {
-      //   console.error("Error occurred during login:", error);
-      //   if (error.data) {
-      //     const { message: msg } = error.data as ErrorResponse;
-      //   }
-      // }
-    } else {
-      try {
-        const response = await login(loginPayload).unwrap()
-        const { status, user, token, message } = response as LoginResponse
-        if (status === 200) {
-          dispatch(setUserData({ ...user }))
-          localStorage.setItem('token', token)
-          setLoginPayload({
-            username: '',
-            password: '',
-          })
+        if (sessionStorage.getItem('role') === 'TECHNICIAN') {
+          navigate('/moorserve/workOrders')
+        } else if (sessionStorage.getItem('role') === 'FINANCE') {
+          navigate('/moorpay/accountReceivable')
+        } else {
           navigate('/dashboard')
         }
-      } catch (error: any) {
-        console.error('Error occurred during login:', error)
-        if (error.data) {
-          const { message: msg } = error.data as ErrorResponse
-        }
-      }
-    }
-  }
-
-  const ResetPasswordHandler = async () => {
-    const resetPassPayload = {
-      newPassword: '',
-      confirmPassword: '',
-    }
-    try {
-      const response = await resetPassword({
-        payload: resetPassPayload,
-        token: token,
-      }).unwrap()
-      const { status, content, message } = response as ResetPasswordResponse
-      if (status === 200) {
-        navigate('/dashboard')
       }
     } catch (error: any) {
-      console.error('Error occurred during password reset:', error)
+      console.error('Error occurred during login:', error)
       if (error.data) {
         const { message: msg } = error.data as ErrorResponse
+        setErrors((prev) => ({
+          ...prev,
+          email: msg,
+        }))
+        setIsLoading(false)
       }
     }
   }
-
-  const getEmployeeHandler = async () => {
-    const response = await getEmployee({})
-  }
-
-  useEffect(() => {
-    getEmployeeHandler()
-  }, [])
 
   return (
     <>
-      <div className="w-full h-screen flex justify-center items-center">
-        <div className="text-center">
-          <div className="mb-3">
-            <div>
-              <img
-                src="/assets/images/Moorfind.png"
-                alt="Logo"
-                className="w-full h-80 bg-black mb-5"
-              />
-            </div>
-            <div className="text-red-500">{errors.email}</div>
-            <div className="p-input-icon-left" style={{ position: 'relative' }}>
-              <InputText
-                style={{
-                  width: '40vw',
-                  height: '6vh',
-                  padding: '0 4rem 0 3rem',
-                  border: '1px solid gray',
-                  fontSize: '1.10vw',
-                }}
-                type={
-                  showSinUp
-                    ? typeEmail === 'password'
-                      ? 'password'
-                      : 'text'
-                    : typeEmail === 'email'
-                      ? 'email'
-                      : 'text'
-                }
-                placeholder={showSinUp ? 'New password' : 'Enter Your email'}
-                name="username"
-                value={username}
-                onChange={handleChange}
-              />
-              <span
-                className="w-5 h-5 absolute top-1/2 transform -translate-y-1/2 left-3  text-gray-400"
-                style={{
-                  backgroundImage: `url(${
-                    showSinUp ? '/assets/images/key.png' : '/assets/images/email.png'
-                  })`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: 'contain',
-                }}></span>
-            </div>
+      <Toast ref={toast} />
+      <div
+        className="w-full h-screen flex justify-center items-center]"
+        id="header"
+        style={{
+          backgroundImage: "url('/assets/images/loginBackgroundImage.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}>
+        <div
+          className={`bg-white rounded-xl p-8 top-227 left-420 gap-8 h-auto ${isLoading ? 'blur-screen' : ''}`}
+          style={{ width: '600px' }}>
+          <div className="text-center mt-[1rem]">
+            <img
+              src="/assets/images/moorfindLogo.png"
+              alt="Logo"
+              className="mx-auto w-60 h-14 mb-5"
+              id="logo"
+            />
           </div>
-
-          <div className="mb-3">
-            <div className="p-input-icon-left" style={{ position: 'relative' }}>
-              <InputText
-                style={{
-                  width: '40vw',
-                  height: '6vh',
-                  padding: '0 4rem 0 3rem',
-                  border: '1px solid gray',
-                  fontSize: '1.10vw',
-                }}
-                type={
-                  showSinUp
-                    ? typePass === 'password'
-                      ? 'password'
-                      : 'text'
-                    : typePass === 'password'
-                      ? 'password'
-                      : 'text'
-                }
-                placeholder={showSinUp ? 'Confirm password' : 'Password'}
-                name="password"
-                value={password}
-                onChange={handleChange}
-              />
-              <span
-                className="w-5 h-5 absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400"
-                style={{
-                  backgroundImage: `url(${
-                    admin ? '/assets/images/key.png' : '/assets/images/key.png'
-                  })`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: 'contain',
-                }}></span>
-            </div>
-
-            {!showSinUp && !admin && (
-              <>
-                <div className="flex justify-end mt-8 cursor-pointer ">
-                  <Link to={'/forgotPassword'}>
-                    <p className="font-normal font-['Roboto']">Forgot password?</p>
-                  </Link>
+          <div className="flex flex-col justify-center text-center mt-[5rem] min-[320px]:w[270px]">
+            <div className="text-red-500 mb-2 text-sm">{errors.email && <p>{errors.email}</p>}</div>
+            <div className="flex flex-col items-center">
+              <div className="p-input-icon-left" id="input-field">
+                <InputText
+                  name="username"
+                  value={username}
+                  onChange={handleChange}
+                  onKeyUp={handleKeyUp}
+                  disabled={isLoading}
+                  placeholder={isLoading ? 'Loading...' : 'Enter Your Email'}
+                  id="input-field"
+                  style={{
+                    width: '500px',
+                    height: '60px',
+                    padding: '0 4rem 0 3rem',
+                    border: '1px solid #C5D9E0',
+                    fontSize: '14px',
+                    color: '#00426F',
+                    borderRadius: '10px',
+                    minHeight: '6vh',
+                  }}
+                />
+                <img
+                  src="/assets/images/envelope.png"
+                  alt="Envelope Icon"
+                  className="p-clickable"
+                  style={{
+                    position: 'absolute',
+                    left: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: '20px',
+                    height: '15px',
+                  }}
+                />
+              </div>
+              <div className="text-red-500 mb-5 mt-3 text-sm">{<p>{errors.password}</p>}</div>
+              <div className="p-input-icon-left">
+                <div
+                  className="card flex justify-content-center"
+                  style={{ position: 'relative', width: '100%' }}>
+                  <Password
+                    type={'text'}
+                    name="password"
+                    value={password}
+                    onChange={handleChange}
+                    onKeyUp={handleKeyUp}
+                    feedback={false}
+                    toggleMask
+                    disabled={isLoading}
+                    placeholder={isLoading ? 'Loading...' : 'Enter Your Password'}
+                    style={{
+                      padding: '0 2rem 0 3rem',
+                      border: '1px solid #C5D9E0',
+                      fontSize: '18px',
+                      color: '#00426F',
+                      borderRadius: '10px',
+                      width: '500px',
+                      height: '60px',
+                    }}
+                  />
+                  <img
+                    src="/assets/images/key.png"
+                    alt="Key Icon"
+                    className="p-clickable"
+                    style={{
+                      position: 'absolute',
+                      left: '13px',
+                      top: '55%',
+                      transform: 'translateY(-50%)',
+                      width: '22px',
+                      height: '20px',
+                      pointerEvents: 'none',
+                    }}
+                  />
                 </div>
+              </div>
 
-                <div className="flex justify-end">
-                  <span className="w-[7.40rem] h-[0.50px] bg-black text-black "></span>
-                </div>
-              </>
-            )}
+              {isLoading && (
+                <ProgressSpinner
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '50px',
+                    height: '50px',
+                  }}
+                  strokeWidth="4"
+                />
+              )}
+              <div className="flex justify-end mb-8 mt-5 w-[500px] cursor-pointer underline">
+                <span
+                  className="font-normal"
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: 400,
+                    lineHeight: '18.75px',
+                    textAlign: 'right',
+                    color: '#00426F',
+                  }}>
+                  <Link to={'/forgotPassword'}>Forgot password?</Link>
+                </span>
+              </div>
+
+              <Button
+                style={{
+                  width: '500px',
+                  height: '60px',
+                  minHeight: '60px',
+                  padding: '0 4rem 0 3rem',
+                  border: '1px solid #C5D9E0',
+                  fontSize: '22px',
+                  lineHeight: '25.78px',
+                  color: '#FFFFFF',
+                  borderRadius: '10px',
+                  backgroundColor: '#0098FF',
+                  textAlign: 'center',
+                  display: 'flex',
+                  fontWeight: '500',
+                  justifyContent: 'center',
+                }}
+                onClick={signInHandler}
+                disabled={isLoading}>
+                <p>Login</p>
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-col items-center">
-            {admin && <span className="mb-8">For admin use only</span>}{' '}
-            <button
-              className="w-40 h-12 bg-black text-white border border-black font-bold text-sm"
-              onClick={showSinUp ? ResetPasswordHandler : signInHandler}>
-              {Label}
-            </button>
-          </div>
-        </div>
-      </div>
-      {!admin && (
-        <div className="flex justify-center items-center mt-0">
-          <div className="text-center mx-auto" style={{ width: '40vw' }}>
-            <p className="text-xs font-bold">
-              Just testing the waters? If you do not have an account{' '}
-              <span className="underline font-bolder">CLICK HERE</span> to let us know you would
-              like to connect and see if MOORFIND can work for you and your business.
+          <div
+            style={{ width: '500px', fontSize: '14px', textAlign: 'center', lineHeight: '22px' }}>
+            <p className="text-center mt-8 text-[#00426F] leading-6 font-[400]">
+              Just testing the waters? If you do not have an account&nbsp;
+              <a
+                href="https://www.moorfind.com/"
+                className="underline font-bolder font-[700] text-sm">
+                CLICK HERE
+              </a>
+              &nbsp;to let us <br /> know If you would like to connect and see if MOORFIND can work
+              for you and your business.
             </p>
           </div>
         </div>
-      )}
+      </div>
     </>
   )
 }

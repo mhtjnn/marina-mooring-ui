@@ -1,35 +1,64 @@
-import { useEffect, useMemo, useState } from 'react'
-import { InputText } from 'primereact/inputtext'
-import { Dialog } from 'primereact/dialog'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from 'primereact/button'
 import AddWorkOrders from './AddWorkOrders'
-import { WorkOrderPayload, WorkOrderResponse } from '../../../Type/ApiTypes'
+import { ErrorResponse, WorkOrderPayload, WorkOrderResponse } from '../../../Type/ApiTypes'
 import { useGetWorkOrdersMutation } from '../../../Services/MoorServe/MoorserveApi'
-import DataTableSearchFieldComponent from '../../CommonComponent/Table/DataTableComponent'
 import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
+import Header from '../../Layout/LayoutComponents/Header'
+import './WorkOrder.module.css'
+import { InputText } from 'primereact/inputtext'
+import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
+import CustomModal from '../../CustomComponent/CustomModal'
+import { useSelector } from 'react-redux'
+import { selectCustomerId } from '../../../Store/Slice/userSlice'
+import { Toast } from 'primereact/toast'
+import { Params } from '../../../Type/CommonType'
+import { ProgressSpinner } from 'primereact/progressspinner'
+import { Paginator } from 'primereact/paginator'
+import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton'
+import { properties } from '../../Utils/MeassageProperties'
+import { WorkOrderValue } from '../../../Type/ComponentBasedType'
+import { jsPDF } from 'jspdf'
+import { AddNewButtonStyle } from '../../Style'
 
-const WorkOrders = () => {
+const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
+  const selectedCustomerId = useSelector(selectCustomerId)
   const [visible, setVisible] = useState(false)
+  const [searchText, setSearchText] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
   const [workOrderData, setWorkOrderData] = useState<WorkOrderPayload[]>([])
   const [selectedCustomer, setSelectedCustomer] = useState<any>(undefined)
   const [editMode, setEditMode] = useState(false)
   const [getWorkOrder] = useGetWorkOrdersMutation()
+  const toast = useRef<Toast>(null)
+  const [pageNumber, setPageNumber] = useState(0)
+  const [pageNumber1, setPageNumber1] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalRecords, setTotalRecords] = useState<number>()
+  const [completedWorkOrder, setCompletedOrder] = useState<string>('No')
 
-  const header = (
-    <div className="flex flex-wrap align-items-center justify-between  p-4">
-      <span className="text-xl font-bold">Work Orders</span>
-      <div className="">
-        <div className="p-input-icon-left">
-          <i className="pi pi-search text-[#D2D2D2] " data-testid="search-icon" />
-          <InputText
-            placeholder="Search"
-            className="h-[5vh] cursor-pointer font-bold"
-            style={{ border: '1px solid #D2D2D2', borderRadius: '10px' }}
-          />
-        </div>
-      </div>
-    </div>
-  )
+  const onPageChange = (event: any) => {
+    setPageNumber(event.page)
+    setPageNumber1(event.first)
+    setPageSize(event.rows)
+  }
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPageNumber(0)
+    setPageNumber1(0)
+    setSearchText(e.target.value)
+  }
+
+  const handleCompleted = (e: SelectButtonChangeEvent) => {
+    if (e.value) {
+      setCompletedOrder(e.value)
+    }
+  }
+
+  const options = [
+    { label: 'Pending', value: 'No' },
+    { label: 'Completed', value: 'Yes' },
+  ]
 
   const ActionButtonColumn: ActionButtonColumnProps = {
     header: 'Action',
@@ -38,63 +67,259 @@ const WorkOrders = () => {
         color: 'black',
         label: 'Edit',
         underline: true,
-      }
+        onClick: (row) => handleEdit(row),
+      },
     ],
-    headerStyle: {backgroundColor:"#F2F2F2"}
+    headerStyle: {
+      backgroundColor: '#FFFFFF',
+      color: '#000000',
+      fontWeight: '700',
+      fontSize: '12px',
+    },
+    style: { borderBottom: '1px solid #D5E1EA', backgroundColor: '#FFFFFF', fontWeight: '400' },
   }
 
-  const tableColumns = useMemo(
+  const columnStyle = {
+    backgroundColor: '#FFFFFF',
+    color: '#000000',
+    fontWeight: '700',
+    fontSize: '12px',
+  }
+
+  const firstLastName = (data: any) => {
+    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
+  }
+
+  const TechnicianfirstLastName = (data: any) => {
+    return (
+      data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
+    )
+  }
+
+  const workOrderColumns = useMemo(
     () => [
       {
-        id: 'invoice',
-        label: 'Invoice',
-        style: { width: '6vw', backgroundColor: '#F2F2F2' },
-      },
-      {
-        id: 'mooringId',
-        label: 'Mooring ID',
-        style: { width: '12vw', backgroundColor: '#F2F2F2' },
-      },
-      {
-        id: 'customerName',
+        id: 'firstName',
         label: 'Customer Name',
-        style: { width: '10vw', backgroundColor: '#F2F2F2' },
+        style: columnStyle,
+        body: firstLastName,
       },
       {
-        id: 'technicianName',
-        label: 'Technician Name',
-        style: { width: '12vw', backgroundColor: '#F2F2F2' },
+        id: 'mooringResponseDto.mooringNumber',
+        label: 'Mooring Number',
+        style: columnStyle,
+      },
+      // {
+      //   id: 'Boatyard',
+      //   label: 'Boatyard',
+      //   style: columnStyle,
+      // },
+      // {
+      //   id: 'ServiceArea',
+      //   label: 'Service Area',
+      //   style: columnStyle,
+      // },
+      // {
+      //   id: 'jobType',
+      //   label: 'Job Type',
+      //   style: columnStyle,
+      // },
+
+      {
+        id: 'technicianUserResponseDto.name',
+        label: 'Assigned to',
+        style: columnStyle,
+        body: TechnicianfirstLastName,
+      },
+      // {
+      //   id: 'orderDate',
+      //   label: 'Order Date',
+      //   style: columnStyle,
+      // },
+      // {
+      //   id: 'Creation Date',
+      //   label: 'Creation Date',
+      //   style: columnStyle,
+      // },
+      {
+        id: 'dueDate',
+        label: 'Due Date',
+        style: columnStyle,
       },
       {
-        id: 'services',
-        label: 'Services',
-        style: { width: '10vw', backgroundColor: '#F2F2F2' },
-      },
-      {
-        id: 'time',
-        label: 'Time',
-        style: { width: '10vw', backgroundColor: '#F2F2F2' },
-      },
-      {
-        id: 'amount',
-        label: 'Amount',
-        style: { width: '10vw', backgroundColor: '#F2F2F2' },
+        id: 'workOrderStatusDto.status',
+        label: 'Status',
+        style: columnStyle,
       },
     ],
     [],
   )
 
-  const getWorkOrderData = async () => {
+  const dataToPdf = (data: any[]) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      console.error('Invalid data provided. Expected an array of objects.')
+      return
+    }
+
+    const doc = new jsPDF()
+    doc.setFontSize(18)
+    doc.text('Work Orders', 14, 22)
+    const headers = [
+      'Customer Name',
+      'Mooring Number',
+      'Boatyard',
+      'Assigned To',
+      'Due Date',
+      'Status',
+    ]
+    const columnWidths = [30, 30, 30, 30, 30, 30]
+    const xStart = 14
+    const yStart = 30
+    doc.setFontSize(8)
+    let xPosition = xStart
+    let yPosition = yStart
+
+    headers.forEach((header, index) => {
+      doc.text(header, xPosition, yPosition)
+      xPosition += columnWidths[index]
+    })
+
+    yPosition += 10
+    data.forEach((item, rowIndex) => {
+      xPosition = xStart
+      const row = [
+        item?.customerResponseDto?.firstName && item?.customerResponseDto?.lastName
+          ? `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`
+          : 'N/A',
+        item?.mooringResponseDto?.mooringNumber
+          ? item.mooringResponseDto.mooringNumber.toString()
+          : 'N/A',
+        item?.boatyardResponseDto?.boatyardId
+          ? item.boatyardResponseDto.boatyardId.toString()
+          : 'N/A',
+        item?.technicianUserResponseDto?.firstName && item?.technicianUserResponseDto?.lastName
+          ? `${item.technicianUserResponseDto.firstName} ${item.technicianUserResponseDto.lastName}`
+          : 'N/A',
+        item?.dueDate ? item.dueDate.toString() : 'N/A',
+        item?.workOrderStatusDto?.status ? item.workOrderStatusDto.status : 'N/A',
+      ]
+
+      row.forEach((cell, colIndex) => {
+        if (typeof cell === 'undefined') {
+          console.error(`Undefined cell value at row ${rowIndex + 1}, column ${colIndex + 1}`)
+        }
+        doc.text(cell.toString(), xPosition, yPosition)
+        xPosition += columnWidths[colIndex]
+      })
+
+      yPosition += 10
+    })
+    doc.save('WorkOrders.pdf')
+  }
+
+  const handleExportPdf = async () => {
+    setIsLoading(true)
+    const params1: Params = {
+      pageSize: 999999,
+      showCompletedWorkOrders: 'Yes',
+    }
+    const params2: Params = {
+      pageSize: 999999,
+      showCompletedWorkOrders: 'No',
+    }
+
     try {
-      const response = await getWorkOrder({}).unwrap()
-      const { status, content } = response as WorkOrderResponse
-      if (status === 200 && Array.isArray(content)) {
-        setWorkOrderData(content)
+      const [response1, response2] = await Promise.all([
+        getWorkOrder(params1).unwrap(),
+        getWorkOrder(params2).unwrap(),
+      ])
+
+      const {
+        status: status1,
+        content: content1,
+        message: message1,
+      } = response1 as WorkOrderResponse
+      const {
+        status: status2,
+        content: content2,
+        message: message2,
+      } = response2 as WorkOrderResponse
+
+      if (
+        status1 === 200 &&
+        Array.isArray(content1) &&
+        status2 === 200 &&
+        Array.isArray(content2)
+      ) {
+        // Combine the contents from both responses
+        const combinedContent = [...content1, ...content2]
+        dataToPdf(combinedContent)
+      } else {
+        if (status1 !== 200 || !Array.isArray(content1)) {
+          toast?.current?.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: message1,
+            life: 3000,
+          })
+        }
+        if (status2 !== 200 || !Array.isArray(content2)) {
+          toast?.current?.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: message2,
+            life: 3000,
+          })
+        }
       }
     } catch (error) {
-      console.error('Error fetching work order data:', error)
+      toast?.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'An error occurred while fetching work orders.',
+        life: 3000,
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
+
+  const getWorkOrderData = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const params: Params = {}
+      params.searchText = searchText
+      if (pageNumber) {
+        params.pageNumber = pageNumber
+      }
+      if (pageSize) {
+        params.pageSize = pageSize
+      }
+      if (completedWorkOrder) {
+        params.showCompletedWorkOrders = completedWorkOrder
+      }
+
+      const response = await getWorkOrder(params).unwrap()
+      const { status, content, message, totalSize } = response as WorkOrderResponse
+      if (status === 200 && Array.isArray(content)) {
+        setWorkOrderData(content)
+        setIsLoading(false)
+        setTotalRecords(totalSize)
+      } else {
+        setIsLoading(false)
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: message,
+          life: 3000,
+        })
+      }
+    } catch (error) {
+      const { message: msg } = error as ErrorResponse
+      setIsLoading(false)
+      console.error('Error occurred while fetching customer data:', msg)
+    }
+  }, [searchText, selectedCustomerId, pageNumber, pageSize, completedWorkOrder])
 
   const handleEdit = (rowData: any) => {
     setSelectedCustomer(rowData)
@@ -102,96 +327,207 @@ const WorkOrders = () => {
     setVisible(true)
   }
 
+  const handleModalClose = () => {
+    setVisible(false)
+    setEditMode(false)
+    getWorkOrderData()
+  }
+  const handleButtonClick = () => {
+    setVisible(true)
+  }
+
   useEffect(() => {
     getWorkOrderData()
-  }, [])
+  }, [pageNumber, completedWorkOrder, pageSize])
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      getWorkOrderData()
+    }, 600)
+    return () => clearTimeout(timeoutId)
+  }, [searchText, selectedCustomerId, pageSize, pageNumber])
+
+  useEffect(() => {
+    if (selectedCustomerId) {
+      handleModalClose()
+    }
+  }, [selectedCustomerId])
 
   return (
-    <>
+    <div style={{ height: '95vh' }} className={visible ? 'backdrop-blur-lg' : ''}>
+      <Toast ref={toast} />
+      {!report && <Header header="MOORSERVE/Work Orders" />}{' '}
       <div className="">
-        <div className="flex justify-between gap-4 mr-4 mt-24">
-          <div>
-            <h1 className="mt-6 opacity-30 text-2xl ml-36 font-normal">MOORSERVE/Work Orders</h1>
-          </div>
-          <div className="flex mr-36 gap-4">
-            <div>
-              <div className="flex gap-4">
-                <Button
-                  label={'Create New'}
-                  onClick={() => setVisible(true)}
-                  style={{
-                    width: '7vw',
-                    height: '5vh',
-                    backgroundColor: 'black',
-                    cursor: 'pointer',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    fontSize: '0.80vw',
-                  }}></Button>
-
-                <Dialog
-                  header={''}
-                  visible={visible}
-                  modal={false}
-                  style={{ width: '50vw' }}
-                  onHide={() => setVisible(false)}>
+        {!report && (
+          <div className="flex justify-end gap-6 mt-6 mr-16">
+            <Button
+              onClick={handleExportPdf}
+              style={{
+                width: '125px',
+                height: '44px',
+                minHeight: '44px',
+                backgroundColor: '#0098FF',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: 'white',
+                borderRadius: '0.50rem',
+                marginLeft: '8px',
+                boxShadow: 'none',
+              }}>
+              Export To PDF
+            </Button>
+            <div className="items-center">
+              <CustomModal
+                buttonText={'ADD NEW'}
+                icon={
+                  <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />
+                }
+                children={
                   <AddWorkOrders
                     workOrderData={selectedCustomer}
-                    editMode={editMode}
+                    editModeWorkOrder={editMode}
                     setVisible={setVisible}
+                    toastRef={toast}
+                    closeModal={handleModalClose}
+                    isAccountRecievable={false}
                   />
-                </Dialog>
+                }
+                headerText={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}
+                visible={visible}
+                onClick={handleButtonClick}
+                onHide={handleModalClose}
+                buttonStyle={AddNewButtonStyle}
+                dialogStyle={{
+                  width: '851px',
+                  height: '526px',
+                  borderRadius: '1rem',
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        <div
+          style={{
+            height: '713px',
+            gap: '0px',
+            borderRadius: '10px',
+            border: '1px solid #D5E1EA',
+            opacity: '0px',
+            backgroundColor: '#FFFFFF',
+            // overflow:"scroll"
+          }}
+          className="bg-[F2F2F2]  ml-12  mt-3 mr-14">
+          <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2 rounded-tl-[10px] rounded-tr-[10px]">
+            <h1
+              // style={{
+              //   fontSize: '18px',
+              //   fontWeight: '800',
+              //   lineHeight: '21.09px',
+              //   letterSpacing: '0.4837472140789032px',
+              //   color: '#FFFFFF',
+              //   padding: '8px',
+              // }}
+              className="p-2 text-xl font-extrabold text-white">
+              Work Orders
+            </h1>
+
+            <div className="flex gap-6">
+              <div className="relative inline-block">
+                <div className="relative mt-1">
+                  <img
+                    src="/assets/images/Search.png"
+                    alt="search icon"
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                    data-testid="search-icon"
+                  />
+                  <InputText
+                    value={searchText}
+                    onChange={handleSearch}
+                    placeholder="Search"
+                    id="placeholderText"
+                    className="pl-10 w-[237px] bg-[#00426F] text-[white] h-[35px] rounded-lg border  border-[#D5E1EA] placeholder:text-[#FFFFFF]  focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="bg-white min-h-[4.5vh] rounded-md">
+                <div className="card flex justify-content-center p-0.5 pl-0.5">
+                  <SelectButton
+                    value={completedWorkOrder}
+                    onChange={handleCompleted}
+                    options={options}
+                    className="selectButtons"
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* <div className="bg-[#F2F2F2] rounded-xl border-[1px] border-[#D1D1D1] ml-36 p-2 mt-12 w-[64vw] ">
-          <DataTable
-            value={workOrderData}
-            header={header}
-            tableStyle={{
-              fontSize: '0.80rem',
-              fontWeight: 'bold',
-            }}
-            scrollable={true}>
-            <Column style={{ width: '4vw' }} field="customerId" header="Customer ID"></Column>
-            <Column style={{ width: '7vw' }} field="customerName" header="Customer Name"></Column>
-            <Column style={{ width: '7vw' }} field="mooringNumber" header="Mooring ID"></Column>
-            <Column style={{ width: '15vw' }} field="boatYard" header="Boatyard"></Column>
-            <Column style={{ width: '13vw' }} field="assignedTo" header="Assigned to"></Column>
-            <Column style={{ width: '6vw' }} field="dueDate" header="Due date"></Column>
-            <Column style={{ width: '6vw' }} field="status" header="Status"></Column>
-            <Column
-              header="Action"
-              body={(rowData) => (
-                <div className="flex gap-4">
-                  <span
-                    className="text-black underline cursor-pointer"
-                    onClick={() => handleEdit(rowData)}>
-                    Edit
-                  </span>
-                </div>
-              )}></Column>
-          </DataTable>
-        </div> */}
+          <div
+            data-testid="customer-admin-data"
+            className="flex flex-col h-full "
+            style={{ height: '630px' }}>
+            <div className="flex-grow overflow-auto">
+              <DataTableComponent
+                tableStyle={{
+                  fontSize: '12px',
+                  color: '#000000',
+                  fontWeight: 600,
+                  backgroundColor: '#F9FAFB',
+                }}
+                data={workOrderData}
+                columns={workOrderColumns}
+                actionButtons={ActionButtonColumn}
+                style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
+                emptyMessage={
+                  <div className="text-center mt-28">
+                    <img
+                      src="/assets/images/empty.png"
+                      alt="Empty Data"
+                      className="w-28 mx-auto mb-4"
+                    />
+                    <p className="text-gray-500 font-[600] text-lg">{properties.noDataMessage}</p>
+                  </div>
+                }
+              />
 
-        <div className="bg-[F2F2F2] rounded-md border-[1px] border-gray-300 w-[64vw]  ml-32 mt-12 ">
-          <DataTableSearchFieldComponent
-            tableStyle={{
-              fontSize: '12px',
-              color: '#000000',
-              fontWeight: 600,
-            }}
-            data={workOrderData}
-            columns={tableColumns}
-            header={header}
-            actionButtons={ActionButtonColumn}
-            style={{ backgroundColor: '#F2F2F2' }}
-          />
+              {isLoading && (
+                <ProgressSpinner
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '50px',
+                    height: '50px',
+                  }}
+                  strokeWidth="4"
+                />
+              )}
+            </div>
+            <div className="mt-auto">
+              <Paginator
+                first={pageNumber1}
+                rows={pageSize}
+                totalRecords={totalRecords}
+                rowsPerPageOptions={[5, 10, 20, 30]}
+                onPageChange={onPageChange}
+                style={{
+                  position: 'sticky',
+                  bottom: 0,
+                  zIndex: 1,
+                  backgroundColor: 'white',
+                  borderTop: '1px solid #D5E1EA',
+                  padding: '0.5rem',
+                  marginBottom: '-25px',
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
