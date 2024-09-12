@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* 
+.p-selectbutton .p-button.p-highlight {
+  background-color: black;
+}
+.p-selectbutton .p-button.p-highlight:hover {
+  background-color: black;
+} */
+
+.p-dialog {
+  border-radius: 10px;
+  border: 2px solid #f5efef;
+  overflow: hidden;
+}
+
+.p-button.p-component {
+  border: none;
+}
+
+.p-selectbutton .p-component {
+  width: 50%;
+  font-size: 8px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.p-selectbutton .p-button.p-highlight {
+  background-color: black;
+}
+
+.headerClass {
+  background-color: black;
+}
+
+/* searchDataTable */
+
+.p-datatable .p-datatable-tbody > tr {
+  background: #f2f2f2;
+}
+
+.p-datatable-thead > th {
+  background: #f2f2f2;
+}
+.p-datatable-header {
+  background: #f2f2f2;
+}
+
+
