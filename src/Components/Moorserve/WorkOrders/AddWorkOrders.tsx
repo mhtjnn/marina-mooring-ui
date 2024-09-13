@@ -472,7 +472,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         editPayload.formRequestDtoList = [
           {
             formName: workOrder.attachForm.formName,
-            fileName: workOrder.attachForm.fileName,
+            fileName: workOrder.attachForm.fileName
+              ? workOrder.attachForm.fileName
+              : workOrder.attachForm.formName,
             encodedFormData: formData ? formData : workOrder.attachForm.formData,
           },
         ]
