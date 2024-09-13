@@ -220,7 +220,12 @@ const Settings = () => {
       const selectedValue: any = dropdownValues[rowData.id]
       const matchedCustomer = quickBookCustomer.find((item: any) => item?.id === selectedValue?.id)
       if (!matchedCustomer) {
-        throw new Error('No matching QuickBook customer found')
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No matching QuickBook customer found',
+          life: 3000,
+        })
       }
 
       const response = await mapCustomerToQuickBook({
