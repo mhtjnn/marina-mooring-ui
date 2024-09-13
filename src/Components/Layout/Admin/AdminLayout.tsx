@@ -137,7 +137,7 @@ const AdminLayout = () => {
           {/* Logo */}
           <div>
             <img
-              src={open ? '/assets/images/MoorFindLogo.png' : '/assets/images/moorfind.svg'}
+              src={open ? '/assets/images/MoorFindLogo.svg' : '/assets/images/moorfind.svg'}
               alt="Moorfind Logo"
               style={{
                 width: open ? '45%' : '2rem',
