@@ -240,7 +240,9 @@ const Settings = () => {
 
       const response = await mapCustomerToQuickBook({
         customerId: rowData?.id,
-        quickbookCustomerId: Object.values(dropdownValues)?.map((value: any) => value.id)?.[0],
+        quickbookCustomerId: Object.values(dropdownValues)?.map(
+          (value: any) => value.quickbookCustomerId,
+        )?.[0],
       }).unwrap()
       const { status, message } = response as CustomerResponse
       if (status === 200 || status === 201) {
