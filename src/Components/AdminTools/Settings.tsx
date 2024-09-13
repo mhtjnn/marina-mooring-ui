@@ -111,7 +111,14 @@ const Settings = () => {
                 dropdownValues[rowData.id] ||
                 rowData?.quickbookCustomerResponseDto?.quickbookCustomerName
               }
-              onChange={(e) => setDropdownValues({ ...dropdownValues, [rowData.id]: e.value })}
+              onChange={(e) => {
+                const selectedCustomer = quickBookCustomer.find((item) => item.label === e.value)
+                setDropdownValues({
+                  ...dropdownValues,
+                  [rowData.id]: selectedCustomer || e.value,
+                })
+              }}
+              // onChange={(e) => setDropdownValues({ ...dropdownValues, [rowData.id]: e.value })}
               options={quickBookCustomer}
               disabled={
                 (rowData?.quickbookCustomerResponseDto?.id || !!dropdownDisabled[rowData.id]) &&
@@ -210,19 +217,15 @@ const Settings = () => {
   const MapCustomerToQuickBook = async (rowData: any) => {
     try {
       setIsLoading(true)
-      console.log('rowData', rowData)
-      console.log('dropDown', dropdownValues)
-      console.log(
-        'value ',
-        Object.values(dropdownValues)?.find((value: any) => value),
-      )
+      const selectedValue: any = dropdownValues[rowData.id]
+      const matchedCustomer = quickBookCustomer.find((item: any) => item?.id === selectedValue?.id)
+      if (!matchedCustomer) {
+        throw new Error('No matching QuickBook customer found')
+      }
 
-      const matchedValue: any = Object.values(dropdownValues)?.find(
-        (value: any) => value.id === rowData.id,
-      )
       const response = await mapCustomerToQuickBook({
         customerId: rowData?.id,
-        quickbookCustomerId: matchedValue?.quickbookCustomerId,
+        quickbookCustomerId: matchedCustomer?.id,
       }).unwrap()
       const { status, message } = response as CustomerResponse
       if (status === 200 || status === 201) {
@@ -250,7 +253,7 @@ const Settings = () => {
       toast?.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: data?.message,
+        detail: message || data?.message,
         life: 3000,
       })
     }
