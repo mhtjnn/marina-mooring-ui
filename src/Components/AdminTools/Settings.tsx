@@ -210,6 +210,13 @@ const Settings = () => {
   const MapCustomerToQuickBook = async (rowData: any) => {
     try {
       setIsLoading(true)
+      console.log('rowData', rowData)
+      console.log('dropDown', dropdownValues)
+      console.log(
+        'value ',
+        Object.values(dropdownValues)?.find((value: any) => value),
+      )
+
       const matchedValue: any = Object.values(dropdownValues)?.find(
         (value: any) => value.id === rowData.id,
       )
