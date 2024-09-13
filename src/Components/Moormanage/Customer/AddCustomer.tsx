@@ -326,7 +326,11 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       if (!formData?.mooringNumber) {
         errors.mooringNumber = 'Mooring Number is required'
       }
+      if (!formData?.mooringStatus) {
+        errors.mooringStatus = 'Mooring Status is required'
+      }
     }
+
     setFirstErrorField(firstError)
     setFieldErrors(errors)
     return errors
@@ -935,7 +939,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }, [country?.id === 13])
 
   useEffect(() => {
-    if (formData?.mooringStatus?.id === 2) {
+    if (formData?.mooringStatus?.id === 1) {
       setFormData({
         ...formData,
         boatYardName: '',
@@ -1344,7 +1348,9 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                   <div>
                     <div>
                       <span className="font-medium text-sm text-[#000000]">
-                        <div className="flex gap-1">Mooring Status</div>
+                        <div className="flex gap-1">
+                          Mooring Status <p className="text-red-600">*</p>
+                        </div>
                       </span>
                     </div>
                     <div className="mt-2">
@@ -1358,11 +1364,16 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                         style={{
                           width: '230px',
                           height: '32px',
-                          border: '1px solid #D5E1EA',
+                          border: fieldErrors.mooringStatus ? '1px solid red' : '1px solid #D5E1EA',
                           borderRadius: '0.50rem',
                           fontSize: '0.8rem',
                         }}
                       />
+                      <p id="mooringStatus">
+                        {fieldErrors.mooringStatus && (
+                          <small className="p-error">{fieldErrors.mooringStatus}</small>
+                        )}
+                      </p>
                     </div>
                   </div>
                   {/* Service Area */}
@@ -1405,7 +1416,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                         onChange={(e) => handleInputChange('boatYardName', e.target.value)}
                         options={boatyardName}
                         optionLabel="boatyardName"
-                        disabled={formData?.mooringStatus?.id === 2}
+                        disabled={formData?.mooringStatus?.id === 1}
                         editable
                         placeholder="Select"
                         style={{
@@ -1554,11 +1565,11 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                       </p>
                     </div>
                   </div>
-                  {/* Type of Vessel */}
+                  {/* Boat Type */}
                   <div>
                     <div>
                       <span className="font-medium text-sm text-[#000000]">
-                        <div className="flex gap-1">Type of Vessel</div>
+                        <div className="flex gap-1">Boat Type</div>
                       </span>
                     </div>
 
@@ -1583,10 +1594,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                 </div>
                 {/* Row 4 */}
                 <div className="flex gap-6 mt-3">
-                  {/* Weight of Vessel */}
+                  {/* Boat Weight */}
                   <div>
                     <span className="font-medium text-sm text-[#000000]">
-                      <div className="flex gap-1">Weight of Vessel</div>
+                      <div className="flex gap-1">Boat Weight</div>
                     </span>
                     <div className="mt-2">
                       <InputComponent

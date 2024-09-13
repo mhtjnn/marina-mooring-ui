@@ -79,7 +79,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
   const [firstErrorField, setFirstErrorField] = useState('')
   const [gpsCoordinatesValue, setGpsCoordinatesValue] = useState<string>()
-  const [checkedDock, setCheckedDock] = useState(false)
+  const [isBoatyardDisabled, setIsBoatyardDisabled] = useState(false)
   const [mooringImages, setMooringImages] = useState<string[]>([])
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [encodedImages, setEncodedImages] = useState<string[]>([])
@@ -233,6 +233,10 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       if (!firstError) firstError = 'mooringNumber'
     }
 
+    if (!formData?.mooringStatus) {
+      errors.mooringStatus = 'Mooring Status id required'
+      if (!firstError) firstError = 'mooringStatus'
+    }
     setFirstErrorField(firstError)
     setFieldErrors(errors)
 
@@ -384,7 +388,10 @@ const AddMoorings: React.FC<AddMooringProps> = ({
           mooringRowData?.customerResponseDto?.lastName ||
         '',
       harbor: mooringRowData?.harborOrArea || '',
-      boatYardName: mooringRowData?.boatyardResponseDto?.boatyardName || '',
+      boatYardName:
+        mooringRowData?.mooringStatus?.id === 1
+          ? ' '
+          : mooringRowData?.boatyardResponseDto?.boatyardName || '',
       boatName: mooringRowData?.boatName || '',
       boatSize: mooringRowData?.boatSize || '',
       boatType: mooringRowData?.boatType?.boatType || '',
@@ -613,6 +620,14 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     }
   }
 
+  const handleDropdownChange = (e: any) => {
+    handleInputChange('mooringStatus', e.target.value)
+    if (e.target.value.id !== 1) {
+      console.log('am here', e.target.value.id)
+      setIsBoatyardDisabled(false)
+    }
+  }
+
   useEffect(() => {
     fetchMetaData()
   }, [])
@@ -631,13 +646,24 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   }, [gpsCoordinatesValue])
 
   useEffect(() => {
-    if (formData?.mooringStatus?.id === 2) {
+    if (formData?.mooringStatus?.id === 1) {
+      console.log('am here also field empty')
+
       setFormData({
         ...formData,
         boatYardName: '',
       })
     }
   }, [formData?.mooringStatus?.id])
+  console.log('formData?.mooringStatus?.id', formData?.mooringStatus?.id)
+
+  useEffect(() => {
+    if (formData?.mooringStatus?.id != 1) {
+      setIsBoatyardDisabled(false)
+    } else if (formData?.mooringStatus?.id === 1 || mooringRowData?.mooringStatus?.id === 1) {
+      setIsBoatyardDisabled(true)
+    }
+  }, [formData?.mooringStatus?.id, mooringRowData?.mooringStatus?.id])
 
   return (
     <>
@@ -673,7 +699,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                     fontSize: '0.8rem',
                   }}
                 />
-
                 <p id="customerName">
                   {fieldErrors.customerName && (
                     <small className="p-error">{fieldErrors.customerName}</small>
@@ -716,25 +741,33 @@ const AddMoorings: React.FC<AddMooringProps> = ({
             <div>
               <div>
                 <span className="font-medium text-sm text-[#000000]">
-                  <div className="flex gap-1">Mooring Status</div>
+                  <div className="flex gap-1">
+                    Mooring Status <p className="text-red-600">*</p>
+                  </div>
                 </span>
               </div>
               <div className="mt-2">
                 <Dropdown
                   value={formData?.mooringStatus}
-                  onChange={(e) => handleInputChange('mooringStatus', e.target.value)}
+                  onChange={handleDropdownChange}
                   options={mooringStatus}
                   optionLabel="status"
+                  placeholder="Select"
                   editable
                   disabled={isLoading}
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: '1px solid #D5E1EA',
+                    border: fieldErrors.mooringStatus ? '1px solid red' : '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
                 />
+                <p id="mooringStatus">
+                  {fieldErrors.mooringStatus && (
+                    <small className="p-error">{fieldErrors.mooringStatus}</small>
+                  )}
+                </p>
               </div>
             </div>
           </div>
@@ -777,14 +810,14 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                   optionLabel="boatyardName"
                   placeholder="Select"
                   editable
-                  disabled={isLoading || formData?.mooringStatus?.id === 2}
+                  disabled={isLoading || isBoatyardDisabled}
                   style={{
                     width: '230px',
                     height: '32px',
                     border: '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
-                    cursor: formData?.mooringStatus?.id === 2 ? 'not-allowed' : 'pointer',
+                    cursor: isBoatyardDisabled ? 'not-allowed' : 'pointer',
                   }}
                 />
               </div>
@@ -903,11 +936,11 @@ const AddMoorings: React.FC<AddMooringProps> = ({
           </div>
           {/* Row 4 */}
           <div className="flex gap-6 mt-3">
-            {/* Type of Vessel */}
+            {/* Boat Type */}
             <div>
               <div>
                 <span className="font-medium text-sm text-[#000000]">
-                  <div className="flex gap-1">Type of Vessel</div>
+                  <div className="flex gap-1">Boat Type</div>
                 </span>
               </div>
 
@@ -929,10 +962,10 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                 />
               </div>
             </div>
-            {/* Weight of Vessel */}
+            {/* Boat Weight */}
             <div>
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">Weight of Vessel</div>
+                <div className="flex gap-1">Boat Weight</div>
               </span>
               <div className="mt-2">
                 <InputComponent
