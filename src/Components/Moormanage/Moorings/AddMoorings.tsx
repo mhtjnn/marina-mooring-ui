@@ -647,21 +647,18 @@ const AddMoorings: React.FC<AddMooringProps> = ({
 
   useEffect(() => {
     if (formData?.mooringStatus?.id === 1) {
-      console.log('am here also field empty')
-
       setFormData({
         ...formData,
         boatYardName: '',
       })
     }
   }, [formData?.mooringStatus?.id])
-  console.log('formData?.mooringStatus?.id', formData?.mooringStatus?.id)
 
   useEffect(() => {
-    if (formData?.mooringStatus?.id != 1) {
-      setIsBoatyardDisabled(false)
-    } else if (formData?.mooringStatus?.id === 1 || mooringRowData?.mooringStatus?.id === 1) {
+    if (formData?.mooringStatus?.id === 1 || mooringRowData?.mooringStatus?.id === 1) {
       setIsBoatyardDisabled(true)
+    } else if (formData?.mooringStatus?.id != 1) {
+      setIsBoatyardDisabled(false)
     }
   }, [formData?.mooringStatus?.id, mooringRowData?.mooringStatus?.id])
 
