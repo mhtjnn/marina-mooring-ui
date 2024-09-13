@@ -623,7 +623,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const handleDropdownChange = (e: any) => {
     handleInputChange('mooringStatus', e.target.value)
     if (e.target.value.id !== 1) {
-      console.log('am here', e.target.value.id)
       setIsBoatyardDisabled(false)
     }
   }

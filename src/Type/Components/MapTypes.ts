@@ -68,4 +68,5 @@ export interface CustomServiceAreaMoorinMapProps extends CustomDisplayPositionMa
   iconsByStatus?: { [key: string]: L.Icon }
   moorings?: any
   mooringData?: any
+  leftContanerWidth?: any
 }
