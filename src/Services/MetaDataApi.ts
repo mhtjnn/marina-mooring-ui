@@ -178,7 +178,7 @@ const metaDataApi = userApi.injectEndpoints({
 
     getQuickBookCustomer: builder.mutation({
       query: ({ pageNumber, pageSize }: { pageNumber?: number; pageSize?: number }) => ({
-        url: 'api/v1/metadata/quickbookCustomers',
+        url: 'api/v1/QBOCustomer/',
         method: 'GET',
         params: { pageNumber, pageSize },
       }),

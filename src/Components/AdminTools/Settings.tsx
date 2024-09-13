@@ -195,39 +195,39 @@ const Settings = () => {
     }
   }, [getCustomer, selectedCustomerId, pageSize, pageNumber])
 
-  const getQuickBookData = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const response = await getQuickBook({}).unwrap()
-      const { status, content, message, totalSize } = response as CustomerResponse
-      if (status === 200) {
-        toast?.current?.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: message,
-          life: 3000,
-        })
-      } else {
-        toast?.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: message,
-          life: 3000,
-        })
-      }
-    } catch (error) {
-      setIsLoading(false)
-      const { message: msg } = error as ErrorResponse
-      console.error('Error occurred while fetching customer data:', msg)
-    }
-  }, [selectedCustomerId])
+  // const getQuickBookData = useCallback(async () => {
+  //   setIsLoading(true)
+  //   try {
+  //     const response = await getQuickBook({}).unwrap()
+  //     const { status, content, message, totalSize } = response as CustomerResponse
+  //     if (status === 200) {
+  //       toast?.current?.show({
+  //         severity: 'success',
+  //         summary: 'Success',
+  //         detail: message,
+  //         life: 3000,
+  //       })
+  //     } else {
+  //       toast?.current?.show({
+  //         severity: 'error',
+  //         summary: 'Error',
+  //         detail: message,
+  //         life: 3000,
+  //       })
+  //     }
+  //   } catch (error) {
+  //     setIsLoading(false)
+  //     const { message: msg } = error as ErrorResponse
+  //     console.error('Error occurred while fetching customer data:', msg)
+  //   }
+  // }, [selectedCustomerId])
 
   const fetchDataAndUpdate = useCallback(async () => {
     const { quickBookCustomerData } = await getQuickBookCustomerData()
 
     if (quickBookCustomerData !== null) {
       const parsedData = quickBookCustomerData?.map((item: any) => ({
-        label: item.quickbookCustomerName,
+        label: item.quickbookCustomerFirstName + ' ' + item.quickbookCustomerLastName,
         id: item.id,
       }))
       setQuickBookCustomer(parsedData)
@@ -321,7 +321,7 @@ const Settings = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       getCustomerData()
-      getQuickBookData()
+      // getQuickBookData()
     }, 600)
     return () => clearTimeout(timeoutId)
   }, [selectedCustomerId, pageSize, pageNumber])
