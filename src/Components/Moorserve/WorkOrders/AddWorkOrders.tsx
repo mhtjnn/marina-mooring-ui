@@ -866,7 +866,15 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }, [editModeWorkOrder, editModeEstimate])
 
-  console.log('formData', formData)
+  useEffect(() => {
+    if (workOrder?.workOrderStatus?.id !== 10 && workOrder.vendor) {
+      setVendorId('')
+      setWorkOrder({
+        ...workOrder,
+        vendor: '',
+      })
+    }
+  }, [workOrder.workOrderStatus?.id])
 
   return (
     <>
@@ -1151,7 +1159,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             <div className="mt-1">
               <Dropdown
                 value={workOrder.workOrderStatus}
-                onChange={(e) => handleInputChange('workOrderStatus', e.target.value)}
+                onChange={(e) => {
+                  handleInputChange('workOrderStatus', e.target.value)
+                }}
                 options={workOrderStatusValue}
                 optionLabel="status"
                 editable
@@ -1268,11 +1278,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   onChange={(e) => {
                     handleInputChange('vendor', e.target.value)
                     setVendorId(e.target.value.id)
-                    setWorkOrder({
-                      ...workOrder,
-                      inventory: '',
-                      quantity: '',
-                    })
                   }}
                   options={vendorsName}
                   optionLabel="vendorName"
@@ -1290,7 +1295,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             </div>
           )}
           {/* Inventory */}
-          {vendorId && (
+          {workOrder?.workOrderStatus?.id === 10 && vendorId ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Item</div>
@@ -1315,11 +1320,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 />
               </div>
             </div>
-          )}
+          ) : null}
         </div>
         <div className="flex gap-6 mt-3">
           {/* Quantity */}
-          {workOrder?.inventory?.quantity && (
+          {workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity && (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Quantity</div>

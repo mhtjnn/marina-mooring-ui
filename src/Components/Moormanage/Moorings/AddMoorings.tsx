@@ -25,21 +25,13 @@ import {
 } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
 import { useSelector } from 'react-redux'
 import { selectCustomerId } from '../../../Store/Slice/userSlice'
-import {
-  CustomerResponse,
-  ErrorResponse,
-  MooringPayload,
-  MooringRowData,
-} from '../../../Type/ApiTypes'
+import { CustomerResponse, ErrorResponse, MooringRowData } from '../../../Type/ApiTypes'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import { Calendar } from 'primereact/calendar'
 import { Toast } from 'primereact/toast'
-import { Checkbox } from 'primereact/checkbox'
 import { FaFileUpload } from 'react-icons/fa'
-import { AiOutlineDelete } from 'react-icons/ai'
 import { Dialog } from 'primereact/dialog'
 import UploadImages from '../../CommonComponent/UploadImages'
-import { AppContext } from '../../../Services/ContextApi/AppContext'
 import { debounce } from 'lodash'
 
 const AddMoorings: React.FC<AddMooringProps> = ({
