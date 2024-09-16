@@ -104,7 +104,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
   const [formsData, setFormsData] = useState<any[]>([])
-  const { formData } = useContext(FormDataContext)
+  const { formData, setFormData } = useContext(FormDataContext)
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [customerImages, setCustomerImages] = useState<string[]>([])
   const [vendorId, setVendorId] = useState<any>()
@@ -393,7 +393,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       return
     }
 
-    const payload = {
+    const payload: any = {
       mooringId: workOrder?.mooringId?.id,
       customerId: workOrder?.customerName?.id,
       boatyardId: workOrder?.boatyards?.id,
@@ -405,7 +405,17 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       problem: workOrder?.value,
       imageRequestDtoList: imageRequestDtoList,
     }
-
+    if (workOrder?.attachForm) {
+      payload.formRequestDtoList = [
+        {
+          formName: workOrder.attachForm.formName,
+          fileName: workOrder.attachForm.fileName
+            ? workOrder.attachForm.fileName
+            : workOrder.attachForm.formName,
+          encodedFormData: formData ? formData : workOrder.attachForm.formData,
+        },
+      ]
+    }
     try {
       const response = await saveWorkOrder(payload).unwrap()
       const { status, message } = response as WorkOrderResponse
@@ -856,6 +866,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }, [editModeWorkOrder, editModeEstimate])
 
+  console.log('formData', formData)
+
   return (
     <>
       <Toast ref={toastRef} />
@@ -1216,7 +1228,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   <i
                     className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
                     style={{ color: '#007bff' }}
-                    onClick={() => viewFormsData(workOrder.attachForm?.id)}></i>
+                    onClick={() => setViewPdf(formData)}></i>
                 )}
               </div>
             </span>
@@ -1227,6 +1239,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   handleInputChange('attachForm', e.target.value)
                   viewFormsData(e.value.id)
                   setSelectedFormData(viewPdf?.formData)
+                  setFormData('')
                 }}
                 options={formsData}
                 optionLabel="formName"
@@ -1255,6 +1268,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   onChange={(e) => {
                     handleInputChange('vendor', e.target.value)
                     setVendorId(e.target.value.id)
+                    setWorkOrder({
+                      ...workOrder,
+                      inventory: '',
+                      quantity: '',
+                    })
                   }}
                   options={vendorsName}
                   optionLabel="vendorName"
@@ -1549,7 +1567,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       </Dialog>
       {viewPdf && (
         <PDFEditor
-          fileData={viewPdf?.formData}
+          fileData={formData ? formData : selectedformData}
           fileName={viewPdf?.formName}
           onClose={() => setViewPdf(null)}
         />
