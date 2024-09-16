@@ -6,15 +6,9 @@ import { GrFormSubtract } from 'react-icons/gr'
 import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 
-import {
-  ErrorResponse,
-  FormsResponse,
-  ViewFormsResponse,
-  WorkOrderResponse,
-} from '../../../Type/ApiTypes'
+import { ErrorResponse, ViewFormsResponse, WorkOrderResponse } from '../../../Type/ApiTypes'
 import {
   useAddWorkOrderMutation,
-  useGetFormsMutation,
   useGetViewFormMutation,
   useUpdateWorkOrderMutation,
 } from '../../../Services/MoorServe/MoorserveApi'
@@ -40,7 +34,8 @@ import {
   AttachFormsTypesData,
   BoatyardNameData,
   CustomersData,
-  JobTypesData,
+  InventoryDetailsData,
+  VendorData,
 } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
 import { useSelector } from 'react-redux'
 import { selectCustomerId } from '../../../Store/Slice/userSlice'
@@ -52,8 +47,8 @@ import ApproveModal from '../../Moorpay/AccountReceivable/ApproveModal'
 import ShowImages from '../../CommonComponent/UploadImages'
 import PDFEditor from '../Forms/PdfEditor'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
-import InputComponent from '../../CommonComponent/InputComponent'
 import { InputText } from 'primereact/inputtext'
+import InputComponent from '../../CommonComponent/InputComponent'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -81,6 +76,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     jobType: '',
     attachForm: '',
     cost: '',
+    vendor: '',
+    inventory: '',
   })
 
   const [time, setTime] = useState({ minutes: 0, seconds: 0 })
@@ -96,21 +93,21 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [workOrderStatusValue, setWorkOrderStatusValue] = useState<MetaData[]>()
   const [customerNameValue, setcustomerNameValue] = useState<any[]>()
   const [boatyardsName, setBoatYardsName] = useState<MetaData[]>([])
+  const [vendorsName, setVendorsName] = useState<MetaData[]>([])
+  const [inventory, setInventory] = useState<MetaData[]>([])
   const [editMode, setEditMode] = useState<boolean>(
     editModeWorkOrder ? editModeWorkOrder : false || editModeEstimate ? editModeEstimate : false,
   )
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [lastChangedField, setLastChangedField] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [encodedImages, setEncodedImages] = useState<string[]>([])
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
-  const [jobTypesValues, setJobTypesValues] = useState<any>()
   const [formsData, setFormsData] = useState<any[]>([])
   const { formData } = useContext(FormDataContext)
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [customerImages, setCustomerImages] = useState<string[]>([])
-
+  const [vendorId, setVendorId] = useState<any>()
   const { getMooringBasedOnCustomerIdAndBoatyardIdData } = GetMooringBasedOnCustomerIdAndBoatyardId(
     workOrder?.customerName?.id && workOrder?.customerName?.id,
     workOrder?.boatyards?.id && workOrder?.boatyards?.id,
@@ -129,11 +126,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   )
   const { getCustomersData } = CustomersData(selectedCustomerId)
   const { getBoatYardNameData } = BoatyardNameData(selectedCustomerId)
-  const { getJobTypeData } = JobTypesData()
   const { getAttachFormsTypeData } = AttachFormsTypesData()
+  const { getVendorValue } = VendorData()
+  const { getInventoryDetails } = InventoryDetailsData(vendorId)
   const { getTechniciansData } = GetTechnicians()
   const { getMooringIdsData } = GetMooringIds()
-  const [getForms] = useGetFormsMutation()
   const { getWorkOrderStatusData } = GetWorkOrderStatus()
   const [saveWorkOrder] = useAddWorkOrderMutation()
   const [updateWorkOrder] = useUpdateWorkOrderMutation()
@@ -147,10 +144,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const CustomerNameOptions = workOrder?.mooringId?.id
     ? customerBasedOnMooringId
     : customerNameValue
-
-  const uploadImages = () => {
-    setImageVisible(true)
-  }
 
   const MooringNameOptions = (() => {
     if (workOrder?.customerName?.id && workOrder?.boatyards?.id) {
@@ -384,7 +377,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
 
     setCustomerImages((prevImages) => [...prevImages, ...newImageUrls])
-    setEncodedImages((prevEncoded) => [...prevEncoded, ...newBase64Strings])
     setimageRequestDtoList(imageRequestDtoList)
   }
 
@@ -649,6 +641,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     const { customersData } = await getCustomersData()
     const { boatYardName } = await getBoatYardNameData()
     const { attachFormsTypeValue } = await getAttachFormsTypeData()
+    const { vendorValue } = await getVendorValue()
     // const { jobTypeValue } = await getJobTypeData()
 
     if (getTechnicians !== null) {
@@ -687,7 +680,19 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setIsLoading(false)
       setBoatYardsName(boatYardName)
     }
+    if (vendorValue !== null) {
+      setIsLoading(false)
+      setVendorsName(vendorValue)
+    }
   }, [])
+
+  const fetchInventoryDetails = async () => {
+    const { inventoryDetails } = await getInventoryDetails()
+    if (inventoryDetails !== null) {
+      setIsLoading(false)
+      setInventory(inventoryDetails)
+    }
+  }
 
   const fetchDataAndUpdateBasedOnCustomerId = useCallback(async () => {
     const { mooringsBasedOnCustomerId } = await getMooringsBasedOnCustomerIdData()
@@ -818,6 +823,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }, [])
 
   useEffect(() => {
+    vendorId && fetchInventoryDetails()
+  }, [vendorId])
+
+  useEffect(() => {
     if (workOrder?.boatyards?.id) {
       fetchDataAndUpdateBasedOnBoatyardId()
     }
@@ -917,6 +926,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               )}
             </p>
           </div>
+
+          {/* Images */}
           {!estimate ? (
             <div className="">
               <span className="font-medium text-sm text-[#000000]">
@@ -936,7 +947,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   }}>
                   <div
                     onClick={() => {
-                      !isTechnician && uploadImages()
+                      !isTechnician && setImageVisible(true)
                     }}
                     className="flex gap-3 text-center">
                     <FaFileUpload
@@ -1195,35 +1206,19 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           </div>
         </div>
 
-        {/* <div className="flex gap-6 mt-3">
-          <div>
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">Job Type</div>
-            </span>
-            <div className="mt-1">
-              <Dropdown
-                value={workOrder.jobType}
-                onChange={(e) => handleInputChange('jobType', e.target.value)}
-                options={jobTypesValues}
-                optionLabel="type"
-                editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                style={{
-                  width: '230px',
-                  height: '32px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                }}
-              />
-            </div>
-          </div> 
-          </div> */}
-
-        {editModeWorkOrder && (
+        <div className="flex gap-6">
+          {/* Attach Form */}
           <div className="mt-3">
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">Attach Form</div>
+              <div className="flex gap-1 items-center">
+                Attach Form
+                {workOrder.attachForm?.id && (
+                  <i
+                    className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
+                    style={{ color: '#007bff' }}
+                    onClick={() => viewFormsData(workOrder.attachForm?.id)}></i>
+                )}
+              </div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -1247,34 +1242,114 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               />
             </div>
           </div>
-        )}
 
+          {/* Vendor */}
+          {workOrder?.workOrderStatus?.id === 10 && (
+            <div className="mt-3">
+              <span className="font-medium text-sm text-[#000000]">
+                <div className="flex gap-1">Vendor</div>
+              </span>
+              <div className="mt-1">
+                <Dropdown
+                  value={workOrder.vendor}
+                  onChange={(e) => {
+                    handleInputChange('vendor', e.target.value)
+                    setVendorId(e.target.value.id)
+                  }}
+                  options={vendorsName}
+                  optionLabel="vendorName"
+                  editable
+                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  style={{
+                    width: '230px',
+                    height: '32px',
+                    border: '1px solid #D5E1EA',
+                    borderRadius: '0.50rem',
+                    fontSize: '0.8rem',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          {/* Inventory */}
+          {vendorId && (
+            <div className="mt-3">
+              <span className="font-medium text-sm text-[#000000]">
+                <div className="flex gap-1">Item</div>
+              </span>
+              <div className="mt-1">
+                <Dropdown
+                  value={workOrder.inventory}
+                  onChange={(e) => {
+                    handleInputChange('inventory', e.target.value)
+                  }}
+                  options={inventory}
+                  optionLabel="itemName"
+                  editable
+                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  style={{
+                    width: '230px',
+                    height: '32px',
+                    border: '1px solid #D5E1EA',
+                    borderRadius: '0.50rem',
+                    fontSize: '0.8rem',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-6 mt-3">
+          {/* Quantity */}
+          {workOrder?.inventory?.quantity && (
+            <div className="mt-3">
+              <span className="font-medium text-sm text-[#000000]">
+                <div className="flex gap-1">Quantity</div>
+              </span>
+              <div className="mt-1">
+                <InputComponent
+                  value={workOrder.inventory.quantity}
+                  onChange={(e) => {
+                    handleInputChange('quantity', e.target.value)
+                  }}
+                  disabled={true}
+                  style={{
+                    width: '230px',
+                    height: '32px',
+                    border: '1px solid #D5E1EA',
+                    borderRadius: '0.50rem',
+                    fontSize: '0.8rem',
+                    paddingLeft: '0.5rem',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
         {/* Report Problem */}
         <div className=" mt-4 mb-20">
           <span className="font-medium text-sm text-[#000000]">
             <div className="flex gap-1">Report Problem</div>
           </span>
           <div className="mt-1 text-[#000000]">
-            <div className="">
-              <InputTextarea
-                value={workOrder.value}
-                rows={3}
-                cols={30}
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                onChange={(e) => handleInputChange('value', e.target.value)}
-                style={{
-                  width: '740px',
-                  height: '66px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  boxShadow: 'none',
-                  paddingLeft: '0.5rem',
-                  fontSize: '0.8rem',
-                  resize: 'none',
-                  cursor: isAccountRecievable ? 'disabled' : 'pointer',
-                }}
-              />
-            </div>
+            <InputTextarea
+              value={workOrder.value}
+              rows={3}
+              cols={30}
+              disabled={isLoading || isAccountRecievable || isTechnician}
+              onChange={(e) => handleInputChange('value', e.target.value)}
+              style={{
+                width: '740px',
+                height: '66px',
+                border: '1px solid #D5E1EA',
+                borderRadius: '0.50rem',
+                boxShadow: 'none',
+                paddingLeft: '0.5rem',
+                fontSize: '0.8rem',
+                resize: 'none',
+                cursor: isAccountRecievable ? 'disabled' : 'pointer',
+              }}
+            />
           </div>
         </div>
       </div>

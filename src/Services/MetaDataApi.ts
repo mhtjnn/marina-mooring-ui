@@ -216,6 +216,30 @@ const metaDataApi = userApi.injectEndpoints({
         params: { pageNumber, pageSize },
       }),
     }),
+
+    getVendorData: builder.mutation({
+      query: ({ pageNumber, pageSize }: { pageNumber?: number; pageSize?: number }) => ({
+        url: 'api/v1/metadata/vendors',
+        method: 'GET',
+        params: { pageNumber, pageSize },
+      }),
+    }),
+
+    getInventoryData: builder.mutation({
+      query: ({
+        pageNumber,
+        pageSize,
+        vendorId,
+      }: {
+        pageNumber?: number
+        pageSize?: number
+        vendorId: number
+      }) => ({
+        url: `api/v1/metadata/inventory/${vendorId}`,
+        method: 'GET',
+        params: { pageNumber, pageSize },
+      }),
+    }),
   }),
 })
 
@@ -244,4 +268,6 @@ export const {
   useGetPaymentOptionMutation,
   useGetMooringStatusTypeMutation,
   useGetAttachFormsTypeMutation,
+  useGetVendorDataMutation,
+  useGetInventoryDataMutation,
 } = metaDataApi

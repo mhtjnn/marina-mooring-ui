@@ -22,6 +22,8 @@ import {
   useGetJobTypeMutation,
   useGetMooringStatusTypeMutation,
   useGetAttachFormsTypeMutation,
+  useGetVendorDataMutation,
+  useGetInventoryDataMutation,
 } from '../../../Services/MetaDataApi'
 import { ErrorResponse, MetaDataCustomerResponse, MetaDataResponse } from '../../../Type/ApiTypes'
 
@@ -193,6 +195,50 @@ export const AttachFormsTypesData = () => {
   })
 
   return { getAttachFormsTypeData }
+}
+
+export const VendorData = () => {
+  const [getVendorDataValues] = useGetVendorDataMutation()
+
+  const fetchVendorDataValues = async (getData: any) => {
+    try {
+      const response = await getData({})
+      const { status, content } = response.data as MetaDataResponse
+      return status === 200 && Array.isArray(content) ? content : null
+    } catch (error) {
+      const { message } = error as ErrorResponse
+      console.error('Error fetching metadata:', error)
+      return null
+    }
+  }
+
+  const getVendorValue = async () => ({
+    vendorValue: await fetchVendorDataValues(getVendorDataValues),
+  })
+
+  return { getVendorValue }
+}
+
+export const InventoryDetailsData = (vendorId: number) => {
+  const [getVendorDataValues] = useGetInventoryDataMutation()
+
+  const fetchInventoryDetailsData = async (getData: any) => {
+    try {
+      const response = await getData({ vendorId: vendorId })
+      const { status, content } = response.data as MetaDataResponse
+      return status === 200 && Array.isArray(content) ? content : null
+    } catch (error) {
+      const { message } = error as ErrorResponse
+      console.error('Error fetching metadata:', error)
+      return null
+    }
+  }
+
+  const getInventoryDetails = async () => ({
+    inventoryDetails: await fetchInventoryDetailsData(getVendorDataValues),
+  })
+
+  return { getInventoryDetails }
 }
 
 export const TypeOfChainCondition = () => {

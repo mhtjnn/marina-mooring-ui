@@ -16,7 +16,6 @@ import {
   DeleteCustomerResponse,
   GetInventoryResponse,
   GetVendorResponse,
-  VendorPayload,
 } from '../../../Type/ApiTypes'
 import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
@@ -41,7 +40,6 @@ const InventoryDetails: React.FC = () => {
   const [getVendorById] = useGetVendorByIdMutation()
   const [deleteInventory] = useDeleteInventoryMutation()
   const toast = useRef<Toast>(null)
-  const navigate = useNavigate()
   const handleEdit = (rowData: any) => {
     setEditMode(true)
     setModalVisible(true)
@@ -120,6 +118,17 @@ const InventoryDetails: React.FC = () => {
       {
         id: 'taxable',
         label: 'Taxable',
+        style: {
+          width: '9vw',
+          backgroundColor: '#00426F',
+          color: '#FFFFFF',
+          fontSize: '12px',
+          fontWeight: '700',
+        },
+      },
+      {
+        id: 'quantity',
+        label: 'Quantity',
         style: {
           width: '9vw',
           backgroundColor: '#00426F',

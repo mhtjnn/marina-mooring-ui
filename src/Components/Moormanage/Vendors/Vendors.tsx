@@ -147,11 +147,6 @@ const Vendors = () => {
         label: 'Inventory Items',
         style: VendorcolumnStyle,
       },
-      {
-        id: 'quantity',
-        label: 'Quantity',
-        style: VendorcolumnStyle,
-      },
     ],
     [],
   )
