@@ -833,7 +833,13 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }, [])
 
   useEffect(() => {
-    vendorId && fetchInventoryDetails()
+    if (vendorId) {
+      fetchInventoryDetails()
+      setWorkOrder({
+        ...workOrder,
+        inventory: '',
+      })
+    }
   }, [vendorId])
 
   useEffect(() => {
