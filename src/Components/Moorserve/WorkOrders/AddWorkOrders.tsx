@@ -49,6 +49,7 @@ import PDFEditor from '../Forms/PdfEditor'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
+import { MultiSelect } from 'primereact/multiselect'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -238,6 +239,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const handleEditMode = () => {
+    console.log(
+      'workOrderData?.formResponseDtoList.map((value: any) => value.formName)',
+      workOrderData?.formResponseDtoList.map((value: any) => value.formName),
+    )
+
     setWorkOrder((prevState: any) => ({
       ...prevState,
       mooringId: workOrderData?.mooringResponseDto?.mooringNumber,
@@ -255,6 +261,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       workOrderStatus: workOrderData?.workOrderStatusDto?.status,
       value: workOrderData?.problem,
       cost: workOrderData?.cost,
+      attachForm: workOrderData?.formResponseDtoList.map((value: any) => value.formName),
     }))
     const parseTime = (timeString: any) => {
       const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
@@ -451,6 +458,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const UpdateWorkOrder = async () => {
+    console.log('workOrder.attachForm.formData', workOrder.attachForm)
+
     const errors = validateFields()
     if (Object.keys(errors).length > 0) {
       return
@@ -478,6 +487,21 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               ? workOrder.attachForm.fileName
               : workOrder.attachForm.formName,
             encodedFormData: formData ? formData : workOrder.attachForm.formData,
+          },
+        ]
+      }
+
+      if (workOrder?.inventory) {
+        editPayload.inventoryRequestDtoList = [
+          {
+            id: 0,
+            inventoryTypeId: 0,
+            itemName: 'string',
+            cost: 0,
+            salePrice: 0,
+            taxable: 'string',
+            quantity: 0,
+            workOrderId: 0,
           },
         ]
       }
@@ -805,7 +829,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (status === 200) {
         setIsLoading(false)
         setViewPdf(content)
-        setSelectedFormData(content?.formData)
+        setSelectedFormData(content?.encodedData)
+        setFormData(content?.encodedData)
       } else {
         setViewPdf('')
         setIsLoading(false)
@@ -1249,7 +1274,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </div>
             </span>
             <div className="mt-1">
-              <Dropdown
+              {/* <Dropdown
                 value={workOrder.attachForm}
                 onChange={(e) => {
                   handleInputChange('attachForm', e.target.value)
@@ -1260,6 +1285,27 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={formsData}
                 optionLabel="formName"
                 editable
+                disabled={isLoading || isAccountRecievable || isTechnician}
+                style={{
+                  width: '230px',
+                  height: '32px',
+                  border: '1px solid #D5E1EA',
+                  borderRadius: '0.50rem',
+                  fontSize: '0.8rem',
+                }}
+              /> */}
+              <MultiSelect
+                value={workOrder.attachForm}
+                onChange={(e) => {
+                  handleInputChange('attachForm', e.target.value)
+                  viewFormsData(e.value.id)
+                  setSelectedFormData(viewPdf?.formData)
+                  setFormData('')
+                }}
+                options={formsData}
+                optionLabel="formName"
+                display="chip"
+                maxSelectedLabels={3}
                 disabled={isLoading || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',

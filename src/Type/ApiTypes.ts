@@ -797,6 +797,7 @@ export interface ViewFormsResponse {
     formName: string
     fileName: string
     formData: string
+    encodedData: string
     userResponseDto: {
       id: number
       firstName: string
