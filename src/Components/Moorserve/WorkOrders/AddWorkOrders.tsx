@@ -79,6 +79,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     viewAttachedForm: '',
     cost: '',
     vendor: '',
+    quantity: '',
     inventory: '',
   })
 
@@ -181,6 +182,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (!workOrder.mooringId) {
       errors.mooringId = 'Mooring Number is required'
     }
+    if (!workOrder.inventory && vendorId) {
+      errors.inventory = 'Item Name is required'
+    }
 
     setErrorMessage(errors)
     return errors
@@ -199,6 +203,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (value !== '' && !numberRegex.test(value)) {
         return
       }
+    }
+    if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) {
+      return
     }
     let updatedWorkOrder = { ...workOrder, [field]: value }
 
@@ -409,6 +416,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (workOrder?.attachForm) {
       payload.formRequestDtoList = [
         {
+          id: workOrder.attachForm.id,
           formName: workOrder.attachForm.formName,
           fileName: workOrder.attachForm.fileName
             ? workOrder.attachForm.fileName
@@ -421,7 +429,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       payload.inventoryRequestDtoList = [
         {
           id: workOrder?.inventory?.id,
-          quantity: workOrder?.inventory?.quantity,
+          quantity: workOrder?.quantity,
         },
       ]
     }
@@ -482,6 +490,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (workOrder?.attachForm) {
         editPayload.formRequestDtoList = [
           {
+            id: workOrder.attachForm.id,
             formName: workOrder.attachForm.formName,
             fileName: workOrder.attachForm.fileName
               ? workOrder.attachForm.fileName
@@ -494,6 +503,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (workOrder?.viewAttachedForm && !workOrder?.attachForm) {
         editPayload.formRequestDtoList = [
           {
+            id: workOrder.viewAttachedForm.id,
             formName: workOrder.viewAttachedForm.formName,
             fileName: workOrder.viewAttachedForm.fileName
               ? workOrder.viewAttachedForm.fileName
@@ -507,7 +517,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         editPayload.inventoryRequestDtoList = [
           {
             id: workOrder?.inventory?.id,
-            quantity: workOrder?.inventory?.quantity,
+            quantity: workOrder?.quantity,
           },
         ]
       }
@@ -945,6 +955,16 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }, [workOrder.workOrderStatus?.id])
 
+  useEffect(() => {
+    if (workOrder?.inventory?.id) {
+      setWorkOrder({
+        ...workOrder,
+        quantity: workOrder.inventory?.quantity,
+      })
+    }
+  }, [workOrder.inventory?.id])
+  console.log('workOrderData?.formResponseDtoList &&', workOrderData?.formResponseDtoList)
+
   return (
     <>
       <Toast ref={toastRef} />
@@ -1333,17 +1353,21 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               />
             </div>
           </div>
-
+          {/* View Attached Form */}
           {workOrderData?.formResponseDtoList && editModeWorkOrder && (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1 items-center">
                   View Attached Form
-                  {workOrder.viewAttachedForm?.id && !workOrder.attachForm?.id && (
+                  {workOrder.viewAttachedForm?.id && (
                     <i
                       className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
                       style={{ color: '#007bff' }}
-                      onClick={() => setViewPdf(formData)}></i>
+                      onClick={() => {
+                        console.log('formData in viewAttached', formData)
+                        // viewAttachedFormsData(workOrder.viewAttachedForm?.id)
+                        setViewPdf(formData)
+                      }}></i>
                   )}
                 </div>
               </span>
@@ -1373,7 +1397,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </div>
             </div>
           )}
-
           {/* Vendor */}
           {workOrder?.workOrderStatus?.id === 10 && (
             <div className="mt-3">
@@ -1402,11 +1425,17 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </div>
             </div>
           )}
-          {/* Inventory */}
-          {workOrder?.workOrderStatus?.id === 10 && vendorId ? (
+          {/* Item Name */}
+          {(workOrderData?.formResponseDtoList === undefined ||
+            !editModeWorkOrder ||
+            !editModeWorkOrder) &&
+          workOrder?.workOrderStatus?.id === 10 &&
+          vendorId ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">Item</div>
+                <div className="flex gap-1">
+                  Item <p className="text-red-600">*</p>
+                </div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -1421,29 +1450,71 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: '1px solid #D5E1EA',
+                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
                 />
               </div>
+              <p>
+                {errorMessage.inventory && (
+                  <small className="p-error">{errorMessage.inventory}</small>
+                )}
+              </p>
             </div>
           ) : null}
         </div>
         <div className="flex gap-6 mt-3">
+          {/* Item Name*/}
+          {(workOrderData?.formResponseDtoList || editModeWorkOrder || editModeWorkOrder) &&
+          workOrder?.workOrderStatus?.id === 10 &&
+          vendorId ? (
+            <div>
+              <span className="font-medium text-sm text-[#000000]">
+                <div className="flex gap-1">
+                  Item <p className="text-red-600">*</p>
+                </div>
+              </span>
+              <div className="mt-1">
+                <Dropdown
+                  value={workOrder.inventory}
+                  onChange={(e) => {
+                    handleInputChange('inventory', e.target.value)
+                  }}
+                  options={inventory}
+                  optionLabel="itemName"
+                  editable
+                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  style={{
+                    width: '230px',
+                    height: '32px',
+                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
+                    borderRadius: '0.50rem',
+                    fontSize: '0.8rem',
+                  }}
+                />
+              </div>
+              <p>
+                {errorMessage.inventory && (
+                  <small className="p-error">{errorMessage.inventory}</small>
+                )}
+              </p>
+            </div>
+          ) : null}
           {/* Quantity */}
           {workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity && (
-            <div className="mt-3">
+            <div>
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">Quantity</div>
+                <div className="flex gap-1">Quantity (Available)</div>
               </span>
               <div className="mt-1">
                 <InputComponent
-                  value={workOrder.inventory.quantity}
+                  value={workOrder.quantity}
                   onChange={(e) => {
                     handleInputChange('quantity', e.target.value)
                   }}
-                  disabled={true}
+                  type="number"
+                  disabled={isLoading || isAccountRecievable || isTechnician}
                   style={{
                     width: '230px',
                     height: '32px',
