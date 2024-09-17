@@ -137,7 +137,9 @@ export interface WorkOrderProps {
   isAccountRecievable?: boolean
   isInvoice?: boolean
   isTechnician?: boolean
+  visible?: boolean
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
+  setWorkOrderData?: React.Dispatch<React.SetStateAction<any>>
   toastRef?: any
   closeModal: () => void
   getWorkOrderWithPendingPayApproval?: () => void

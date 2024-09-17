@@ -63,6 +63,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   getOutStandingInvoice,
   isInvoice,
   isTechnician,
+  visible,
+  setWorkOrderData,
 }) => {
   const selectedCustomerId = useSelector(selectCustomerId)
   const [workOrder, setWorkOrder] = useState<any>({
@@ -901,6 +903,40 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
 
+  const ItemName = () => {
+    return (
+      <>
+        <span className="font-medium text-sm text-[#000000]">
+          <div className="flex gap-1">
+            Item <p className="text-red-600">*</p>
+          </div>
+        </span>
+        <div className="mt-1">
+          <Dropdown
+            value={workOrder.inventory}
+            onChange={(e) => {
+              handleInputChange('inventory', e.target.value)
+            }}
+            options={inventory}
+            optionLabel="itemName"
+            editable
+            disabled={isLoading || isAccountRecievable || isTechnician}
+            style={{
+              width: '230px',
+              height: '32px',
+              border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
+              borderRadius: '0.50rem',
+              fontSize: '0.8rem',
+            }}
+          />
+        </div>
+        <p>
+          {errorMessage.inventory && <small className="p-error">{errorMessage.inventory}</small>}
+        </p>
+      </>
+    )
+  }
+
   useEffect(() => {
     fetchDataAndUpdate()
   }, [])
@@ -963,7 +999,12 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       })
     }
   }, [workOrder.inventory?.id])
-  console.log('workOrderData?.formResponseDtoList &&', workOrderData?.formResponseDtoList)
+
+  useEffect(() => {
+    if (setWorkOrderData && !visible && (!editModeWorkOrder || !editModeEstimate)) {
+      setWorkOrderData('')
+    }
+  }, [visible])
 
   return (
     <>
@@ -1364,7 +1405,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                       className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
                       style={{ color: '#007bff' }}
                       onClick={() => {
-                        console.log('formData in viewAttached', formData)
                         // viewAttachedFormsData(workOrder.viewAttachedForm?.id)
                         setViewPdf(formData)
                       }}></i>
@@ -1426,80 +1466,21 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             </div>
           )}
           {/* Item Name */}
-          {(workOrderData?.formResponseDtoList === undefined ||
+          {(workOrderData?.formResponseDtoList === null ||
             !editModeWorkOrder ||
             !editModeWorkOrder) &&
           workOrder?.workOrderStatus?.id === 10 &&
           vendorId ? (
-            <div className="mt-3">
-              <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Item <p className="text-red-600">*</p>
-                </div>
-              </span>
-              <div className="mt-1">
-                <Dropdown
-                  value={workOrder.inventory}
-                  onChange={(e) => {
-                    handleInputChange('inventory', e.target.value)
-                  }}
-                  options={inventory}
-                  optionLabel="itemName"
-                  editable
-                  disabled={isLoading || isAccountRecievable || isTechnician}
-                  style={{
-                    width: '230px',
-                    height: '32px',
-                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
-                    borderRadius: '0.50rem',
-                    fontSize: '0.8rem',
-                  }}
-                />
-              </div>
-              <p>
-                {errorMessage.inventory && (
-                  <small className="p-error">{errorMessage.inventory}</small>
-                )}
-              </p>
-            </div>
+            <div className="mt-3">{ItemName()}</div>
           ) : null}
         </div>
         <div className="flex gap-6 mt-3">
           {/* Item Name*/}
-          {(workOrderData?.formResponseDtoList || editModeWorkOrder || editModeWorkOrder) &&
+          {workOrderData?.formResponseDtoList &&
+          (editModeWorkOrder || editModeWorkOrder) &&
           workOrder?.workOrderStatus?.id === 10 &&
           vendorId ? (
-            <div>
-              <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Item <p className="text-red-600">*</p>
-                </div>
-              </span>
-              <div className="mt-1">
-                <Dropdown
-                  value={workOrder.inventory}
-                  onChange={(e) => {
-                    handleInputChange('inventory', e.target.value)
-                  }}
-                  options={inventory}
-                  optionLabel="itemName"
-                  editable
-                  disabled={isLoading || isAccountRecievable || isTechnician}
-                  style={{
-                    width: '230px',
-                    height: '32px',
-                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
-                    borderRadius: '0.50rem',
-                    fontSize: '0.8rem',
-                  }}
-                />
-              </div>
-              <p>
-                {errorMessage.inventory && (
-                  <small className="p-error">{errorMessage.inventory}</small>
-                )}
-              </p>
-            </div>
+            <div>{ItemName()}</div>
           ) : null}
           {/* Quantity */}
           {workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity && (

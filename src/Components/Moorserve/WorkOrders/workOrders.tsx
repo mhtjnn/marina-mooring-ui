@@ -27,7 +27,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   const [searchText, setSearchText] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [workOrderData, setWorkOrderData] = useState<WorkOrderPayload[]>([])
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(undefined)
+  const [selectedCustomer, setSelectedCustomer] = useState<any>('')
   const [editMode, setEditMode] = useState(false)
   const [getWorkOrder] = useGetWorkOrdersMutation()
   const toast = useRef<Toast>(null)
@@ -386,8 +386,10 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
                 children={
                   <AddWorkOrders
                     workOrderData={selectedCustomer}
+                    setWorkOrderData={setSelectedCustomer}
                     editModeWorkOrder={editMode}
                     setVisible={setVisible}
+                    visible={visible}
                     toastRef={toast}
                     closeModal={handleModalClose}
                     isAccountRecievable={false}
@@ -416,22 +418,10 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
             border: '1px solid #D5E1EA',
             opacity: '0px',
             backgroundColor: '#FFFFFF',
-            // overflow:"scroll"
           }}
           className="bg-[F2F2F2]  ml-12  mt-3 mr-14">
           <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2 rounded-tl-[10px] rounded-tr-[10px]">
-            <h1
-              // style={{
-              //   fontSize: '18px',
-              //   fontWeight: '800',
-              //   lineHeight: '21.09px',
-              //   letterSpacing: '0.4837472140789032px',
-              //   color: '#FFFFFF',
-              //   padding: '8px',
-              // }}
-              className="p-2 text-xl font-extrabold text-white">
-              Work Orders
-            </h1>
+            <h1 className="p-2 text-xl font-extrabold text-white">Work Orders</h1>
 
             <div className="flex gap-6">
               <div className="relative inline-block">
