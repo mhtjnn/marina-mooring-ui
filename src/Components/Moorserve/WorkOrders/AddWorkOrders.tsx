@@ -76,6 +76,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     value: '',
     jobType: '',
     attachForm: '',
+    viewAttachedForm: '',
     cost: '',
     vendor: '',
     inventory: '',
@@ -90,7 +91,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [technicians, setTechnicians] = useState<any[]>()
   const [moorings, setMoorings] = useState<MetaData[]>()
   const [viewPdf, setViewPdf] = useState<any>()
-  const [selectedformData, setSelectedFormData] = useState<any>()
   const [workOrderStatusValue, setWorkOrderStatusValue] = useState<MetaData[]>()
   const [customerNameValue, setcustomerNameValue] = useState<any[]>()
   const [boatyardsName, setBoatYardsName] = useState<MetaData[]>([])
@@ -99,7 +99,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [editMode, setEditMode] = useState<boolean>(
     editModeWorkOrder ? editModeWorkOrder : false || editModeEstimate ? editModeEstimate : false,
   )
-  const [selectedForm, setSelectedForm] = useState<any>() // State to store selected form
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [lastChangedField, setLastChangedField] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -240,12 +239,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const handleEditMode = () => {
-    console.log(
-      'workOrderData?.formResponseDtoList.map((value: any) => value.formName)',
-      workOrderData?.formResponseDtoList &&
-        workOrderData?.formResponseDtoList.map((value: any) => value),
-    )
-
     setWorkOrder((prevState: any) => ({
       ...prevState,
       mooringId: workOrderData?.mooringResponseDto?.mooringNumber,
@@ -263,16 +256,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       workOrderStatus: workOrderData?.workOrderStatusDto?.status,
       value: workOrderData?.problem,
       cost: workOrderData?.cost,
-      attachForm:
-        workOrderData?.formResponseDtoList &&
-        workOrderData?.formResponseDtoList.map((value: any) => value?.formName),
-      // attachForm: workOrderData?.formResponseDtoList.map((value: any) => ({
-      //   formName: value.formName,
-      //   id: value.id,
-      // })),
     }))
-    console.log('workOrder.attachForm?.id', workOrder.attachForm)
-
     const parseTime = (timeString: any) => {
       const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
       return { minutes: hours * 60 + minutes, seconds }
@@ -433,6 +417,14 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         },
       ]
     }
+    if (workOrder?.inventory) {
+      payload.inventoryRequestDtoList = [
+        {
+          id: workOrder?.inventory?.id,
+          quantity: workOrder?.inventory?.quantity,
+        },
+      ]
+    }
     try {
       const response = await saveWorkOrder(payload).unwrap()
       const { status, message } = response as WorkOrderResponse
@@ -468,8 +460,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const UpdateWorkOrder = async () => {
-    console.log('workOrder.attachForm.formData', workOrder.attachForm)
-
     const errors = validateFields()
     if (Object.keys(errors).length > 0) {
       return
@@ -501,17 +491,23 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         ]
       }
 
+      if (workOrder?.viewAttachedForm && !workOrder?.attachForm) {
+        editPayload.formRequestDtoList = [
+          {
+            formName: workOrder.viewAttachedForm.formName,
+            fileName: workOrder.viewAttachedForm.fileName
+              ? workOrder.viewAttachedForm.fileName
+              : workOrder.viewAttachedForm.formName,
+            encodedFormData: formData ? formData : workOrder.viewAttachedForm.formData,
+          },
+        ]
+      }
+
       if (workOrder?.inventory) {
         editPayload.inventoryRequestDtoList = [
           {
-            id: 0,
-            inventoryTypeId: 0,
-            itemName: 'string',
-            cost: 0,
-            salePrice: 0,
-            taxable: 'string',
-            quantity: 0,
-            workOrderId: 0,
+            id: workOrder?.inventory?.id,
+            quantity: workOrder?.inventory?.quantity,
           },
         ]
       }
@@ -839,10 +835,42 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (status === 200) {
         setIsLoading(false)
         setViewPdf(content)
-        setSelectedFormData(content?.encodedData)
         setFormData(content?.encodedData)
       } else {
         setViewPdf('')
+        setFormData('')
+        setIsLoading(false)
+        toastRef?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: message,
+          life: 3000,
+        })
+      }
+    } catch (error) {
+      const { message, data } = error as ErrorResponse
+      setIsLoading(false)
+      toastRef?.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: message || data?.message,
+        life: 3000,
+      })
+    }
+  }
+
+  const viewAttachedFormsData = async (id: any) => {
+    setIsLoading(true)
+    try {
+      const response = await getViewForms({ id: id }).unwrap()
+      const { status, content, message } = response as ViewFormsResponse
+      if (status === 200) {
+        setIsLoading(false)
+        setViewPdf(content)
+        setFormData(content?.encodedData)
+      } else {
+        setViewPdf('')
+        setFormData('')
         setIsLoading(false)
         toastRef?.current?.show({
           severity: 'error',
@@ -1289,7 +1317,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 onChange={(e) => {
                   handleInputChange('attachForm', e.target.value)
                   viewFormsData(e.value.id)
-                  setSelectedFormData(viewPdf?.formData)
                   setFormData('')
                 }}
                 options={formsData}
@@ -1306,6 +1333,46 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               />
             </div>
           </div>
+
+          {workOrderData?.formResponseDtoList && editModeWorkOrder && (
+            <div className="mt-3">
+              <span className="font-medium text-sm text-[#000000]">
+                <div className="flex gap-1 items-center">
+                  View Attached Form
+                  {workOrder.viewAttachedForm?.id && !workOrder.attachForm?.id && (
+                    <i
+                      className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
+                      style={{ color: '#007bff' }}
+                      onClick={() => setViewPdf(formData)}></i>
+                  )}
+                </div>
+              </span>
+              <div className="mt-1">
+                <Dropdown
+                  value={workOrder.viewAttachedForm}
+                  onChange={(e) => {
+                    handleInputChange('viewAttachedForm', e.target.value)
+                    viewAttachedFormsData(e.value.id)
+                    setFormData('')
+                  }}
+                  options={
+                    workOrderData?.formResponseDtoList &&
+                    workOrderData?.formResponseDtoList.map((value: any) => value)
+                  }
+                  optionLabel="formName"
+                  editable
+                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  style={{
+                    width: '230px',
+                    height: '32px',
+                    border: '1px solid #D5E1EA',
+                    borderRadius: '0.50rem',
+                    fontSize: '0.8rem',
+                  }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Vendor */}
           {workOrder?.workOrderStatus?.id === 10 && (
@@ -1614,24 +1681,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
       {viewPdf && (
         <PDFEditor
-          fileData={formData ? formData : selectedformData}
-          fileName={viewPdf?.formName}
+          fileData={formData ? formData : viewPdf?.encodedFormData}
+          fileName={viewPdf?.formName ? viewPdf?.formName : viewPdf?.fileName}
           onClose={() => setViewPdf(null)}
         />
-      )}
-
-      {selectedformData && (
-        <div>
-          <h3>Form Preview: {selectedformData?.formName}</h3>
-          <iframe
-            src={selectedformData?.formUrl} // If the form is a PDF or a URL
-            width="600"
-            height="800"
-            title="Form Preview"
-          />
-          {/* Or display form data directly here */}
-          <div>{selectedformData.content}</div>
-        </div>
       )}
     </>
   )

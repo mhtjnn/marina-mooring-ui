@@ -122,13 +122,13 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose }) => {
       const pdfBase64 = await pdfDoc.saveAsBase64({ dataUri: false })
       setLoading(false)
       setFormData(pdfBase64)
-      onClose() // Pass the encoded PDF data to onClose handler
+      onClose()
     }
   }
 
   const handleDownload = async () => {
     if (pdfUrl) {
-      handleSave() // Ensure all changes are saved before download
+      handleSave()
       toPDF()
       const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
       const pdfDoc = await PDFDocument.load(existingPdfBytes)

@@ -451,7 +451,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
                   />
                 </div>
               </div>
-              <div className="bg-white min-h-[4.5vh] rounded-md">
+              <div className="bg-white rounded-md">
                 <div className="card flex justify-content-center p-0.5 pl-0.5">
                   <SelectButton
                     value={completedWorkOrder}
