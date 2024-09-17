@@ -99,6 +99,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [editMode, setEditMode] = useState<boolean>(
     editModeWorkOrder ? editModeWorkOrder : false || editModeEstimate ? editModeEstimate : false,
   )
+  const [selectedForm, setSelectedForm] = useState<any>() // State to store selected form
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [lastChangedField, setLastChangedField] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -241,7 +242,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const handleEditMode = () => {
     console.log(
       'workOrderData?.formResponseDtoList.map((value: any) => value.formName)',
-      workOrderData?.formResponseDtoList.map((value: any) => value.formName),
+      workOrderData?.formResponseDtoList &&
+        workOrderData?.formResponseDtoList.map((value: any) => value),
     )
 
     setWorkOrder((prevState: any) => ({
@@ -261,8 +263,16 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       workOrderStatus: workOrderData?.workOrderStatusDto?.status,
       value: workOrderData?.problem,
       cost: workOrderData?.cost,
-      attachForm: workOrderData?.formResponseDtoList.map((value: any) => value.formName),
+      attachForm:
+        workOrderData?.formResponseDtoList &&
+        workOrderData?.formResponseDtoList.map((value: any) => value?.formName),
+      // attachForm: workOrderData?.formResponseDtoList.map((value: any) => ({
+      //   formName: value.formName,
+      //   id: value.id,
+      // })),
     }))
+    console.log('workOrder.attachForm?.id', workOrder.attachForm)
+
     const parseTime = (timeString: any) => {
       const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
       return { minutes: hours * 60 + minutes, seconds }
@@ -1274,7 +1284,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </div>
             </span>
             <div className="mt-1">
-              {/* <Dropdown
+              <Dropdown
                 value={workOrder.attachForm}
                 onChange={(e) => {
                   handleInputChange('attachForm', e.target.value)
@@ -1285,27 +1295,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={formsData}
                 optionLabel="formName"
                 editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                style={{
-                  width: '230px',
-                  height: '32px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                }}
-              /> */}
-              <MultiSelect
-                value={workOrder.attachForm}
-                onChange={(e) => {
-                  handleInputChange('attachForm', e.target.value)
-                  viewFormsData(e.value.id)
-                  setSelectedFormData(viewPdf?.formData)
-                  setFormData('')
-                }}
-                options={formsData}
-                optionLabel="formName"
-                display="chip"
-                maxSelectedLabels={3}
                 disabled={isLoading || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
@@ -1622,12 +1611,27 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         />
         {/* <Toast ref={toastRef} /> */}
       </Dialog>
+
       {viewPdf && (
         <PDFEditor
           fileData={formData ? formData : selectedformData}
           fileName={viewPdf?.formName}
           onClose={() => setViewPdf(null)}
         />
+      )}
+
+      {selectedformData && (
+        <div>
+          <h3>Form Preview: {selectedformData?.formName}</h3>
+          <iframe
+            src={selectedformData?.formUrl} // If the form is a PDF or a URL
+            width="600"
+            height="800"
+            title="Form Preview"
+          />
+          {/* Or display form data directly here */}
+          <div>{selectedformData.content}</div>
+        </div>
       )}
     </>
   )

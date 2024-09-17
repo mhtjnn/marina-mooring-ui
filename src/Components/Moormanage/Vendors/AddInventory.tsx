@@ -224,7 +224,7 @@ const AddInventory: React.FC<AddInventoryProps> = ({
 
   return (
     <>
-      <div className={`w-full h-full mb-16 ml-4 ${isLoading ? 'blurred' : ''}`}>
+      <div className={`w-full h-full mb-16  ${isLoading ? 'blurred' : ''}`}>
         <div>
           <Dropdown
             value={formData.type}
@@ -242,7 +242,7 @@ const AddInventory: React.FC<AddInventoryProps> = ({
               fontSize: '0.8rem',
             }}
           />
-          <p className="">{errors.type && <small className="p-error">{errors.type}</small>}</p>
+          <p>{errors.type && <small className="p-error">{errors.type}</small>}</p>
         </div>
         <div className="flex gap-5 mt-5">
           <div>
@@ -378,7 +378,7 @@ const AddInventory: React.FC<AddInventoryProps> = ({
                     <span className="custom-checkbox"></span>
                   </label>
                 </span>
-                <p className="font-medium text-lg text-[#000000] mt-8 ml-[14px]">Yes</p>
+                <p className="font-medium text-lg text-[#000000] mt-8 ml-[12px]">Yes</p>
               </div>
 
               <div className="flex gap-4 items-center mt-[-20px]">
@@ -393,7 +393,7 @@ const AddInventory: React.FC<AddInventoryProps> = ({
                     <span className="custom-checkbox"></span>
                   </label>
                 </span>
-                <p className="font-medium text-lg text-[#000000] mt-8 ml-[14px]">No</p>
+                <p className="font-medium text-lg text-[#000000] mt-8 ml-[12px]">No</p>
               </div>
             </div>
             {errors.taxable && <small className="p-error">{errors.taxable}</small>}
