@@ -490,73 +490,102 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
     try {
       setIsLoading(true)
-      const editPayload: any = {
-        mooringId: workOrder?.mooringId?.id || workOrderData?.mooringResponseDto?.id,
-        customerId: workOrder?.customerName?.id || workOrderData?.customerResponseDto?.id,
-        boatyardId: workOrder?.boatyards?.id || workOrderData?.boatyardResponseDto?.id,
-        technicianId: workOrder?.assignedTo?.id || workOrderData?.technicianUserResponseDto?.id,
-        dueDate: workOrder?.dueDate || workOrderData?.dueDate,
-        scheduledDate: workOrder?.scheduleDate || workOrderData?.scheduledDate,
-        workOrderStatusId: workOrder?.workOrderStatus?.id || workOrderData?.workOrderStatusDto?.id,
-        time: '00:' + formatTime(time.minutes, time.seconds) || workOrderData?.time,
-        problem: workOrder?.value || workOrderData?.problem,
-        imageRequestDtoList: imageRequestDtoList,
+      const editPayload: any = {}
+      if (workOrder?.mooringId?.id !== workOrderData?.mooringResponseDto?.id) {
+        editPayload.mooringId = workOrder?.mooringId?.id
       }
-
+      if (workOrder?.customerName?.id !== workOrderData?.customerResponseDto?.id) {
+        editPayload.customerId = workOrder?.customerName?.id
+      }
+      if (workOrder?.boatyards?.id !== workOrderData?.boatyardResponseDto?.id) {
+        editPayload.boatyardId = workOrder?.boatyards?.id
+      }
+      if (workOrder?.assignedTo?.id !== workOrderData?.technicianUserResponseDto?.id) {
+        editPayload.technicianId = workOrder?.assignedTo?.id
+      }
+      if (workOrder?.dueDate !== workOrderData?.dueDate) {
+        editPayload.dueDate = workOrder?.dueDate
+      }
+      if (workOrder?.scheduleDate !== workOrderData?.scheduledDate) {
+        editPayload.scheduledDate = workOrder?.scheduleDate
+      }
+      if (workOrder?.workOrderStatus?.id !== workOrderData?.workOrderStatusDto?.id) {
+        editPayload.workOrderStatusId = workOrder?.workOrderStatus?.id
+      }
+      if (workOrder?.value !== workOrderData?.problem) {
+        editPayload.problem = workOrder?.value
+      }
+      if (imageRequestDtoList && imageRequestDtoList.length > 0) {
+        editPayload.imageRequestDtoList = imageRequestDtoList
+      }
+      const formattedTime = '00:' + formatTime(time.minutes, time.seconds)
+      if (formattedTime !== workOrderData?.time) {
+        editPayload.time = formattedTime
+      }
       if (workOrder?.attachForm) {
-        editPayload.formRequestDtoList = [
-          {
-            id: workOrder.attachForm.id,
-            formName: workOrder.attachForm.formName,
-            fileName: workOrder.attachForm.fileName
-              ? workOrder.attachForm.fileName
-              : workOrder.attachForm.formName,
-            encodedFormData: formData ? formData : workOrder.attachForm.formData,
-          },
-        ]
+        if (formData) {
+          editPayload.formRequestDtoList = [
+            {
+              id: workOrder.attachForm.id,
+              formName: workOrder.attachForm.formName,
+              fileName: workOrder.attachForm.fileName
+                ? workOrder.attachForm.fileName
+                : workOrder.attachForm.formName,
+              encodedFormData: formData ? formData : workOrder.attachForm.formData,
+            },
+          ]
+        }
       }
-
-      if (workOrder?.viewAttachedForm && !workOrder?.attachForm) {
-        editPayload.formRequestDtoList = [
-          {
-            id: workOrder.viewAttachedForm.id,
-            formName: workOrder.viewAttachedForm.formName,
-            fileName: workOrder.viewAttachedForm.fileName
-              ? workOrder.viewAttachedForm.fileName
-              : workOrder.viewAttachedForm.formName,
-            encodedFormData: formData ? formData : workOrder.viewAttachedForm.formData,
-          },
-        ]
-      }
-
       if (workOrder?.inventory) {
-        editPayload.inventoryRequestDtoList = [
-          {
-            id: workOrder?.inventory?.id,
-            quantity: workOrder?.quantity,
-          },
-        ]
+        const inventoryId =
+          workOrder?.inventory?.id || workOrderData?.inventoryResponseDtoList?.[0]?.id
+        const quantity =
+          workOrder?.quantity || workOrderData?.inventoryResponseDtoList?.[0]?.quantity
+
+        const inventoryUpdated =
+          inventoryId !== workOrderData?.inventoryResponseDtoList?.[0]?.id ||
+          quantity !== workOrderData?.inventoryResponseDtoList?.[0]?.quantity
+
+        if (inventoryUpdated) {
+          editPayload.inventoryRequestDtoList = [
+            {
+              id: inventoryId,
+              quantity: quantity,
+            },
+          ]
+        }
       }
-      const response = await updateWorkOrder({
-        payload: editPayload,
-        id: workOrderData?.id,
-      }).unwrap()
-      const { status, message } = response as WorkOrderResponse
-      if (status === 200 || status === 201) {
+      if (Object.keys(editPayload).length > 0) {
+        const response = await updateWorkOrder({
+          payload: editPayload,
+          id: workOrderData?.id,
+        }).unwrap()
+
+        const { status, message } = response as WorkOrderResponse
+
         setIsLoading(false)
-        closeModal()
-        toastRef?.current?.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: message,
-          life: 3000,
-        })
+        if (status === 200 || status === 201) {
+          closeModal()
+          toastRef?.current?.show({
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
+            life: 3000,
+          })
+        } else {
+          toastRef?.current?.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: message,
+            life: 3000,
+          })
+        }
       } else {
         setIsLoading(false)
         toastRef?.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: message,
+          severity: 'info',
+          summary: 'No Changes',
+          detail: 'No updates were made to the work order.',
           life: 3000,
         })
       }
