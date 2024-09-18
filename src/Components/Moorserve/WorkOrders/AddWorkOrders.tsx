@@ -112,6 +112,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [customerImages, setCustomerImages] = useState<string[]>([])
   const [vendorId, setVendorId] = useState<any>()
+  const [isDirty, setIsDirty] = useState<boolean>(false)
   const { getMooringBasedOnCustomerIdAndBoatyardIdData } = GetMooringBasedOnCustomerIdAndBoatyardId(
     workOrder?.customerName?.id && workOrder?.customerName?.id,
     workOrder?.boatyards?.id && workOrder?.boatyards?.id,
@@ -829,12 +830,15 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (vendorId) {
       fetchInventoryDetails()
       if (
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.length < 0
+        (workOrderData?.inventoryResponseDtoList &&
+          workOrderData?.inventoryResponseDtoList.length <= 0) ||
+        (workOrder.inventory && editModeWorkOrder && isDirty) ||
+        (workOrder.inventory && !editModeWorkOrder)
       ) {
         setWorkOrder({
           ...workOrder,
           inventory: '',
+          quantity: '',
         })
       }
     }
@@ -1300,6 +1304,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   onChange={(e) => {
                     handleInputChange('vendor', e.target.value)
                     setVendorId(e.target.value.id)
+                    setIsDirty(true)
                   }}
                   options={vendorsName}
                   optionLabel="vendorName"
