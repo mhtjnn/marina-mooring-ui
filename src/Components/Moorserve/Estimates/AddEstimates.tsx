@@ -241,17 +241,21 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       value: workOrderData?.problem,
       cost: workOrderData?.cost,
       vendor:
+        workOrderData?.workOrderStatusDto?.id === 10 &&
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.vendorName,
       inventory:
+        workOrderData?.workOrderStatusDto?.id === 10 &&
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.itemName,
       quantity:
+        workOrderData?.workOrderStatusDto?.id === 10 &&
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.quantity,
     }))
     setVendorId(
-      workOrderData?.inventoryResponseDtoList &&
+      workOrderData?.workOrderStatusDto?.id === 10 &&
+        workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.id,
     )
     const parseTime = (timeString: any) => {

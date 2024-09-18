@@ -268,17 +268,21 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       attachForm:
         workOrderData?.formResponseDtoList && workOrderData?.formResponseDtoList?.[0]?.formName,
       vendor:
+        workOrderData?.workOrderStatusDto?.id === 10 &&
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.vendorName,
       inventory:
+        workOrderData?.workOrderStatusDto?.id === 10 &&
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.itemName,
       quantity:
+        workOrderData?.workOrderStatusDto?.id === 10 &&
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.quantity,
     }))
     setVendorId(
-      workOrderData?.inventoryResponseDtoList &&
+      workOrderData?.workOrderStatusDto?.id === 10 &&
+        workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.id,
     )
     const parseTime = (timeString: any) => {
@@ -557,8 +561,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           ]
         }
       }
-      console.log('lemgth', Object.keys(editPayload))
-
       if (Object.keys(editPayload).length > 0) {
         const response = await updateWorkOrder({
           payload: editPayload,
@@ -864,6 +866,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setWorkOrder({
         ...workOrder,
         vendor: '',
+        inventory: '',
+        quantity: '',
       })
     }
   }, [workOrder.workOrderStatus?.id])
@@ -880,6 +884,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   useEffect(() => {
     if (setWorkOrderData && !visible && !editModeWorkOrder) {
       setWorkOrderData('')
+      setWorkOrder('')
       setFormData('')
     }
   }, [visible])
@@ -1212,85 +1217,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
         <div className="flex gap-6">
           {/* Attach Form */}
-          {/* <div className="mt-3">
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1 items-center">
-                Attach Form
-                {workOrder.attachForm?.id && (
-                  <i
-                    className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
-                    style={{ color: '#007bff' }}
-                    onClick={() => setViewPdf(formData)}></i>
-                )}
-              </div>
-            </span>
-            <div className="mt-1">
-              <Dropdown
-                value={workOrder.attachForm}
-                onChange={(e) => {
-                  handleInputChange('attachForm', e.target.value)
-                  viewFormsData(e.value.id)
-                  setFormData('')
-                }}
-                options={formsData}
-                optionLabel="formName"
-                editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                style={{
-                  width: '230px',
-                  height: '32px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                }}
-              />
-            </div>
-          </div> */}
-          {/* View Attached Form */}
-          {/* {workOrderData?.formResponseDtoList && editModeWorkOrder && (
-            <div className="mt-3">
-              <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1 items-center">
-                  View Attached Form
-                  {workOrder.viewAttachedForm?.id && (
-                    <i
-                      className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
-                      style={{ color: '#007bff' }}
-                      onClick={() => {
-                        // viewAttachedFormsData(workOrder.viewAttachedForm?.id)
-                        setViewPdf(formData)
-                      }}></i>
-                  )}
-                </div>
-              </span>
-              <div className="mt-1">
-                <Dropdown
-                  value={workOrder.viewAttachedForm}
-                  onChange={(e) => {
-                    handleInputChange('viewAttachedForm', e.target.value)
-                    viewAttachedFormsData(e.value.id)
-                    setFormData('')
-                  }}
-                  options={
-                    workOrderData?.formResponseDtoList &&
-                    workOrderData?.formResponseDtoList.map((value: any) => value)
-                  }                    setWorkOrderData={setSelectedCustomer}
-
-                  optionLabel="formName"
-                  editable
-                  disabled={isLoading || isAccountRecievable || isTechnician}
-                  style={{
-                    width: '230px',
-                    height: '32px',
-                    border: '1px solid #D5E1EA',
-                    borderRadius: '0.50rem',
-                    fontSize: '0.8rem',
-                  }}
-                />
-              </div>
-            </div>
-          )} */}
-          {/* Attach/View Form */}
           <div className="mt-3">
             <span className="font-medium text-sm text-[#000000]">
               <div className="flex gap-1 items-center">
@@ -1350,7 +1276,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {/* Vendor */}
           {workOrder?.workOrderStatus?.id === 10 ||
           (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0) ? (
+            workOrderData?.inventoryResponseDtoList.length > 0 &&
+            (workOrder?.workOrderStatus?.id === 10 ||
+              workOrderData?.workOrderStatusDto?.id === 10)) ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
@@ -1375,6 +1303,19 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
+                  itemTemplate={(option) => (
+                    <div className="flex justify-between items-center">
+                      <span>{option.vendorName}</span>
+                      {workOrderData?.inventoryResponseDtoList &&
+                        workOrderData.inventoryResponseDtoList.some(
+                          (item: any) => item?.vendorResponseDto.id === option.id,
+                        ) && (
+                          <i
+                            className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
+                            style={{ color: 'green' }}></i>
+                        )}
+                    </div>
+                  )}
                 />
               </div>
               <p>
@@ -1385,7 +1326,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {/* Item Name */}
           {(workOrder?.workOrderStatus?.id === 10 && vendorId) ||
           (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0) ? (
+            workOrderData?.inventoryResponseDtoList.length > 0 &&
+            (workOrder?.workOrderStatus?.id === 10 ||
+              workOrderData?.workOrderStatusDto?.id === 10)) ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
@@ -1436,7 +1379,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {/* Quantity */}
           {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
           (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0) ? (
+            workOrderData?.inventoryResponseDtoList.length > 0 &&
+            (workOrder?.workOrderStatus?.id === 10 ||
+              workOrderData?.workOrderStatusDto?.id === 10)) ? (
             <div>
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Quantity (Available)</div>
