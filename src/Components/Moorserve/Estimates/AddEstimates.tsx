@@ -51,7 +51,7 @@ import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { MultiSelect } from 'primereact/multiselect'
 
-const AddWorkOrders: React.FC<WorkOrderProps> = ({
+const AddEstimates: React.FC<WorkOrderProps> = ({
   workOrderData,
   editModeEstimate,
   editModeWorkOrder,
@@ -184,9 +184,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (!workOrder.mooringId) {
       errors.mooringId = 'Mooring Number is required'
     }
-    if (!workOrder.inventory) {
+    if (!workOrder.inventory && vendorId && inventory.length! > 0) {
       errors.inventory = 'Item Name is required'
     }
+
     setErrorMessage(errors)
     return errors
   }
@@ -264,17 +265,12 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       workOrderStatus: workOrderData?.workOrderStatusDto?.status,
       value: workOrderData?.problem,
       cost: workOrderData?.cost,
-      attachForm:
-        workOrderData?.formResponseDtoList && workOrderData?.formResponseDtoList?.[0]?.formName,
       vendor:
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.vendorName,
       inventory:
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.itemName,
-      quantity:
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.quantity,
     }))
     setVendorId(
       workOrderData?.inventoryResponseDtoList &&
@@ -365,7 +361,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         detail: detailMessage,
         life: 3000,
       })
-      // fileInput.value = ''
       return
     }
 
@@ -410,14 +405,13 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     setCustomerImages(newImages)
   }
 
-  const SaveWorkOrder = async () => {
+  const SaveEstimate = async () => {
     const errors = validateFields()
     if (Object.keys(errors).length > 0) {
       setErrorMessage(errors)
       return
     }
-
-    const payload: any = {
+    const payload = {
       mooringId: workOrder?.mooringId?.id,
       customerId: workOrder?.customerName?.id,
       boatyardId: workOrder?.boatyards?.id,
@@ -427,30 +421,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       workOrderStatusId: workOrder?.workOrderStatus?.id,
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
-      imageRequestDtoList: imageRequestDtoList,
+      cost: workOrder?.cost,
     }
-    if (workOrder?.attachForm) {
-      payload.formRequestDtoList = [
-        {
-          id: workOrder.attachForm.id,
-          formName: workOrder.attachForm.formName,
-          fileName: workOrder.attachForm.fileName
-            ? workOrder.attachForm.fileName
-            : workOrder.attachForm.formName,
-          encodedFormData: formData ? formData : workOrder.attachForm.formData,
-        },
-      ]
-    }
-    if (workOrder?.inventory) {
-      payload.inventoryRequestDtoList = [
-        {
-          id: workOrder?.inventory?.id,
-          quantity: workOrder?.quantity,
-        },
-      ]
-    }
+
     try {
-      const response = await saveWorkOrder(payload).unwrap()
+      const response = await saveEstimation(payload).unwrap()
       const { status, message } = response as WorkOrderResponse
       if (status === 200 || status === 201) {
         closeModal()
@@ -471,26 +446,26 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         })
       }
     } catch (error) {
-      const { message, data } = error as ErrorResponse
+      const { message } = error as ErrorResponse
       setIsLoading(false)
-
       toastRef?.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: message || data?.message,
+        detail: message,
         life: 3000,
       })
     }
   }
 
-  const UpdateWorkOrder = async () => {
+  const UpdateEstimate = async () => {
     const errors = validateFields()
     if (Object.keys(errors).length > 0) {
       return
     }
+
     try {
       setIsLoading(true)
-      const editPayload: any = {
+      const editCustomerPayload = {
         mooringId: workOrder?.mooringId?.id || workOrderData?.mooringResponseDto?.id,
         customerId: workOrder?.customerName?.id || workOrderData?.customerResponseDto?.id,
         boatyardId: workOrder?.boatyards?.id || workOrderData?.boatyardResponseDto?.id,
@@ -500,45 +475,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         workOrderStatusId: workOrder?.workOrderStatus?.id || workOrderData?.workOrderStatusDto?.id,
         time: '00:' + formatTime(time.minutes, time.seconds) || workOrderData?.time,
         problem: workOrder?.value || workOrderData?.problem,
-        imageRequestDtoList: imageRequestDtoList,
+        cost: workOrder?.cost || workOrderData?.cost,
       }
-
-      if (workOrder?.attachForm) {
-        editPayload.formRequestDtoList = [
-          {
-            id: workOrder.attachForm.id,
-            formName: workOrder.attachForm.formName,
-            fileName: workOrder.attachForm.fileName
-              ? workOrder.attachForm.fileName
-              : workOrder.attachForm.formName,
-            encodedFormData: formData ? formData : workOrder.attachForm.formData,
-          },
-        ]
-      }
-
-      if (workOrder?.viewAttachedForm && !workOrder?.attachForm) {
-        editPayload.formRequestDtoList = [
-          {
-            id: workOrder.viewAttachedForm.id,
-            formName: workOrder.viewAttachedForm.formName,
-            fileName: workOrder.viewAttachedForm.fileName
-              ? workOrder.viewAttachedForm.fileName
-              : workOrder.viewAttachedForm.formName,
-            encodedFormData: formData ? formData : workOrder.viewAttachedForm.formData,
-          },
-        ]
-      }
-
-      if (workOrder?.inventory) {
-        editPayload.inventoryRequestDtoList = [
-          {
-            id: workOrder?.inventory?.id,
-            quantity: workOrder?.quantity,
-          },
-        ]
-      }
-      const response = await updateWorkOrder({
-        payload: editPayload,
+      const response = await updateEstimate({
+        payload: editCustomerPayload,
         id: workOrderData?.id,
       }).unwrap()
       const { status, message } = response as WorkOrderResponse
@@ -578,10 +518,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const handleSave = () => {
-    if (editModeWorkOrder) {
-      UpdateWorkOrder()
+    if (editModeEstimate) {
+      UpdateEstimate()
     } else {
-      SaveWorkOrder()
+      SaveEstimate()
     }
   }
 
@@ -591,7 +531,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     const { WorkOrderStatus } = await getWorkOrderStatusData()
     const { customersData } = await getCustomersData()
     const { boatYardName } = await getBoatYardNameData()
-    const { attachFormsTypeValue } = await getAttachFormsTypeData()
     const { vendorValue } = await getVendorValue()
     // const { jobTypeValue } = await getJobTypeData()
 
@@ -611,17 +550,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setIsLoading(false)
       setWorkOrderStatusValue(WorkOrderStatus)
     }
-    // if (jobTypeValue !== null) {
-    //   setIsLoading(false)
-    //   setJobTypesValues(jobTypeValue)
-    // }
-    if (attachFormsTypeValue != null) {
-      setIsLoading(false)
-      setFormsData(attachFormsTypeValue)
-      if (workOrderData?.formResponseDtoList) {
-        setFormsData((prevState) => [...prevState, ...workOrderData?.formResponseDtoList])
-      }
-    }
+
     if (customersData !== null) {
       const firstLastName = customersData.map((item) => ({
         firstName: item.firstName + ' ' + item.lastName,
@@ -744,38 +673,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }, [workOrder?.boatyards?.id, workOrder?.customerName?.id])
 
-  const viewFormsData = async (id: any) => {
-    setIsLoading(true)
-    try {
-      const response = await getViewForms({ id: id }).unwrap()
-      const { status, content, message } = response as ViewFormsResponse
-      if (status === 200) {
-        setIsLoading(false)
-        setViewPdf(content)
-        setFormData(content?.encodedData)
-      } else {
-        setViewPdf('')
-        setFormData('')
-        setIsLoading(false)
-        toastRef?.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: message,
-          life: 3000,
-        })
-      }
-    } catch (error) {
-      const { message, data } = error as ErrorResponse
-      setIsLoading(false)
-      toastRef?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: message || data?.message,
-        life: 3000,
-      })
-    }
-  }
-
   useEffect(() => {
     fetchDataAndUpdate()
   }, [])
@@ -783,15 +680,20 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   useEffect(() => {
     if (vendorId) {
       fetchInventoryDetails()
-      if (
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.length < 0
-      ) {
-        setWorkOrder({
-          ...workOrder,
-          inventory: '',
-        })
-      }
+      setWorkOrder({
+        ...workOrder,
+        inventory: '',
+      })
+    }
+    if (
+      vendorId &&
+      workOrderData?.inventoryResponseDtoList &&
+      workOrderData?.inventoryResponseDtoList?.length < 0
+    ) {
+      setWorkOrder({
+        ...workOrder,
+        inventory: '',
+      })
     }
   }, [vendorId])
 
@@ -847,7 +749,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   useEffect(() => {
     if (setWorkOrderData && !visible && (!editModeWorkOrder || !editModeEstimate)) {
       setWorkOrderData('')
-      setFormData('')
     }
   }, [visible])
 
@@ -922,34 +823,27 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             </p>
           </div>
 
-          {/* Images */}
-          <div className="">
+          {/* Cost */}
+          <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">Image</div>
+              <div className="flex gap-1">Cost</div>
             </span>
             <div className="mt-1">
-              <div />
-              <div
+              <InputText
+                type="text"
+                value={workOrder.cost}
+                onChange={(e) => handleInputChange('cost', e.target.value)}
+                disabled={isLoading || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
                   border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
                   fontSize: '0.8rem',
-                  paddingLeft: '0.5rem',
-                  cursor: isTechnician ? 'disabled' : 'pointer',
-                }}>
-                <div
-                  onClick={() => {
-                    !isTechnician && setImageVisible(true)
-                  }}
-                  className="flex gap-3 text-center">
-                  <FaFileUpload style={{ fontSize: '22px', color: '#0098FF', marginTop: '3px' }} />
-                  <div className="border-r-2 border-blue-100  h-[30px]"></div>
-                  <span className="pl-4 mt-1"> Upload Image </span>
-                </div>
-              </div>
+                  padding: '0.5rem',
+                }}
+              />
             </div>
+            {/* <p>{errorMessage.cost && <small className="p-error">{errorMessage.cost}</small>}</p> */}
           </div>
         </div>
 
@@ -1178,142 +1072,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         </div>
 
         <div className="flex gap-6">
-          {/* Attach Form */}
-          {/* <div className="mt-3">
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1 items-center">
-                Attach Form
-                {workOrder.attachForm?.id && (
-                  <i
-                    className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
-                    style={{ color: '#007bff' }}
-                    onClick={() => setViewPdf(formData)}></i>
-                )}
-              </div>
-            </span>
-            <div className="mt-1">
-              <Dropdown
-                value={workOrder.attachForm}
-                onChange={(e) => {
-                  handleInputChange('attachForm', e.target.value)
-                  viewFormsData(e.value.id)
-                  setFormData('')
-                }}
-                options={formsData}
-                optionLabel="formName"
-                editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                style={{
-                  width: '230px',
-                  height: '32px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                }}
-              />
-            </div>
-          </div> */}
-          {/* View Attached Form */}
-          {/* {workOrderData?.formResponseDtoList && editModeWorkOrder && (
-            <div className="mt-3">
-              <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1 items-center">
-                  View Attached Form
-                  {workOrder.viewAttachedForm?.id && (
-                    <i
-                      className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
-                      style={{ color: '#007bff' }}
-                      onClick={() => {
-                        // viewAttachedFormsData(workOrder.viewAttachedForm?.id)
-                        setViewPdf(formData)
-                      }}></i>
-                  )}
-                </div>
-              </span>
-              <div className="mt-1">
-                <Dropdown
-                  value={workOrder.viewAttachedForm}
-                  onChange={(e) => {
-                    handleInputChange('viewAttachedForm', e.target.value)
-                    viewAttachedFormsData(e.value.id)
-                    setFormData('')
-                  }}
-                  options={
-                    workOrderData?.formResponseDtoList &&
-                    workOrderData?.formResponseDtoList.map((value: any) => value)
-                  }
-                  optionLabel="formName"
-                  editable
-                  disabled={isLoading || isAccountRecievable || isTechnician}
-                  style={{
-                    width: '230px',
-                    height: '32px',
-                    border: '1px solid #D5E1EA',
-                    borderRadius: '0.50rem',
-                    fontSize: '0.8rem',
-                  }}
-                />
-              </div>
-            </div>
-          )} */}
-          {/* Attach/View Form */}
-          <div className="mt-3">
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1 items-center">
-                Attach Form
-                {(workOrder.attachForm?.id || workOrderData?.formResponseDtoList) && (
-                  <i
-                    className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
-                    style={{ color: '#007bff' }}
-                    onClick={() => {
-                      if (formData) {
-                        setViewPdf(formData)
-                      } else {
-                        viewFormsData(
-                          workOrderData?.formResponseDtoList &&
-                            workOrderData?.formResponseDtoList?.[0]?.id,
-                        )
-                      }
-                    }}></i>
-                )}
-              </div>
-            </span>
-            <div className="mt-1">
-              <Dropdown
-                value={workOrder.attachForm}
-                onChange={(e) => {
-                  handleInputChange('attachForm', e.target.value)
-                  viewFormsData(e.value.id)
-                  setFormData('')
-                }}
-                options={formsData}
-                optionLabel="formName"
-                editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                style={{
-                  width: '230px',
-                  height: '32px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                }}
-                itemTemplate={(option) => (
-                  <div className="flex justify-between items-center">
-                    <span>{option.formName}</span>
-                    {workOrderData?.formResponseDtoList &&
-                      workOrderData?.formResponseDtoList?.some(
-                        (form: any) => form.id === option.id,
-                      ) && (
-                        <i
-                          className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
-                          style={{ color: '#007bff' }}
-                          onClick={() => setViewPdf(option)}></i>
-                      )}
-                  </div>
-                )}
-              />
-            </div>
-          </div>
           {/* Vendor */}
           {workOrder?.workOrderStatus?.id === 10 ||
           (workOrderData?.inventoryResponseDtoList &&
@@ -1351,7 +1109,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
-                  Item <p className="text-red-600">*</p>
+                  Item {inventory.length > 0 && <p className="text-red-600">*</p>}
                 </div>
               </span>
               <div className="mt-1">
@@ -1367,7 +1125,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
+                    border:
+                      errorMessage.inventory && inventory.length! > 0
+                        ? '1px solid red'
+                        : '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -1375,31 +1136,25 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                     <div className="flex justify-between items-center">
                       <span>{option.itemName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
-                        workOrderData.inventoryResponseDtoList.some(
+                        workOrderData?.inventoryResponseDtoList.some(
                           (item: any) => item.id === option.id,
-                        ) && (
-                          <i
-                            className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
-                            style={{ color: 'green' }}></i>
-                        )}
+                        ) && <span>{'  ' + 'Quantity' + '  ' + option.quantity}</span>}
                     </div>
                   )}
                 />
               </div>
               <p>
-                {errorMessage.inventory && (
+                {errorMessage.inventory && inventory.length! > 0 && (
                   <small className="p-error">{errorMessage.inventory}</small>
                 )}
               </p>
             </div>
           ) : null}
-        </div>
-        <div className="flex gap-6 mt-3">
           {/* Quantity */}
           {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
           (workOrderData?.inventoryResponseDtoList &&
             workOrderData?.inventoryResponseDtoList.length > 0) ? (
-            <div>
+            <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Quantity (Available)</div>
               </span>
@@ -1657,4 +1412,4 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   )
 }
 
-export default AddWorkOrders
+export default AddEstimates

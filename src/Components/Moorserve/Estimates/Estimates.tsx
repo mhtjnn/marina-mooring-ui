@@ -21,6 +21,7 @@ import { utils, writeFile } from 'xlsx'
 import React from 'react'
 import { properties } from '../../Utils/MeassageProperties'
 import { AddNewButtonStyle } from '../../Style'
+import AddEstimates from './AddEstimates'
 
 const Estimates = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -276,7 +277,7 @@ const Estimates = () => {
                 <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />
               }
               children={
-                <AddWorkOrders
+                <AddEstimates
                   workOrderData={selectedCustomer}
                   editModeEstimate={editMode}
                   estimate={true}
@@ -311,18 +312,7 @@ const Estimates = () => {
           }}
           className="bg-[F2F2F2]  ml-12  mt-3 mr-14">
           <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2   rounded-tl-[10px] rounded-tr-[10px]">
-            <h1
-              // style={{
-              //   fontSize: '18px',
-              //   fontWeight: '700',
-              //   lineHeight: '21.09px',
-              //   letterSpacing: '0.4837472140789032px',
-              //   color: '#FFFFFF',
-              //   padding: '8px',
-              // }}
-              className=" p-2 text-xl font-extrabold text-white">
-              Estimate
-            </h1>
+            <h1 className=" p-2 text-xl font-extrabold text-white">Estimate</h1>
 
             <div className="relative inline-block">
               <div className="relative mt-1">
