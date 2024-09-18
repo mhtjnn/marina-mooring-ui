@@ -182,7 +182,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (!workOrder.mooringId) {
       errors.mooringId = 'Mooring Number is required'
     }
-    if (!workOrder.inventory) {
+    if (!workOrder.vendor && workOrder.workOrderStatus.id === 10) {
+      errors.vendor = 'Vendor is required'
+    }
+    if (!workOrder.inventory && vendorId) {
       errors.inventory = 'Item Name is required'
     }
     setErrorMessage(errors)
@@ -486,6 +489,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (Object.keys(errors).length > 0) {
       return
     }
+
     try {
       setIsLoading(true)
       const editPayload: any = {}
@@ -553,6 +557,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           ]
         }
       }
+      console.log('lemgth', Object.keys(editPayload))
+
       if (Object.keys(editPayload).length > 0) {
         const response = await updateWorkOrder({
           payload: editPayload,
@@ -1347,7 +1353,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             workOrderData?.inventoryResponseDtoList.length > 0) ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">Vendor</div>
+                <div className="flex gap-1">
+                  Vendor <p className="text-red-600">*</p>
+                </div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -1363,12 +1371,15 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: '1px solid #D5E1EA',
+                    border: errorMessage.vendor ? '1px solid red' : '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
                 />
               </div>
+              <p>
+                {errorMessage.vendor && <small className="p-error">{errorMessage.vendor}</small>}
+              </p>
             </div>
           ) : null}
           {/* Item Name */}

@@ -1,22 +1,15 @@
-import React, { useState, useEffect, useCallback, useRef, useContext } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { InputTextarea } from 'primereact/inputtextarea'
 import { Dropdown } from 'primereact/dropdown'
 import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
 import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
-
-import { ErrorResponse, ViewFormsResponse, WorkOrderResponse } from '../../../Type/ApiTypes'
-import {
-  useAddWorkOrderMutation,
-  useGetViewFormMutation,
-  useUpdateWorkOrderMutation,
-} from '../../../Services/MoorServe/MoorserveApi'
+import { ErrorResponse, WorkOrderResponse } from '../../../Type/ApiTypes'
 import {
   useAddEstimateMutation,
   useUpdateEstimateMutation,
 } from '../../../Services/MoorServe/MoorserveApi'
-
 import { Button } from 'primereact/button'
 import { WorkOrderProps } from '../../../Type/ComponentBasedType'
 import {
@@ -29,9 +22,8 @@ import {
   GetTechnicians,
   GetWorkOrderStatus,
 } from '../../CommonComponent/MetaDataComponent/MoorserveMetaDataApi'
-import { MetaData, Params } from '../../../Type/CommonType'
+import { MetaData } from '../../../Type/CommonType'
 import {
-  AttachFormsTypesData,
   BoatyardNameData,
   CustomersData,
   InventoryDetailsData,
@@ -42,25 +34,16 @@ import { selectCustomerId } from '../../../Store/Slice/userSlice'
 import { Calendar } from 'primereact/calendar'
 import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
-import ReasonModal from '../../Moorpay/AccountReceivable/ReasonModal'
-import ApproveModal from '../../Moorpay/AccountReceivable/ApproveModal'
 import ShowImages from '../../CommonComponent/UploadImages'
-import PDFEditor from '../Forms/PdfEditor'
-import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
-import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
-import { MultiSelect } from 'primereact/multiselect'
 
 const AddEstimates: React.FC<WorkOrderProps> = ({
   workOrderData,
   editModeEstimate,
   editModeWorkOrder,
-  estimate,
   setVisible,
   closeModal,
   isAccountRecievable,
-  getWorkOrderWithPendingPayApproval,
-  getOutStandingInvoice,
   isInvoice,
   isTechnician,
   visible,
@@ -93,7 +76,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const [customerBasedOnMooringId, setCustomerBasedOnMooringId] = useState<any[]>()
   const [technicians, setTechnicians] = useState<any[]>()
   const [moorings, setMoorings] = useState<MetaData[]>()
-  const [viewPdf, setViewPdf] = useState<any>()
   const [workOrderStatusValue, setWorkOrderStatusValue] = useState<MetaData[]>()
   const [customerNameValue, setcustomerNameValue] = useState<any[]>()
   const [boatyardsName, setBoatYardsName] = useState<MetaData[]>([])
@@ -105,8 +87,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [lastChangedField, setLastChangedField] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [approveModalOpen, setApproveModalOpen] = useState(false)
-  const [denyModalOpen, setDenyModalOpen] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [customerImages, setCustomerImages] = useState<string[]>([])
   const [vendorId, setVendorId] = useState<any>()
@@ -178,10 +158,12 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (!workOrder.mooringId) {
       errors.mooringId = 'Mooring Number is required'
     }
-    if (!workOrder.inventory) {
+    if (!workOrder.vendor && workOrder.workOrderStatus.id === 10) {
+      errors.vendor = 'Vendor is required'
+    }
+    if (!workOrder.inventory && vendorId) {
       errors.inventory = 'Item Name is required'
     }
-
     setErrorMessage(errors)
     return errors
   }
@@ -231,7 +213,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setLastChangedField(field)
       setEditMode(false)
     }
-
     setWorkOrder(updatedWorkOrder)
     if (errorMessage[field]) {
       setErrorMessage({
@@ -337,21 +318,15 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target
     const files = Array.from(fileInput.files || [])
-
     if (files.length === 0) return
-
     const validImageFiles = files.filter(
       (file) => file.type.startsWith('image/') && file.size >= 5120 && file.size <= 1048576,
     )
-
     const invalidTypeFiles = files.filter((file) => !file.type.startsWith('image/'))
     const invalidSizeFiles = files.filter((file) => file.size < 5120 || file.size > 1048576)
-
     if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
       let detailMessage = 'Only image files are allowed'
-
       if (invalidSizeFiles.length > 0) detailMessage = 'Images must be between 5 KB and 1 MB.'
-
       toastRef?.current?.show({
         severity: 'error',
         summary: 'Error',
@@ -360,11 +335,9 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       })
       return
     }
-
     const newBase64Strings: string[] = []
     const newImageUrls: string[] = []
     const imageRequestDtoList: { imageName: string; imageData: string }[] = []
-
     for (const file of validImageFiles) {
       try {
         const base64String = await new Promise<string>((resolve, reject) => {
@@ -391,7 +364,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         console.error('Error reading file:', error)
       }
     }
-
     setCustomerImages((prevImages) => [...prevImages, ...newImageUrls])
     setimageRequestDtoList(imageRequestDtoList)
   }
@@ -428,7 +400,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         },
       ]
     }
-
     try {
       const response = await saveEstimation(payload).unwrap()
       const { status, message } = response as WorkOrderResponse
@@ -470,17 +441,37 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
     try {
       setIsLoading(true)
-      const editPayload: any = {
-        mooringId: workOrder?.mooringId?.id || workOrderData?.mooringResponseDto?.id,
-        customerId: workOrder?.customerName?.id || workOrderData?.customerResponseDto?.id,
-        boatyardId: workOrder?.boatyards?.id || workOrderData?.boatyardResponseDto?.id,
-        technicianId: workOrder?.assignedTo?.id || workOrderData?.technicianUserResponseDto?.id,
-        dueDate: workOrder?.dueDate || workOrderData?.dueDate,
-        scheduledDate: workOrder?.scheduleDate || workOrderData?.scheduledDate,
-        workOrderStatusId: workOrder?.workOrderStatus?.id || workOrderData?.workOrderStatusDto?.id,
-        time: '00:' + formatTime(time.minutes, time.seconds) || workOrderData?.time,
-        problem: workOrder?.value || workOrderData?.problem,
-        cost: workOrder?.cost || workOrderData?.cost,
+      const editPayload: any = {}
+      if (workOrder?.mooringId?.id !== workOrderData?.mooringResponseDto?.id) {
+        editPayload.mooringId = workOrder?.mooringId?.id
+      }
+      if (workOrder?.customerName?.id !== workOrderData?.customerResponseDto?.id) {
+        editPayload.customerId = workOrder?.customerName?.id
+      }
+      if (workOrder?.boatyards?.id !== workOrderData?.boatyardResponseDto?.id) {
+        editPayload.boatyardId = workOrder?.boatyards?.id
+      }
+      if (workOrder?.assignedTo?.id !== workOrderData?.technicianUserResponseDto?.id) {
+        editPayload.technicianId = workOrder?.assignedTo?.id
+      }
+      if (workOrder?.dueDate !== workOrderData?.dueDate) {
+        editPayload.dueDate = workOrder?.dueDate
+      }
+      if (workOrder?.scheduleDate !== workOrderData?.scheduledDate) {
+        editPayload.scheduledDate = workOrder?.scheduleDate
+      }
+      if (workOrder?.workOrderStatus?.id !== workOrderData?.workOrderStatusDto?.id) {
+        editPayload.workOrderStatusId = workOrder?.workOrderStatus?.id
+      }
+      if (workOrder?.value !== workOrderData?.problem) {
+        editPayload.problem = workOrder?.value
+      }
+      if (workOrder?.cost !== workOrderData?.cost) {
+        editPayload.cost = workOrder?.cost
+      }
+      const formattedTime = '00:' + formatTime(time.minutes, time.seconds)
+      if (formattedTime !== workOrderData?.time) {
+        editPayload.time = formattedTime
       }
       if (workOrder?.inventory) {
         const inventoryId =
@@ -501,28 +492,29 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           ]
         }
       }
-      const response = await updateEstimate({
-        payload: editPayload,
-        id: workOrderData?.id,
-      }).unwrap()
-      const { status, message } = response as WorkOrderResponse
-      if (status === 200 || status === 201) {
+      if (Object.keys(editPayload).length > 0) {
+        const response = await updateEstimate({
+          payload: editPayload,
+          id: workOrderData?.id,
+        }).unwrap()
+        const { status, message } = response as WorkOrderResponse
         setIsLoading(false)
-        closeModal()
-        toastRef?.current?.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: message,
-          life: 3000,
-        })
-      } else {
-        setIsLoading(false)
-        toastRef?.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: message,
-          life: 3000,
-        })
+        if (status === 200 || status === 201) {
+          closeModal()
+          toastRef?.current?.show({
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
+            life: 3000,
+          })
+        } else {
+          toastRef?.current?.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: message,
+            life: 3000,
+          })
+        }
       }
     } catch (error) {
       setIsLoading(false)
@@ -551,8 +543,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     const { customersData } = await getCustomersData()
     const { boatYardName } = await getBoatYardNameData()
     const { vendorValue } = await getVendorValue()
-    // const { jobTypeValue } = await getJobTypeData()
-
     if (getTechnicians !== null) {
       const firstLastName = getTechnicians.map((item) => ({
         firstName: item.firstName + ' ' + item.lastName,
@@ -601,7 +591,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
   const fetchDataAndUpdateBasedOnCustomerId = useCallback(async () => {
     const { mooringsBasedOnCustomerId } = await getMooringsBasedOnCustomerIdData()
-
     if (mooringsBasedOnCustomerId !== null) {
       setIsLoading(false)
       setMooringBasedOnCustomerId(mooringsBasedOnCustomerId)
@@ -619,7 +608,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const fetchDataAndUpdateBasedOnMooringId = useCallback(async () => {
     const { boatyardBasedOnMooringId } = await getBoatyardBasedOnMooringIdData()
     const { customerBasedOnMooringId } = await getCustomerBasedOnMooringIdData()
-
     if (boatyardBasedOnMooringId !== null) {
       setIsLoading(false)
       setBoatyardBasedOnMooringId(boatyardBasedOnMooringId)
@@ -661,7 +649,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
   const fetchDataAndUpdateBasedOnBoatyardId = useCallback(async () => {
     const { mooringBasedOnBoatyardId } = await getMooringsBasedOnBoatyardIdData()
-
     if (mooringBasedOnBoatyardId !== null) {
       setMooringsBasedOnBoatyardIdData(mooringBasedOnBoatyardId)
       if (mooringBasedOnBoatyardId?.length === 0) {
@@ -678,7 +665,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const fetchDataAndUpdateBasedOnCuatomerIdAndBoatyardId = useCallback(async () => {
     const { mooringbasedOnCustomerIdAndBoatyardId } =
       await getMooringBasedOnCustomerIdAndBoatyardIdData()
-
     if (mooringbasedOnCustomerIdAndBoatyardId !== null) {
       setbasedOnCustomerIdAndBoatyardId(mooringbasedOnCustomerIdAndBoatyardId)
       if (mooringbasedOnCustomerIdAndBoatyardId?.length === 0) {
@@ -1099,7 +1085,9 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
             workOrderData?.inventoryResponseDtoList.length > 0) ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">Vendor</div>
+                <div className="flex gap-1">
+                  Vendor <p className="text-red-600">*</p>
+                </div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -1115,12 +1103,15 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: '1px solid #D5E1EA',
+                    border: errorMessage.vendor ? '1px solid red' : '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
                 />
               </div>
+              <p>
+                {errorMessage.vendor && <small className="p-error">{errorMessage.vendor}</small>}
+              </p>
             </div>
           ) : null}
           {/* Item Name */}
