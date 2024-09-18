@@ -3,7 +3,6 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Dropdown } from 'primereact/dropdown'
 import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
-import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 import { ErrorResponse, WorkOrderResponse } from '../../../Type/ApiTypes'
 import {
@@ -36,6 +35,7 @@ import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import ShowImages from '../../CommonComponent/UploadImages'
 import InputComponent from '../../CommonComponent/InputComponent'
+import { InputText } from 'primereact/inputtext'
 
 const AddEstimates: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -75,6 +75,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const [boatyardBasedOnMooringId, setBoatyardBasedOnMooringId] = useState<MetaData[]>()
   const [customerBasedOnMooringId, setCustomerBasedOnMooringId] = useState<any[]>()
   const [technicians, setTechnicians] = useState<any[]>()
+  const [isDirty, setIsDirty] = useState<boolean>(false)
   const [moorings, setMoorings] = useState<MetaData[]>()
   const [workOrderStatusValue, setWorkOrderStatusValue] = useState<MetaData[]>()
   const [customerNameValue, setcustomerNameValue] = useState<any[]>()
@@ -546,7 +547,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     const { WorkOrderStatus } = await getWorkOrderStatusData()
     const { customersData } = await getCustomersData()
     const { boatYardName } = await getBoatYardNameData()
-    const { vendorValue } = await getVendorValue()
     if (getTechnicians !== null) {
       const firstLastName = getTechnicians.map((item) => ({
         firstName: item.firstName + ' ' + item.lastName,
@@ -563,7 +563,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setIsLoading(false)
       setWorkOrderStatusValue(WorkOrderStatus)
     }
-
     if (customersData !== null) {
       const firstLastName = customersData.map((item) => ({
         firstName: item.firstName + ' ' + item.lastName,
@@ -576,11 +575,21 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setIsLoading(false)
       setBoatYardsName(boatYardName)
     }
+  }, [])
+
+  const fetchVendorDataAndUpdate = async () => {
+    const { vendorValue } = await getVendorValue()
     if (vendorValue !== null) {
       setIsLoading(false)
       setVendorsName(vendorValue)
+      if (workOrderData?.inventoryResponseDtoList) {
+        const vendorList = workOrderData?.inventoryResponseDtoList
+          .map((item: any) => item.vendorResponseDto)
+          .filter((vendor: any) => vendor !== null)
+        setVendorsName((prevState) => [...prevState, ...vendorList])
+      }
     }
-  }, [])
+  }
 
   const fetchInventoryDetails = async () => {
     const { inventoryDetails } = await getInventoryDetails()
@@ -683,6 +692,11 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }, [workOrder?.boatyards?.id, workOrder?.customerName?.id])
 
   useEffect(() => {
+    if (workOrder?.workOrderStatus?.id === 10 || workOrderData?.inventoryResponseDtoList)
+      fetchVendorDataAndUpdate()
+  }, [workOrder?.workOrderStatus?.id === 10, workOrderData?.inventoryResponseDtoList])
+
+  useEffect(() => {
     fetchDataAndUpdate()
   }, [])
 
@@ -690,12 +704,15 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (vendorId) {
       fetchInventoryDetails()
       if (
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.length < 0
+        (workOrderData?.inventoryResponseDtoList &&
+          workOrderData?.inventoryResponseDtoList.length <= 0) ||
+        (workOrder.inventory && editModeEstimate && isDirty) ||
+        (workOrder.inventory && !editModeEstimate)
       ) {
         setWorkOrder({
           ...workOrder,
           inventory: '',
+          quantity: '',
         })
       }
     }
@@ -737,6 +754,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setWorkOrder({
         ...workOrder,
         vendor: '',
+        inventory: '',
+        quantity: '',
       })
     }
   }, [workOrder.workOrderStatus?.id])
@@ -753,6 +772,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   useEffect(() => {
     if (setWorkOrderData && !visible && !editModeEstimate) {
       setWorkOrderData('')
+      setWorkOrder('')
     }
   }, [visible])
 
@@ -761,8 +781,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       <Toast ref={toastRef} />
 
       <div className={`"w-full h-full mb-16 ml-4" ${isLoading ? 'blurred' : ''}`}>
-        {/* Customer Name */}
         <div className="flex gap-6">
+          {/* Customer Name */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
               <div className="flex gap-1">
@@ -794,7 +814,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
               )}
             </p>
           </div>
-
           {/* Mooring Number */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
@@ -826,40 +845,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
               )}
             </p>
           </div>
-
-          {/* Images */}
-          <div className="">
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">Image</div>
-            </span>
-            <div className="mt-1">
-              <div />
-              <div
-                style={{
-                  width: '230px',
-                  height: '32px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                  paddingLeft: '0.5rem',
-                  cursor: isTechnician ? 'disabled' : 'pointer',
-                }}>
-                <div
-                  onClick={() => {
-                    !isTechnician && setImageVisible(true)
-                  }}
-                  className="flex gap-3 text-center">
-                  <FaFileUpload style={{ fontSize: '22px', color: '#0098FF', marginTop: '3px' }} />
-                  <div className="border-r-2 border-blue-100  h-[30px]"></div>
-                  <span className="pl-4 mt-1"> Upload Image </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Boatyards */}
-        <div className="flex gap-6 mt-3">
+          {/* Boatyards */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
               <div className="flex gap-1">
@@ -891,7 +877,9 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
               )}
             </p>
           </div>
+        </div>
 
+        <div className="flex gap-6 mt-3">
           {/* Assigned to */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
@@ -967,10 +955,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
               {errorMessage.dueDate && <small className="p-error">{errorMessage.dueDate}</small>}
             </p>
           </div>
-        </div>
-
-        {/* Schedule Date */}
-        <div className="flex gap-6 mt-3">
+          {/* Schedule Date */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
               <div className="flex gap-1">
@@ -1001,7 +986,9 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
               )}
             </p>
           </div>
+        </div>
 
+        <div className="flex gap-6 mt-3">
           {/* Status */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
@@ -1035,17 +1022,36 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
               )}
             </p>
           </div>
-
+          {/* Cost */}
+          <div>
+            <span className="font-medium text-sm text-[#000000]">
+              <div className="flex gap-1">Cost</div>
+            </span>
+            <div className="mt-1">
+              <InputText
+                type="text"
+                value={workOrder.cost}
+                onChange={(e: any) => handleInputChange('cost', e.target.value)}
+                disabled={isLoading || isAccountRecievable || isTechnician}
+                style={{
+                  width: '230px',
+                  height: '32px',
+                  border: '1px solid #D5E1EA',
+                  fontSize: '0.8rem',
+                  padding: '0.5rem',
+                }}
+              />
+            </div>
+          </div>
           {/* Time (in minutes) */}
           <div className="card  ">
             <span>
               <div className="flex flex-wrap gap-1">
-                <p className="font-medium text-sm text-[#000000] mt-0.5"> Time </p>
+                <p className="font-medium text-sm text-[#000000]"> Time </p>
                 <span style={{ fontSize: '0.8rem' }}>(in minutes)</span>
               </div>
             </span>
             <div
-              className=""
               style={{
                 maxWidth: '100%',
                 height: '32px',
@@ -1054,7 +1060,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
               }}>
               <div className="flex justify-around text-center">
                 <h1
-                  className="mt-1 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
+                  className="mt-1 p-[0.1rem] ml-2 mr-2 bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
                     !isTechnician && handleDecrement()
                   }}>
@@ -1071,7 +1077,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   }}
                 />
                 <h1
-                  className="mt-1 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
+                  className="mt-1 ml-2 mr-2 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
                     !isTechnician && handleIncrement()
                   }}>
@@ -1099,6 +1105,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   onChange={(e) => {
                     handleInputChange('vendor', e.target.value)
                     setVendorId(e.target.value.id)
+                    setIsDirty(true)
                   }}
                   options={vendorsName}
                   optionLabel="vendorName"
@@ -1111,6 +1118,19 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
+                  itemTemplate={(option) => (
+                    <div className="flex justify-between items-center">
+                      <span>{option.vendorName}</span>
+                      {workOrderData?.inventoryResponseDtoList &&
+                        workOrderData.inventoryResponseDtoList.some(
+                          (item: any) => item?.vendorResponseDto.id === option.id,
+                        ) && (
+                          <i
+                            className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
+                            style={{ color: 'green' }}></i>
+                        )}
+                    </div>
+                  )}
                 />
               </div>
               <p>

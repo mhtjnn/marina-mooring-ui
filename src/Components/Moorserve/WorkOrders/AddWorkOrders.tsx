@@ -627,8 +627,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     const { customersData } = await getCustomersData()
     const { boatYardName } = await getBoatYardNameData()
     const { attachFormsTypeValue } = await getAttachFormsTypeData()
-    const { vendorValue } = await getVendorValue()
-    // const { jobTypeValue } = await getJobTypeData()
 
     if (getTechnicians !== null) {
       const firstLastName = getTechnicians.map((item) => ({
@@ -646,10 +644,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setIsLoading(false)
       setWorkOrderStatusValue(WorkOrderStatus)
     }
-    // if (jobTypeValue !== null) {
-    //   setIsLoading(false)
-    //   setJobTypesValues(jobTypeValue)
-    // }
+
     if (attachFormsTypeValue != null) {
       setIsLoading(false)
       setFormsData(attachFormsTypeValue)
@@ -669,10 +664,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setIsLoading(false)
       setBoatYardsName(boatYardName)
     }
-    if (vendorValue !== null) {
-      setIsLoading(false)
-      setVendorsName(vendorValue)
-    }
   }, [])
 
   const fetchInventoryDetails = async () => {
@@ -682,6 +673,20 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setInventory(inventoryDetails)
       if (workOrderData?.inventoryResponseDtoList) {
         setInventory((prevState) => [...prevState, ...workOrderData?.inventoryResponseDtoList])
+      }
+    }
+  }
+
+  const fetchVendorDataAndUpdate = async () => {
+    const { vendorValue } = await getVendorValue()
+    if (vendorValue !== null) {
+      setIsLoading(false)
+      setVendorsName(vendorValue)
+      if (workOrderData?.inventoryResponseDtoList) {
+        const vendorList = workOrderData?.inventoryResponseDtoList
+          .map((item: any) => item.vendorResponseDto)
+          .filter((vendor: any) => vendor !== null)
+        setVendorsName((prevState) => [...prevState, ...vendorList])
       }
     }
   }
@@ -810,6 +815,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       })
     }
   }
+
+  useEffect(() => {
+    if (workOrder?.workOrderStatus?.id === 10 || workOrderData?.inventoryResponseDtoList)
+      fetchVendorDataAndUpdate()
+  }, [workOrder?.workOrderStatus?.id === 10, workOrderData?.inventoryResponseDtoList])
 
   useEffect(() => {
     fetchDataAndUpdate()
@@ -1173,12 +1183,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           <div className="card  ">
             <span>
               <div className="flex flex-wrap gap-1">
-                <p className="font-medium text-sm text-[#000000] mt-0.5"> Time </p>
+                <p className="font-medium text-sm text-[#000000]"> Time </p>
                 <span style={{ fontSize: '0.8rem' }}>(in minutes)</span>
               </div>
             </span>
             <div
-              className=""
               style={{
                 maxWidth: '100%',
                 height: '32px',
@@ -1187,7 +1196,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               }}>
               <div className="flex justify-around text-center">
                 <h1
-                  className="mt-1 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
+                  className="mt-1 p-[0.1rem] ml-2 mr-2 bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
                     !isTechnician && handleDecrement()
                   }}>
@@ -1204,7 +1213,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   }}
                 />
                 <h1
-                  className="mt-1 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
+                  className="mt-1 ml-2 mr-2 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
                     !isTechnician && handleIncrement()
                   }}>
