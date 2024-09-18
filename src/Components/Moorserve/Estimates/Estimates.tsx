@@ -279,6 +279,7 @@ const Estimates = () => {
               children={
                 <AddEstimates
                   workOrderData={selectedCustomer}
+                  setWorkOrderData={setSelectedCustomer}
                   editModeEstimate={editMode}
                   estimate={true}
                   setVisible={setVisible}

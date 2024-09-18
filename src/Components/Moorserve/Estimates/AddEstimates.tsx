@@ -107,8 +107,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const [isLoading, setIsLoading] = useState(true)
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
-  const [formsData, setFormsData] = useState<any[]>([])
-  const { formData, setFormData } = useContext(FormDataContext)
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [customerImages, setCustomerImages] = useState<string[]>([])
   const [vendorId, setVendorId] = useState<any>()
@@ -130,17 +128,13 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   )
   const { getCustomersData } = CustomersData(selectedCustomerId)
   const { getBoatYardNameData } = BoatyardNameData(selectedCustomerId)
-  const { getAttachFormsTypeData } = AttachFormsTypesData()
   const { getVendorValue } = VendorData()
   const { getInventoryDetails } = InventoryDetailsData(vendorId)
   const { getTechniciansData } = GetTechnicians()
   const { getMooringIdsData } = GetMooringIds()
   const { getWorkOrderStatusData } = GetWorkOrderStatus()
-  const [saveWorkOrder] = useAddWorkOrderMutation()
-  const [updateWorkOrder] = useUpdateWorkOrderMutation()
   const [saveEstimation] = useAddEstimateMutation()
   const [updateEstimate] = useUpdateEstimateMutation()
-  const [getViewForms] = useGetViewFormMutation()
   const toastRef = useRef<Toast>(null)
   const [imageVisible, setImageVisible] = useState(false)
   const [imageRequestDtoList, setimageRequestDtoList] = useState<any>()
@@ -184,7 +178,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (!workOrder.mooringId) {
       errors.mooringId = 'Mooring Number is required'
     }
-    if (!workOrder.inventory && vendorId && inventory.length! > 0) {
+    if (!workOrder.inventory) {
       errors.inventory = 'Item Name is required'
     }
 
@@ -194,7 +188,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
   const handleNoteChange = (index: number, note: string) => {
     setimageRequestDtoList((prevList: any[]) =>
-      prevList.map((item, i) => (i === index ? { ...item, note } : item)),
+      prevList?.map((item, i) => (i === index ? { ...item, note } : item)),
     )
   }
 
@@ -271,6 +265,9 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       inventory:
         workOrderData?.inventoryResponseDtoList &&
         workOrderData?.inventoryResponseDtoList?.[0]?.itemName,
+      quantity:
+        workOrderData?.inventoryResponseDtoList &&
+        workOrderData?.inventoryResponseDtoList?.[0]?.quantity,
     }))
     setVendorId(
       workOrderData?.inventoryResponseDtoList &&
@@ -386,7 +383,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         })
         newBase64Strings.push(base64String)
         newImageUrls.push(`data:image/png;base64,${base64String}`)
-        imageRequestDtoList.push({
+        imageRequestDtoList?.push({
           imageName: file.name,
           imageData: base64String,
         })
@@ -411,7 +408,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setErrorMessage(errors)
       return
     }
-    const payload = {
+    const payload: any = {
       mooringId: workOrder?.mooringId?.id,
       customerId: workOrder?.customerName?.id,
       boatyardId: workOrder?.boatyards?.id,
@@ -422,6 +419,14 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
       cost: workOrder?.cost,
+    }
+    if (workOrder?.inventory) {
+      payload.inventoryRequestDtoList = [
+        {
+          id: workOrder?.inventory?.id,
+          quantity: workOrder?.quantity,
+        },
+      ]
     }
 
     try {
@@ -465,7 +470,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
     try {
       setIsLoading(true)
-      const editCustomerPayload = {
+      const editPayload: any = {
         mooringId: workOrder?.mooringId?.id || workOrderData?.mooringResponseDto?.id,
         customerId: workOrder?.customerName?.id || workOrderData?.customerResponseDto?.id,
         boatyardId: workOrder?.boatyards?.id || workOrderData?.boatyardResponseDto?.id,
@@ -477,8 +482,27 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         problem: workOrder?.value || workOrderData?.problem,
         cost: workOrder?.cost || workOrderData?.cost,
       }
+      if (workOrder?.inventory) {
+        const inventoryId =
+          workOrder?.inventory?.id || workOrderData?.inventoryResponseDtoList?.[0]?.id
+        const quantity =
+          workOrder?.quantity || workOrderData?.inventoryResponseDtoList?.[0]?.quantity
+
+        const inventoryUpdated =
+          inventoryId !== workOrderData?.inventoryResponseDtoList?.[0]?.id ||
+          quantity !== workOrderData?.inventoryResponseDtoList?.[0]?.quantity
+
+        if (inventoryUpdated) {
+          editPayload.inventoryRequestDtoList = [
+            {
+              id: inventoryId,
+              quantity: quantity,
+            },
+          ]
+        }
+      }
       const response = await updateEstimate({
-        payload: editCustomerPayload,
+        payload: editPayload,
         id: workOrderData?.id,
       }).unwrap()
       const { status, message } = response as WorkOrderResponse
@@ -510,11 +534,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         life: 3000,
       })
     }
-  }
-
-  const handleModalClose = () => {
-    setDenyModalOpen(false)
-    setApproveModalOpen(false)
   }
 
   const handleSave = () => {
@@ -680,20 +699,15 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   useEffect(() => {
     if (vendorId) {
       fetchInventoryDetails()
-      setWorkOrder({
-        ...workOrder,
-        inventory: '',
-      })
-    }
-    if (
-      vendorId &&
-      workOrderData?.inventoryResponseDtoList &&
-      workOrderData?.inventoryResponseDtoList?.length < 0
-    ) {
-      setWorkOrder({
-        ...workOrder,
-        inventory: '',
-      })
+      if (
+        workOrderData?.inventoryResponseDtoList &&
+        workOrderData?.inventoryResponseDtoList?.length < 0
+      ) {
+        setWorkOrder({
+          ...workOrder,
+          inventory: '',
+        })
+      }
     }
   }, [vendorId])
 
@@ -722,10 +736,10 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }, [workOrder?.customerName?.id, workOrder?.boatyards?.id])
 
   useEffect(() => {
-    if (editModeWorkOrder || editModeEstimate) {
+    if (editModeEstimate) {
       handleEditMode()
     }
-  }, [editModeWorkOrder, editModeEstimate])
+  }, [editModeEstimate])
 
   useEffect(() => {
     if (workOrder?.workOrderStatus?.id !== 10 && workOrder.vendor) {
@@ -747,7 +761,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }, [workOrder.inventory?.id])
 
   useEffect(() => {
-    if (setWorkOrderData && !visible && (!editModeWorkOrder || !editModeEstimate)) {
+    if (setWorkOrderData && !visible && !editModeEstimate) {
       setWorkOrderData('')
     }
   }, [visible])
@@ -823,27 +837,34 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
             </p>
           </div>
 
-          {/* Cost */}
-          <div>
+          {/* Images */}
+          <div className="">
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">Cost</div>
+              <div className="flex gap-1">Image</div>
             </span>
             <div className="mt-1">
-              <InputText
-                type="text"
-                value={workOrder.cost}
-                onChange={(e) => handleInputChange('cost', e.target.value)}
-                disabled={isLoading || isAccountRecievable || isTechnician}
+              <div />
+              <div
                 style={{
                   width: '230px',
                   height: '32px',
                   border: '1px solid #D5E1EA',
+                  borderRadius: '0.50rem',
                   fontSize: '0.8rem',
-                  padding: '0.5rem',
-                }}
-              />
+                  paddingLeft: '0.5rem',
+                  cursor: isTechnician ? 'disabled' : 'pointer',
+                }}>
+                <div
+                  onClick={() => {
+                    !isTechnician && setImageVisible(true)
+                  }}
+                  className="flex gap-3 text-center">
+                  <FaFileUpload style={{ fontSize: '22px', color: '#0098FF', marginTop: '3px' }} />
+                  <div className="border-r-2 border-blue-100  h-[30px]"></div>
+                  <span className="pl-4 mt-1"> Upload Image </span>
+                </div>
+              </div>
             </div>
-            {/* <p>{errorMessage.cost && <small className="p-error">{errorMessage.cost}</small>}</p> */}
           </div>
         </div>
 
@@ -1109,7 +1130,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
-                  Item {inventory.length > 0 && <p className="text-red-600">*</p>}
+                  Item <p className="text-red-600">*</p>
                 </div>
               </span>
               <div className="mt-1">
@@ -1125,10 +1146,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border:
-                      errorMessage.inventory && inventory.length! > 0
-                        ? '1px solid red'
-                        : '1px solid #D5E1EA',
+                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -1136,15 +1154,19 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                     <div className="flex justify-between items-center">
                       <span>{option.itemName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
-                        workOrderData?.inventoryResponseDtoList.some(
+                        workOrderData.inventoryResponseDtoList.some(
                           (item: any) => item.id === option.id,
-                        ) && <span>{'  ' + 'Quantity' + '  ' + option.quantity}</span>}
+                        ) && (
+                          <i
+                            className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
+                            style={{ color: 'green' }}></i>
+                        )}
                     </div>
                   )}
                 />
               </div>
               <p>
-                {errorMessage.inventory && inventory.length! > 0 && (
+                {errorMessage.inventory && (
                   <small className="p-error">{errorMessage.inventory}</small>
                 )}
               </p>
@@ -1179,6 +1201,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
             </div>
           ) : null}
         </div>
+
         {/* Report Problem */}
         <div className=" mt-4 mb-20">
           <span className="font-medium text-sm text-[#000000]">
@@ -1207,7 +1230,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         </div>
       </div>
       {/* Save and Back buttons */}
-
       <div
         className={`"flex gap-6 bottom-2 absolute left-7" ${isLoading ? 'blurred' : ''}`}
         style={{
@@ -1217,160 +1239,37 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           padding: '0 12px',
           bottom: '0px',
         }}>
-        {isAccountRecievable && !isInvoice ? (
-          <>
-            <Button
-              onClick={() => {
-                setApproveModalOpen(true)
-              }}
-              label="Approve"
-              style={{
-                width: '89px',
-                height: '42px',
-                backgroundColor: 'green',
-                cursor: isAccountRecievable ? 'disabled' : 'pointer',
-                fontWeight: 'bolder',
-                fontSize: '1rem',
-                boxShadow: 'none',
-                color: 'white',
-                borderRadius: '0.50rem',
-                marginTop: '10px',
-              }}
-            />
-            <Button
-              onClick={() => {
-                setDenyModalOpen(true)
-              }}
-              label="Deny"
-              text={true}
-              style={{
-                width: '89px',
-                height: '42px',
-                backgroundColor: 'red',
-                cursor: isAccountRecievable ? 'disabled' : 'pointer',
-                fontWeight: 'bolder',
-                fontSize: '1rem',
-                boxShadow: 'none',
-                color: 'white',
-                borderRadius: '0.50rem',
-                marginTop: '10px',
-                marginLeft: '8px',
-              }}
-            />
-          </>
-        ) : (
-          <>
-            {!isTechnician && (
-              <Button
-                onClick={handleSave}
-                disabled={isInvoice}
-                label="Save"
-                style={{
-                  width: '89px',
-                  height: '42px',
-                  backgroundColor: '#0098FF',
-                  cursor: isAccountRecievable ? 'disabled' : 'pointer',
-                  fontWeight: 'bolder',
-                  fontSize: '1rem',
-                  boxShadow: 'none',
-                  color: 'white',
-                  borderRadius: '0.50rem',
-                  marginTop: '10px',
-                }}
-              />
-            )}
-            <Button
-              onClick={() => setVisible(false)}
-              label="Back"
-              text={true}
-              style={{
-                backgroundColor: 'white',
-                color: '#000000',
-                border: 'none',
-                width: '89px',
-                height: '42px',
-                marginTop: '10px',
-              }}
-            />
-          </>
-        )}
+        <Button
+          onClick={handleSave}
+          disabled={isInvoice}
+          label="Save"
+          style={{
+            width: '89px',
+            height: '42px',
+            backgroundColor: '#0098FF',
+            cursor: isAccountRecievable ? 'disabled' : 'pointer',
+            fontWeight: 'bolder',
+            fontSize: '1rem',
+            boxShadow: 'none',
+            color: 'white',
+            borderRadius: '0.50rem',
+            marginTop: '10px',
+          }}
+        />
+        <Button
+          onClick={() => setVisible(false)}
+          label="Back"
+          text={true}
+          style={{
+            backgroundColor: 'white',
+            color: '#000000',
+            border: 'none',
+            width: '89px',
+            height: '42px',
+            marginTop: '10px',
+          }}
+        />
       </div>
-
-      <Dialog
-        position="center"
-        style={{
-          width: '520px',
-          minWidth: '520px',
-          height: '260px',
-          minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
-        }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
-        visible={approveModalOpen}
-        onHide={handleModalClose}
-        header="Approve">
-        <ApproveModal
-          id={workOrderData?.id}
-          setVisible={() => {
-            setApproveModalOpen(false)
-          }}
-          getWorkOrderWithPendingPayApproval={() => {
-            if (getWorkOrderWithPendingPayApproval) {
-              getWorkOrderWithPendingPayApproval()
-            }
-          }}
-          getOutStandingInvoice={() => {
-            if (getOutStandingInvoice) {
-              getOutStandingInvoice()
-            }
-          }}
-          closeModal={() => {
-            closeModal()
-            handleModalClose()
-          }}
-        />
-      </Dialog>
-
-      <Dialog
-        position="center"
-        style={{
-          width: '520px',
-          minWidth: '520px',
-          height: '260px',
-          minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
-        }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
-        visible={denyModalOpen}
-        onHide={handleModalClose}
-        header="Deny">
-        <ReasonModal
-          getWorkOrderWithPendingPayApproval={() => {
-            if (getWorkOrderWithPendingPayApproval) {
-              getWorkOrderWithPendingPayApproval()
-            }
-          }}
-          getOutStandingInvoice={() => {
-            if (getOutStandingInvoice) {
-              getOutStandingInvoice()
-            }
-          }}
-          selectedRowData={workOrderData?.id}
-          setVisible={() => {
-            setDenyModalOpen(false)
-          }}
-          closeModal={() => {
-            closeModal()
-            handleModalClose()
-          }}
-        />
-      </Dialog>
 
       <Dialog
         position="center"
@@ -1398,16 +1297,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           isLoading={isLoading}
           images={customerImages}
         />
-        {/* <Toast ref={toastRef} /> */}
+        <Toast ref={toastRef} />
       </Dialog>
-
-      {viewPdf && (
-        <PDFEditor
-          fileData={formData ? formData : viewPdf?.encodedFormData}
-          fileName={viewPdf?.formName ? viewPdf?.formName : viewPdf?.fileName}
-          onClose={() => setViewPdf(null)}
-        />
-      )}
     </>
   )
 }

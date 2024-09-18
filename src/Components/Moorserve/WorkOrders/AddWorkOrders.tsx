@@ -138,8 +138,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const { getWorkOrderStatusData } = GetWorkOrderStatus()
   const [saveWorkOrder] = useAddWorkOrderMutation()
   const [updateWorkOrder] = useUpdateWorkOrderMutation()
-  const [saveEstimation] = useAddEstimateMutation()
-  const [updateEstimate] = useUpdateEstimateMutation()
   const [getViewForms] = useGetViewFormMutation()
   const toastRef = useRef<Toast>(null)
   const [imageVisible, setImageVisible] = useState(false)
@@ -849,10 +847,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }, [workOrder?.customerName?.id, workOrder?.boatyards?.id])
 
   useEffect(() => {
-    if (editModeWorkOrder || editModeEstimate) {
+    if (editModeWorkOrder) {
       handleEditMode()
     }
-  }, [editModeWorkOrder, editModeEstimate])
+  }, [editModeWorkOrder])
 
   useEffect(() => {
     if (workOrder?.workOrderStatus?.id !== 10 && workOrder.vendor) {
@@ -874,7 +872,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }, [workOrder.inventory?.id])
 
   useEffect(() => {
-    if (setWorkOrderData && !visible && (!editModeWorkOrder || !editModeEstimate)) {
+    if (setWorkOrderData && !visible && !editModeWorkOrder) {
       setWorkOrderData('')
       setFormData('')
     }
@@ -1270,7 +1268,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   options={
                     workOrderData?.formResponseDtoList &&
                     workOrderData?.formResponseDtoList.map((value: any) => value)
-                  }
+                  }                    setWorkOrderData={setSelectedCustomer}
+
                   optionLabel="formName"
                   editable
                   disabled={isLoading || isAccountRecievable || isTechnician}
@@ -1334,9 +1333,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                         (form: any) => form.id === option.id,
                       ) && (
                         <i
-                          className="pi pi-eye cursor-pointer ml-2 hover:bg-gray-200 rounded-full"
-                          style={{ color: '#007bff' }}
-                          onClick={() => setViewPdf(option)}></i>
+                          className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
+                          style={{ color: 'green' }}></i>
                       )}
                   </div>
                 )}
