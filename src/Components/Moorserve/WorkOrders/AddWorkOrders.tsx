@@ -521,9 +521,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (workOrder?.scheduleDate !== workOrderData?.scheduledDate) {
         editPayload.scheduledDate = workOrder?.scheduleDate
       }
-      if (workOrder?.workOrderStatus?.id !== workOrderData?.workOrderStatusDto?.id) {
-        editPayload.workOrderStatusId = workOrder?.workOrderStatus?.id
-      }
+      // if (workOrder?.workOrderStatus?.id !== workOrderData?.workOrderStatusDto?.id) {
+      //   editPayload.workOrderStatusId = workOrder?.workOrderStatus?.id
+      // }
+      editPayload.workOrderStatusId = workOrder?.workOrderStatus?.id
+
       if (workOrder?.value !== workOrderData?.problem) {
         editPayload.problem = workOrder?.value
       }
