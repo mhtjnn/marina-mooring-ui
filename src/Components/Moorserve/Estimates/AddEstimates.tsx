@@ -85,6 +85,11 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const [editMode, setEditMode] = useState<boolean>(
     editModeWorkOrder ? editModeWorkOrder : false || editModeEstimate ? editModeEstimate : false,
   )
+  const [statusChanged, setStatusChanged] = useState(
+    (workOrderData?.inventoryResponseDtoList &&
+      workOrderData?.inventoryResponseDtoList.length > 0) ||
+      workOrderData?.workOrderStatusDto?.id === 10,
+  )
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [lastChangedField, setLastChangedField] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -750,6 +755,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
   useEffect(() => {
     if (workOrder?.workOrderStatus?.id !== 10 && workOrder.vendor) {
+      setStatusChanged(false)
       setVendorId('')
       setWorkOrder({
         ...workOrder,
@@ -1090,9 +1096,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
         <div className="flex gap-6">
           {/* Vendor */}
-          {workOrder?.workOrderStatus?.id === 10 ||
-          (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0) ? (
+          {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
@@ -1139,9 +1143,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
             </div>
           ) : null}
           {/* Item Name */}
-          {(workOrder?.workOrderStatus?.id === 10 && vendorId) ||
-          (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0) ? (
+          {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
@@ -1189,8 +1191,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           ) : null}
           {/* Quantity */}
           {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
-          (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0) ? (
+          statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Quantity (Available)</div>

@@ -107,6 +107,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [isLoading, setIsLoading] = useState(true)
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
+  const [statusChanged, setStatusChanged] = useState(
+    (workOrderData?.inventoryResponseDtoList &&
+      workOrderData?.inventoryResponseDtoList.length > 0) ||
+      workOrderData?.workOrderStatusDto?.id === 10,
+  )
   const [formsData, setFormsData] = useState<any[]>([])
   const { formData, setFormData } = useContext(FormDataContext)
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
@@ -876,6 +881,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
   useEffect(() => {
     if (workOrder?.workOrderStatus?.id !== 10 && workOrder.vendor) {
+      setStatusChanged(false)
       setVendorId('')
       setWorkOrder({
         ...workOrder,
@@ -1287,11 +1293,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             </div>
           </div>
           {/* Vendor */}
-          {workOrder?.workOrderStatus?.id === 10 ||
-          (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0 &&
-            (workOrder?.workOrderStatus?.id === 10 ||
-              workOrderData?.workOrderStatusDto?.id === 10)) ? (
+          {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
@@ -1338,11 +1340,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             </div>
           ) : null}
           {/* Item Name */}
-          {(workOrder?.workOrderStatus?.id === 10 && vendorId) ||
-          (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0 &&
-            (workOrder?.workOrderStatus?.id === 10 ||
-              workOrderData?.workOrderStatusDto?.id === 10)) ? (
+          {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">
@@ -1392,10 +1390,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         <div className="flex gap-6 mt-3">
           {/* Quantity */}
           {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
-          (workOrderData?.inventoryResponseDtoList &&
-            workOrderData?.inventoryResponseDtoList.length > 0 &&
-            (workOrder?.workOrderStatus?.id === 10 ||
-              workOrderData?.workOrderStatusDto?.id === 10)) ? (
+          statusChanged ? (
             <div>
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Quantity (Available)</div>
