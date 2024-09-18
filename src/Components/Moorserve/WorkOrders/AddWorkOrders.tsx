@@ -521,10 +521,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (workOrder?.scheduleDate !== workOrderData?.scheduledDate) {
         editPayload.scheduledDate = workOrder?.scheduleDate
       }
-      // if (workOrder?.workOrderStatus?.id !== workOrderData?.workOrderStatusDto?.id) {
-      //   editPayload.workOrderStatusId = workOrder?.workOrderStatus?.id
-      // }
       editPayload.workOrderStatusId = workOrder?.workOrderStatus?.id
+        ? workOrder?.workOrderStatus?.id
+        : workOrderData?.workOrderStatusDto?.id
 
       if (workOrder?.value !== workOrderData?.problem) {
         editPayload.problem = workOrder?.value
@@ -551,22 +550,28 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         }
       }
       if (workOrder?.inventory) {
-        const inventoryId =
-          workOrder?.inventory?.id || workOrderData?.inventoryResponseDtoList?.[0]?.id
-        const quantity =
-          workOrder?.quantity || workOrderData?.inventoryResponseDtoList?.[0]?.quantity
-
-        const inventoryUpdated =
-          inventoryId !== workOrderData?.inventoryResponseDtoList?.[0]?.id ||
-          quantity !== workOrderData?.inventoryResponseDtoList?.[0]?.quantity
-
-        if (inventoryUpdated) {
-          editPayload.inventoryRequestDtoList = [
-            {
-              id: inventoryId,
-              quantity: quantity,
-            },
-          ]
+        if (
+          workOrder?.inventory?.length > 0 ||
+          workOrderData?.inventoryResponseDtoList?.length > 0
+        ) {
+          const inventoryRequestDtoList: any[] = []
+          if (workOrder?.inventory?.length > 0) {
+            inventoryRequestDtoList.push({
+              id: workOrder?.inventory?.id,
+              quantity: workOrder?.quantity,
+            })
+          } else if (workOrderData?.inventoryResponseDtoList?.length > 0) {
+            workOrderData.inventoryResponseDtoList.forEach((item: any, index: number) => {
+              inventoryRequestDtoList.push({
+                id: item.id,
+                quantity: item.quantity,
+                parentInventoryId: item.parentInventoryId,
+              })
+            })
+          }
+          if (inventoryRequestDtoList.length > 0) {
+            editPayload.inventoryRequestDtoList = inventoryRequestDtoList
+          }
         }
       }
       if (Object.keys(editPayload).length > 0) {
