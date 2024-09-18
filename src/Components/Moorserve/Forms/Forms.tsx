@@ -439,7 +439,7 @@ const Forms = () => {
 
         {viewPdf && (
           <Preview
-            fileData={viewPdf?.formData}
+            fileData={viewPdf?.encodedData}
             fileName={viewPdf?.formName}
             onClose={() => setViewPdf(null)}
           />
