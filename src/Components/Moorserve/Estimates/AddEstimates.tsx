@@ -86,8 +86,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     editModeWorkOrder ? editModeWorkOrder : false || editModeEstimate ? editModeEstimate : false,
   )
   const [statusChanged, setStatusChanged] = useState(
-    (workOrderData?.inventoryResponseDtoList &&
-      workOrderData?.inventoryResponseDtoList.length > 0) ||
+    workOrderData?.inventoryResponseDtoList?.length > 0 &&
       workOrderData?.workOrderStatusDto?.id === 10,
   )
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
@@ -779,6 +778,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (setWorkOrderData && !visible && !editModeEstimate) {
       setWorkOrderData('')
       setWorkOrder('')
+      setStatusChanged(false)
     }
   }, [visible])
 

@@ -108,8 +108,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
   const [statusChanged, setStatusChanged] = useState(
-    (workOrderData?.inventoryResponseDtoList &&
-      workOrderData?.inventoryResponseDtoList.length > 0) ||
+    workOrderData?.inventoryResponseDtoList?.length > 0 &&
       workOrderData?.workOrderStatusDto?.id === 10,
   )
   const [formsData, setFormsData] = useState<any[]>([])
@@ -913,6 +912,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setWorkOrderData('')
       setWorkOrder('')
       setFormData('')
+      setStatusChanged(false)
     }
   }, [visible])
 
