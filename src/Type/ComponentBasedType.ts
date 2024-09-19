@@ -297,4 +297,5 @@ export interface PreviewProps {
   fileData: string
   fileName?: any
   onClose: () => void
+  mooringResponse?: any
 }

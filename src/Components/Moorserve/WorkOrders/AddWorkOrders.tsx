@@ -556,8 +556,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           const inventoryRequestDtoList: any[] = []
           if (workOrder?.inventory?.length > 0) {
             inventoryRequestDtoList.push({
-              id: workOrder?.inventory?.id,
+              id: workOrder?.inventory?.id
+                ? workOrder?.inventory?.id
+                : workOrderData?.inventoryResponseDtoList?.[0]?.id,
               quantity: workOrder?.quantity,
+              parentInventoryId: workOrderData?.inventoryResponseDtoList?.[0]?.parentInventoryId,
             })
           } else if (workOrderData?.inventoryResponseDtoList?.length > 0) {
             workOrderData.inventoryResponseDtoList.forEach((item: any, index: number) => {
@@ -1650,6 +1653,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           fileData={formData ? formData : viewPdf?.encodedFormData}
           fileName={viewPdf?.formName ? viewPdf?.formName : viewPdf?.fileName}
           onClose={() => setViewPdf(null)}
+          mooringResponse={workOrderData?.mooringResponseDto}
         />
       )}
     </>
