@@ -535,25 +535,41 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (formattedTime !== workOrderData?.time) {
         editPayload.time = formattedTime
       }
-      if (workOrder?.attachForm) {
+
+      if (workOrder?.attachForm || workOrderData?.formResponseDtoList) {
+        const formRequestDtoList: any[] = []
+        if (workOrderData?.formResponseDtoList?.length > 0) {
+          workOrderData.formResponseDtoList.forEach((form: any) => {
+            formRequestDtoList.push({
+              id: form.id,
+              formName: form.formName,
+              fileName: form.fileName,
+              encodedFormData: form.encodedFormData || null,
+              parentFormId: form.parentFormId,
+            })
+          })
+        }
         if (formData) {
-          editPayload.formRequestDtoList = [
-            {
-              id: workOrder.attachForm.id,
-              formName: workOrder.attachForm.formName
+          formRequestDtoList.push({
+            id: workOrder.attachForm.id,
+            formName: workOrder.attachForm.formName
+              ? workOrder.attachForm.formName
+              : workOrderData?.formResponseDtoList?.[0]?.formName,
+            fileName: workOrder.attachForm.fileName
+              ? workOrder.attachForm.fileName
+              : workOrder.attachForm.formName
                 ? workOrder.attachForm.formName
                 : workOrderData?.formResponseDtoList?.[0]?.formName,
-              fileName: workOrder.attachForm.fileName
-                ? workOrder.attachForm.fileName
-                : workOrder.attachForm.formName
-                  ? workOrder.attachForm.formName
-                  : workOrderData?.formResponseDtoList?.[0]?.formName,
-              encodedFormData: formData ? formData : workOrder.attachForm.formData,
-              parentFormId: workOrder.attachform?.parentFormId,
-            },
-          ]
+            encodedFormData: formData ? formData : workOrder.attachForm.formData,
+            parentFormId: workOrder.attachForm?.parentFormId,
+          })
+        }
+
+        if (formRequestDtoList.length > 0) {
+          editPayload.formRequestDtoList = formRequestDtoList
         }
       }
+
       if (workOrder?.inventory) {
         if (
           workOrder?.inventory?.length > 0 ||
