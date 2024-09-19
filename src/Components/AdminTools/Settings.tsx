@@ -2,12 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import DataTableComponent from '../CommonComponent/Table/DataTableComponent'
 import Header from '../Layout/LayoutComponents/Header'
 import { useSelector } from 'react-redux'
-import {
-  CustomerPayload,
-  CustomerResponse,
-  ErrorResponse,
-  QuickbookCustomerResponseDto,
-} from '../../Type/ApiTypes'
+import { CustomerPayload, CustomerResponse, ErrorResponse } from '../../Type/ApiTypes'
 import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import { Paginator } from 'primereact/paginator'
@@ -19,7 +14,6 @@ import { useGetCustomerMutation } from '../../Services/MoorManage/MoormanageApi'
 import { selectCustomerId } from '../../Store/Slice/userSlice'
 import {
   useEditMapCustomerToQuickBookMutation,
-  useGetQuickBookMutation,
   useMapCustomerToQuickBookMutation,
 } from '../../Services/AdminTools/AdminToolsApi'
 
@@ -28,7 +22,6 @@ const Settings = () => {
   const [quickBookCustomer, setQuickBookCustomer] = useState<{ label: any; id: any }[]>([])
 
   const [getCustomer] = useGetCustomerMutation()
-  const [getQuickBook] = useGetQuickBookMutation()
   const toast = useRef<Toast>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [totalRecords, setTotalRecords] = useState<number>()
@@ -59,7 +52,6 @@ const Settings = () => {
   const DropdownCell: React.FC<DropdownCellProps & { disabled: boolean }> = ({
     value,
     onChange,
-    options,
     disabled,
   }: any) => {
     return (
@@ -102,28 +94,39 @@ const Settings = () => {
         style: columnStyle,
         body: (rowData: {
           id: string
+          label: string
           dropdownValue: string
+          quickbookCustomerId: any
           quickbookCustomerResponseDto: any
         }) => (
           <>
-            <DropdownCell
-              value={
-                dropdownValues[rowData.id] ||
-                rowData?.quickbookCustomerResponseDto?.quickbookCustomerName
-              }
-              onChange={(e) => {
-                const selectedCustomer = quickBookCustomer.find((item) => item.label === e.value)
-                setDropdownValues({
-                  ...dropdownValues,
-                  [rowData.id]: selectedCustomer || e.value,
-                })
-              }}
-              // onChange={(e) => setDropdownValues({ ...dropdownValues, [rowData.id]: e.value })}
-              options={quickBookCustomer}
+            <Dropdown
+              optionLabel="label"
+              optionValue="quickbookCustomerId"
+              value={dropdownValues[rowData.id] || rowData?.quickbookCustomerResponseDto?.id}
+              options={quickBookCustomer?.map?.((option: any) => {
+                return { ...option, value: option.quickbookCustomerId }
+              })}
               disabled={
                 (rowData?.quickbookCustomerResponseDto?.id || !!dropdownDisabled[rowData.id]) &&
                 rowData?.id !== currentlyEditing
               }
+              onChange={(e) => {
+                setDropdownValues({
+                  ...dropdownValues,
+                  [rowData.id]: e.target.value,
+                })
+              }}
+              editable
+              dataKey="id"
+              style={{
+                height: '32px',
+                border: '1px solid #D5E1EA',
+                borderRadius: '0.50rem',
+                fontSize: '0.8rem',
+                width: '40%',
+                textAlign: 'center',
+              }}
             />
           </>
         ),
@@ -218,19 +221,9 @@ const Settings = () => {
     try {
       setIsLoading(true)
       const selectedValue: any = dropdownValues[rowData.id]
-      const matchedCustomer = quickBookCustomer.find((item: any) => item?.id === selectedValue?.id)
-      if (!matchedCustomer) {
-        toast?.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No matching QuickBook customer found',
-          life: 3000,
-        })
-      }
-
       const response = await mapCustomerToQuickBook({
+        quickbookCustomerId: selectedValue,
         customerId: rowData?.id,
-        quickbookCustomerId: matchedCustomer?.id,
       }).unwrap()
       const { status, message } = response as CustomerResponse
       if (status === 200 || status === 201) {

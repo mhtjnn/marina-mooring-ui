@@ -445,6 +445,64 @@ export interface MooringResponse {
   }
 }
 
+export interface MooringResp {
+  id: number
+  mooringNumber: string
+  harborOrArea: string
+  gpsCoordinates: string
+  installBottomChainDate: string | null
+  installTopChainDate: string | null
+  installConditionOfEyeDate: string | null
+  inspectionDate: string | null
+  boatName: string
+  boatSize: string
+  boatType: {
+    id: number
+    creationDate: string | null
+    boatType: string
+  }
+  boatWeight: string
+  boatyardResponseDto: any | null
+  bottomChainCondition: {
+    id: number
+    creationDate: string | null
+    condition: string
+  }
+  customerId: number | null
+  customerName: string | null
+  depthAtMeanHighWater: number
+  eyeCondition: {
+    id: number
+    creationDate: string | null
+    condition: string
+  }
+  imageDtoList: any | null
+  mooringStatus: {
+    id: number
+    creationDate: string | null
+    status: string
+  }
+  pendantCondition: string
+  serviceAreaResponseDto: any | null
+  shackleSwivelCondition: {
+    id: number
+    creationDate: string | null
+    condition: string
+  }
+  sizeOfWeight: number
+  topChainCondition: {
+    id: number
+    creationDate: string | null
+    condition: string
+  }
+  typeOfWeight: {
+    id: number
+    creationDate: string | null
+    type: string
+  }
+  userId: number | null
+}
+
 export interface MooringAndWorkOrderResponse {
   message: string
   status: number

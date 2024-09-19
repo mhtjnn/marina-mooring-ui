@@ -77,7 +77,7 @@ const adminToolsApi = userApi.injectEndpoints({
         quickbookCustomerId,
         customerId,
       }: {
-        quickbookCustomerId: string
+        quickbookCustomerId: number
         customerId: number
       }) => ({
         url: `api/v1/quickbook/saveMappingCustomerToQuickbook/${quickbookCustomerId}/${customerId}`,

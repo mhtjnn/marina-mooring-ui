@@ -12,14 +12,19 @@ import { InputText } from 'primereact/inputtext'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import PopupModal from './PopupModal'
+import { Chip } from 'primereact/chip'
+import { MooringResp } from '../../../Type/ApiTypes'
 
 const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, mooringResponse }) => {
+  console.log('mooringResp >>', mooringResponse)
+
   const [loading, setLoading] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [newText, setNewText] = useState('')
   const [textSize, setTextSize] = useState<any>(16)
   const { toPDF, targetRef } = usePDF({ filename: fileName })
   const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [selectedValue, setSelectedValue] = useState('')
   const [textEntries, setTextEntries] = useState<
     { text: string; x: number; y: number; size: number }[]
   >([])
@@ -33,6 +38,23 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const pdfRef = useRef<HTMLDivElement>(null)
   const [showDialog, setShowDialog] = useState(false)
   const { setFormData } = useContext(FormDataContext)
+  const chipValues = mooringResponse?.values || []
+  function fetchAllLabels(obj: MooringResp) {
+    return Object.keys(obj).reduce((result, key) => {
+      //@ts-ignore
+      result[key] = obj[key as keyof MooringResp]
+      return result
+    }, {})
+  }
+
+  // Example usage
+  const allLabels = fetchAllLabels(mooringResponse)
+
+  console.log('allLabels', allLabels)
+
+  const handleChipClick = (value: any) => {
+    setSelectedValue(value)
+  }
 
   useEffect(() => {
     if (fileData) {
@@ -224,11 +246,6 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                 style={{ marginLeft: '10px' }}
                 disabled={redoStack.length === 0}
               />
-              <Button
-                label="Show Mooring Info"
-                icon="pi pi-external-link"
-                onClick={() => setModalVisible(true)}
-              />
             </div>
 
             <div ref={targetRef} style={{ flexGrow: 1, overflow: 'auto', position: 'relative' }}>
@@ -292,6 +309,16 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                 placeholder="Font size"
                 style={{ width: '60px' }}
               />
+            </div>
+            <div className="chip-container">
+              {chipValues.map((value: any, index: any) => (
+                <Chip
+                  key={index}
+                  label={value}
+                  onClick={() => handleChipClick(value)}
+                  className="chip-item"
+                />
+              ))}
             </div>
           </Dialog>
           <PopupModal
