@@ -448,6 +448,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             ? workOrder.attachForm.fileName
             : workOrder.attachForm.formName,
           encodedFormData: formData ? formData : workOrder.attachForm.formData,
+          parentFormId: workOrder.attachform?.parentFormId,
         },
       ]
     }
@@ -539,11 +540,16 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           editPayload.formRequestDtoList = [
             {
               id: workOrder.attachForm.id,
-              formName: workOrder.attachForm.formName,
+              formName: workOrder.attachForm.formName
+                ? workOrder.attachForm.formName
+                : workOrderData?.formResponseDtoList?.[0]?.formName,
               fileName: workOrder.attachForm.fileName
                 ? workOrder.attachForm.fileName
-                : workOrder.attachForm.formName,
+                : workOrder.attachForm.formName
+                  ? workOrder.attachForm.formName
+                  : workOrderData?.formResponseDtoList?.[0]?.formName,
               encodedFormData: formData ? formData : workOrder.attachForm.formData,
+              parentFormId: workOrder.attachform?.parentFormId,
             },
           ]
         }

@@ -11,13 +11,15 @@ import { usePDF } from 'react-to-pdf'
 import { InputText } from 'primereact/inputtext'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
+import PopupModal from './PopupModal'
 
-const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose }) => {
+const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, mooringResponse }) => {
   const [loading, setLoading] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [newText, setNewText] = useState('')
   const [textSize, setTextSize] = useState<any>(16)
   const { toPDF, targetRef } = usePDF({ filename: fileName })
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [textEntries, setTextEntries] = useState<
     { text: string; x: number; y: number; size: number }[]
   >([])
@@ -222,6 +224,11 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose }) => {
                 style={{ marginLeft: '10px' }}
                 disabled={redoStack.length === 0}
               />
+              <Button
+                label="Show Mooring Info"
+                icon="pi pi-external-link"
+                onClick={() => setModalVisible(true)}
+              />
             </div>
 
             <div ref={targetRef} style={{ flexGrow: 1, overflow: 'auto', position: 'relative' }}>
@@ -287,6 +294,11 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose }) => {
               />
             </div>
           </Dialog>
+          <PopupModal
+            mooringResponse={mooringResponse}
+            visible={modalVisible}
+            onHide={() => setModalVisible(false)}
+          />
         </>
       )}
     </Sidebar>
