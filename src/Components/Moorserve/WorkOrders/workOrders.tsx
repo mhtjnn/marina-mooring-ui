@@ -157,12 +157,17 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
 
   const dataToPdf = (data: any[]) => {
     if (!Array.isArray(data) || data.length === 0) {
-      console.error('Invalid data provided. Expected an array of objects.')
+      const message = 'Invalid data provided. Expected an array of objects.'
+      toast?.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: message,
+        life: 3000,
+      })
       return
     }
-
     const doc = new jsPDF()
-    doc.setFontSize(18)
+    doc.setFontSize(16)
     doc.text('Work Orders', 14, 22)
     const headers = [
       'Customer Name',
@@ -172,21 +177,26 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       'Due Date',
       'Status',
     ]
-    const columnWidths = [30, 30, 30, 30, 30, 30]
-    const xStart = 14
+    const columnWidths = [40, 40, 30, 30, 30, 50]
+    const xStart = 5
     const yStart = 30
-    doc.setFontSize(8)
-    let xPosition = xStart
+    const recordsPerPage = 20
     let yPosition = yStart
-
-    headers.forEach((header, index) => {
-      doc.text(header, xPosition, yPosition)
-      xPosition += columnWidths[index]
-    })
-
+    let pageCount = 1
+    const addHeaders = () => {
+      let xPosition = xStart
+      doc.setFontSize(12)
+      headers.forEach((header, index) => {
+        doc.text(header, xPosition, yPosition)
+        xPosition += columnWidths[index]
+      })
+      yPosition += 5
+    }
+    addHeaders()
     yPosition += 10
+    doc.setFontSize(10)
     data.forEach((item, rowIndex) => {
-      xPosition = xStart
+      let xPosition = xStart
       const row = [
         item?.customerResponseDto?.firstName && item?.customerResponseDto?.lastName
           ? `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`
@@ -205,14 +215,18 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       ]
 
       row.forEach((cell, colIndex) => {
-        if (typeof cell === 'undefined') {
-          console.error(`Undefined cell value at row ${rowIndex + 1}, column ${colIndex + 1}`)
-        }
-        doc.text(cell.toString(), xPosition, yPosition)
+        const textLines = doc.splitTextToSize(cell.toString(), columnWidths[colIndex])
+        doc.text(textLines, xPosition, yPosition)
         xPosition += columnWidths[colIndex]
       })
 
       yPosition += 10
+      if ((rowIndex + 1) % recordsPerPage === 0 && rowIndex + 1 < data.length) {
+        doc.addPage()
+        yPosition = yStart
+        addHeaders()
+        pageCount += 1
+      }
     })
     doc.save('WorkOrders.pdf')
   }
@@ -251,7 +265,6 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
         status2 === 200 &&
         Array.isArray(content2)
       ) {
-        // Combine the contents from both responses
         const combinedContent = [...content1, ...content2]
         dataToPdf(combinedContent)
       } else {
