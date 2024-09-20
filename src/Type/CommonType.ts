@@ -29,7 +29,7 @@ export interface CustomerProps {
   phone: string
   email: string
   address: string
-  city:string
+  city: string
 }
 
 export interface BillsData {
@@ -181,4 +181,60 @@ export const iconsByStatus = {
   GearOff: GearOffIcon,
   NeedInspection: NeedInspectionIcon,
   NotInUse: NotInUseIcon,
+}
+
+export const chipValues = [
+  'Mooring Number',
+  'Harbor/Area',
+  'GPS Coordinates',
+  'Boat Name',
+  'Boat Size',
+  'Boat Weight',
+  'Boat Type',
+  'Boatyard',
+  'Service Area',
+  'Customer Id',
+  'Customer Name',
+  'Depth at Mean High Water',
+  'Mooring Status',
+  'Pendant Condition',
+  'Size of Weight',
+  'Type of Weight',
+  'Top Chain Condition',
+  'Install Top Chain Condition Date',
+  'Bottom Chain Condition',
+  'Install Bottom Chain Condition Date',
+  'Condition of Eye',
+  'Install Condition of Eye Date',
+  'Shackle Swivel Condition',
+  'Inspection Date',
+  'Main Contact',
+]
+
+export const headerToPropertyMap: any = {
+  'Mooring Number': 'mooringNumber',
+  'Harbor/Area': 'harborOrArea',
+  'GPS Coordinates': 'gpsCoordinates',
+  'Boat Name': 'boatName',
+  'Boat Size': 'boatSize',
+  'Boat Weight': 'boatWeight',
+  'Boat Type': 'boatType?.boatType',
+  Boatyard: 'boatyardResponseDto?.boatyard',
+  'Service Area': 'serviceAreaResponseDto?.serviceArea',
+  'Customer Name': 'customerName',
+  'Customer Id': 'customerId',
+  'Depth at Mean High Water': 'depthAtMeanHighWater',
+  'Bottom Chain Condition': 'bottomChainCondition?.condition',
+  'Condition of Eye': 'eyeCondition.condition',
+  'Mooring Status': 'mooringStatus.status',
+  'Pendant Condition': 'pendantCondition',
+  'Size of Weight': 'sizeOfWeight',
+  'Type of Weight': 'typeOfWeight.type',
+  'Top Chain Condition': 'topChainCondition?.condition',
+  'Install Bottom Chain Condition Date': 'installBottomChainDate',
+  'Install Top Chain Condition Date': 'installTopChainDate',
+  'Install Condition of Eye Date': 'installConditionOfEyeDate',
+  'Inspection Date': 'inspectionDate',
+  'Shackle Swivel Condition': 'shackleSwivelCondition?.condition',
+  'Main Contact': 'mainContact',
 }

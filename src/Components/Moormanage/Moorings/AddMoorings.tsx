@@ -153,12 +153,16 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     const { customersData } = await getCustomersData()
     const { boatYardName } = await getBoatYardNameData()
     const { serviceAreaData } = await getServiceAreaData()
+    const { typeOfShackleSwivelData } = await getTypeOfShackleSwivelData()
 
     if (typeOfWeightData !== null) {
       setIsLoading(false)
       setWeightData(typeOfWeightData)
     }
-
+    if (typeOfShackleSwivelData !== null) {
+      setIsLoading(false)
+      setShackleSwivelData(typeOfShackleSwivelData)
+    }
     if (typeOfMooringStatusTypeData !== null) {
       setIsLoading(false)
       setMooringStatus(typeOfMooringStatusTypeData)

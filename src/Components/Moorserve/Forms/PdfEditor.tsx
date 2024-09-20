@@ -8,25 +8,19 @@ import '@react-pdf-viewer/core/lib/styles/index.css'
 import { convertBytetoUrl } from '../../Helper/Helper'
 import { PreviewProps } from '../../../Type/ComponentBasedType'
 import { usePDF } from 'react-to-pdf'
-import ReactToPdf from 'react-to-pdf'
 import { InputText } from 'primereact/inputtext'
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import PopupModal from './PopupModal'
 import { Chip } from 'primereact/chip'
-import { MooringResp } from '../../../Type/ApiTypes'
+import { chipValues, headerToPropertyMap } from '../../../Type/CommonType'
 
 const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, mooringResponse }) => {
-  // console.log('mooringResp >>', mooringResponse)
-
   const [loading, setLoading] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [newText, setNewText] = useState('')
   const [textSize, setTextSize] = useState<any>(16)
   const { toPDF, targetRef } = usePDF({ filename: fileName })
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [selectedValue, setSelectedValue] = useState('')
-  const [pdfBase64, setBase64Pdf] = useState<any>()
   const [textEntries, setTextEntries] = useState<
     { text: string; x: number; y: number; size: number }[]
   >([])
@@ -40,20 +34,22 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const pdfRef = useRef<HTMLDivElement>(null)
   const [showDialog, setShowDialog] = useState(false)
   const { setFormData } = useContext(FormDataContext)
-  const chipValues = mooringResponse?.values || []
-  // function fetchAllLabels(obj: MooringResp) {
-  //   return Object.keys(obj).reduce((result, key) => {
-  //     //@ts-ignore
-  //     result[key] = obj[key as keyof MooringResp]
-  //     return result
-  //   }, {})
-  // }
 
-  // Example usage
-  // const allLabels = fetchAllLabels(mooringResponse)
+  const handleChipClick = (value: any, header: string) => {
+    const propertyPath = headerToPropertyMap[header]
+    let result
 
-  const handleChipClick = (value: any) => {
-    setSelectedValue(value)
+    if (propertyPath) {
+      result = propertyPath.split('.').reduce((acc: any, key: any) => acc && acc[key], value)
+      if (result) {
+        setNewText(result)
+      } else {
+        setNewText('')
+      }
+    } else {
+      setNewText('')
+      result = 'Property not found'
+    }
   }
 
   useEffect(() => {
@@ -153,9 +149,12 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
       // })
 
       // const pdfBase64 = await pdfDoc.saveAsBase64({ dataUri: false })
-      const resp = toPDF({ method: 'build' })
+      toPDF({ method: 'build' })
         // @ts-expect-error
         .then((pdf: any) => {
+          // @ts-expect-error
+          window.myPdf = pdf
+          setFormData(pdf.output('datauristring').split(',')[1])
           // const reader = new FileReader()
           // reader.readAsDataURL(pdf) // Convert the generated PDF Blob to Base64
           // reader.onloadend = () => {
@@ -163,7 +162,6 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
           //   setFormData(base64data)
           //   console.log('Base64 PDF: ', base64data) // You can store or send this
           // }
-          console.log('pdf', pdf)
         })
         .finally(() => {
           setLoading(false)
@@ -244,7 +242,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
               {/* <ReactToPdf targetRef={targetRef} filename={fileName}>
                 {({ toPdf }: any) => ( */}
               <Button
-                label="Done"
+                label="Save & Download"
                 icon="pi pi-check"
                 className="p-button-rounded p-button-success"
                 onClick={() => handleSave()}
@@ -323,30 +321,75 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
               </div>
             }
             onHide={() => setShowDialog(false)}>
-            <div style={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-              <InputText
-                value={newText}
-                onChange={(e) => setNewText(e.target.value)}
-                placeholder="Enter your text"
-                style={{ flexGrow: 1, marginRight: '10px' }}
-              />
-              <InputText
-                value={textSize}
-                type="number"
-                onChange={(e) => setTextSize(parseInt(e.target.value))}
-                placeholder="Font size"
-                style={{ width: '60px' }}
-              />
-            </div>
-            <div className="chip-container">
-              {chipValues.map((value: any, index: any) => (
-                <Chip
-                  key={index}
-                  label={value}
-                  onClick={() => handleChipClick(value)}
-                  className="chip-item"
+            <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexGrow: 1,
+                  gap: '10px',
+                  padding: '10px',
+                  border: '1px solid #ccc',
+                  borderRadius: '5px',
+                  backgroundColor: '#f9f9f9',
+                }}>
+                <InputText
+                  value={newText}
+                  onChange={(e) => setNewText(e.target.value)}
+                  placeholder="Enter your text"
+                  style={{
+                    flexGrow: 1,
+                    padding: '10px',
+                    border: '1px solid #007BFF',
+                    borderRadius: '4px',
+                    fontSize: '16px',
+                    transition: 'border-color 0.3s',
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = '#0056b3')}
+                  onBlur={(e) => (e.target.style.borderColor = '#007BFF')}
                 />
-              ))}
+                <InputText
+                  value={textSize}
+                  type="number"
+                  onChange={(e) => setTextSize(parseInt(e.target.value))}
+                  placeholder="Font size"
+                  style={{
+                    width: '60px',
+                    padding: '10px',
+                    border: '1px solid #007BFF',
+                    borderRadius: '4px',
+                    fontSize: '16px',
+                    transition: 'border-color 0.3s',
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = '#0056b3')}
+                  onBlur={(e) => (e.target.style.borderColor = '#007BFF')}
+                />
+              </div>
+
+              {/* Chips Container */}
+              <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                {chipValues.map((header, index) => (
+                  <Chip
+                    key={index}
+                    label={header}
+                    onClick={() => handleChipClick(mooringResponse, header)}
+                    style={{
+                      backgroundColor: '#e0f7fa',
+                      color: '#00796b',
+                      borderRadius: '20px',
+                      fontWeight: 'bold',
+                      transition: '0.3s',
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#b2ebf2'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#e0f7fa'
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </Dialog>
           <PopupModal
