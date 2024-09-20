@@ -483,26 +483,22 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         editPayload.time = formattedTime
       }
       if (workOrder?.inventory) {
-        if (
-          workOrder?.inventory?.length > 0 ||
-          workOrderData?.inventoryResponseDtoList?.length > 0
-        ) {
+        if (workOrder?.inventory?.id || workOrderData?.inventoryResponseDtoList?.length > 0) {
           const inventoryRequestDtoList: any[] = []
-          if (workOrder?.inventory?.length > 0) {
-            inventoryRequestDtoList.push({
-              id: workOrder?.inventory?.id
-                ? workOrder?.inventory?.id
-                : workOrderData?.inventoryResponseDtoList?.[0]?.id,
-              quantity: workOrder?.quantity,
-              parentInventoryId: workOrderData?.inventoryResponseDtoList?.[0]?.parentInventoryId,
-            })
-          } else if (workOrderData?.inventoryResponseDtoList?.length > 0) {
+          if (workOrderData?.inventoryResponseDtoList?.length > 0) {
             workOrderData.inventoryResponseDtoList.forEach((item: any, index: number) => {
               inventoryRequestDtoList.push({
                 id: item.id,
                 quantity: item.quantity,
                 parentInventoryId: item.parentInventoryId,
               })
+            })
+          }
+          if (workOrder?.inventory?.id) {
+            inventoryRequestDtoList.push({
+              id: workOrder?.inventory?.id,
+              quantity: workOrder?.quantity,
+              parentInventoryId: workOrder?.parentInventoryId ? workOrder?.parentInventoryId : null,
             })
           }
           if (inventoryRequestDtoList.length > 0) {

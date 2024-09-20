@@ -8,6 +8,7 @@ import '@react-pdf-viewer/core/lib/styles/index.css'
 import { convertBytetoUrl } from '../../Helper/Helper'
 import { PreviewProps } from '../../../Type/ComponentBasedType'
 import { usePDF } from 'react-to-pdf'
+import ReactToPdf from 'react-to-pdf'
 import { InputText } from 'primereact/inputtext'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
@@ -16,7 +17,7 @@ import { Chip } from 'primereact/chip'
 import { MooringResp } from '../../../Type/ApiTypes'
 
 const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, mooringResponse }) => {
-  console.log('mooringResp >>', mooringResponse)
+  // console.log('mooringResp >>', mooringResponse)
 
   const [loading, setLoading] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
@@ -25,6 +26,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const { toPDF, targetRef } = usePDF({ filename: fileName })
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [selectedValue, setSelectedValue] = useState('')
+  const [pdfBase64, setBase64Pdf] = useState<any>()
   const [textEntries, setTextEntries] = useState<
     { text: string; x: number; y: number; size: number }[]
   >([])
@@ -39,18 +41,16 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const [showDialog, setShowDialog] = useState(false)
   const { setFormData } = useContext(FormDataContext)
   const chipValues = mooringResponse?.values || []
-  function fetchAllLabels(obj: MooringResp) {
-    return Object.keys(obj).reduce((result, key) => {
-      //@ts-ignore
-      result[key] = obj[key as keyof MooringResp]
-      return result
-    }, {})
-  }
+  // function fetchAllLabels(obj: MooringResp) {
+  //   return Object.keys(obj).reduce((result, key) => {
+  //     //@ts-ignore
+  //     result[key] = obj[key as keyof MooringResp]
+  //     return result
+  //   }, {})
+  // }
 
   // Example usage
-  const allLabels = fetchAllLabels(mooringResponse)
-
-  console.log('allLabels', allLabels)
+  // const allLabels = fetchAllLabels(mooringResponse)
 
   const handleChipClick = (value: any) => {
     setSelectedValue(value)
@@ -119,72 +119,95 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const handleSave = async () => {
     if (pdfUrl) {
       setLoading(true) // Show loading spinner during the process
-      const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
-      const pdfDoc = await PDFDocument.load(existingPdfBytes)
+      // const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
+      // const pdfDoc = await PDFDocument.load(existingPdfBytes)
 
-      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
-      const pages = pdfDoc.getPages()
+      // const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+      // const pages = pdfDoc.getPages()
 
-      textEntries.forEach((entry) => {
-        pages.forEach((page) => {
-          const { height: pageHeight } = page.getSize()
+      // textEntries.forEach((entry) => {
+      //   pages.forEach((page) => {
+      //     const { height: pageHeight } = page.getSize()
+      //     if (entry.y <= pageHeight) {
+      //       page.drawText(entry.text, {
+      //         x: entry.x,
+      //         y: entry.y,
+      //         size: entry.size,
+      //         font: helveticaFont,
+      //         color: rgb(0, 0, 0),
+      //       })
+      //     }
 
-          if (entry.y <= pageHeight) {
-            page.drawText(entry.text, {
-              x: entry.x,
-              y: pageHeight - entry.y,
-              size: entry.size,
-              font: helveticaFont,
-              color: rgb(0, 0, 0),
-            })
-          }
+      //     entry.y = entry.y > pageHeight ? entry.y - pageHeight : entry.y
+      //   })
+      // })
 
-          entry.y = entry.y > pageHeight ? entry.y - pageHeight : entry.y
+      // toPdf().then((pdf: any) => {
+      //   const reader = new FileReader()
+      //   reader.readAsDataURL(pdf) // Convert the generated PDF Blob to Base64
+      //   reader.onloadend = () => {
+      //     const base64data = reader.result // This is the base64 encoded PDF
+      //     setBase64Pdf(base64data)
+      //     console.log('Base64 PDF: ', base64data) // You can store or send this
+      //   }
+      // })
+
+      // const pdfBase64 = await pdfDoc.saveAsBase64({ dataUri: false })
+      const resp = toPDF({ method: 'build' })
+        // @ts-expect-error
+        .then((pdf: any) => {
+          // const reader = new FileReader()
+          // reader.readAsDataURL(pdf) // Convert the generated PDF Blob to Base64
+          // reader.onloadend = () => {
+          //   const base64data: any = reader.result // This is the base64 encoded PDF
+          //   setFormData(base64data)
+          //   console.log('Base64 PDF: ', base64data) // You can store or send this
+          // }
+          console.log('pdf', pdf)
         })
-      })
-
-      const pdfBase64 = await pdfDoc.saveAsBase64({ dataUri: false })
-      setLoading(false)
-      setFormData(pdfBase64)
-      onClose()
+        .finally(() => {
+          setLoading(false)
+          onClose()
+        })
     }
   }
 
   const handleDownload = async () => {
     if (pdfUrl) {
-      handleSave()
+      // handleSave({})
       toPDF()
-      const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
-      const pdfDoc = await PDFDocument.load(existingPdfBytes)
 
-      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
-      const pages = pdfDoc.getPages()
+      // const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
+      // const pdfDoc = await PDFDocument.load(existingPdfBytes)
 
-      textEntries.forEach((entry) => {
-        pages.forEach((page) => {
-          const { height: pageHeight } = page.getSize()
+      // const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+      // const pages = pdfDoc.getPages()
 
-          if (entry.y <= pageHeight) {
-            page.drawText(entry.text, {
-              x: entry.x,
-              y: pageHeight - entry.y,
-              size: entry.size,
-              font: helveticaFont,
-              color: rgb(0, 0, 0),
-            })
-          }
+      // textEntries.forEach((entry) => {
+      //   pages.forEach((page) => {
+      //     const { height: pageHeight } = page.getSize()
 
-          entry.y = entry.y > pageHeight ? entry.y - pageHeight : entry.y
-        })
-      })
+      //     if (entry.y <= pageHeight) {
+      //       page.drawText(entry.text, {
+      //         x: entry.x,
+      //         y: pageHeight - entry.y,
+      //         size: entry.size,
+      //         font: helveticaFont,
+      //         color: rgb(0, 0, 0),
+      //       })
+      //     }
 
-      const pdfBytes = await pdfDoc.save()
+      //     entry.y = entry.y > pageHeight ? entry.y - pageHeight : entry.y
+      //   })
+      // })
 
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' })
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.download = fileName
-      link.click()
+      // const pdfBytes = await pdfDoc.save()
+
+      // const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+      // const link = document.createElement('a')
+      // link.href = URL.createObjectURL(blob)
+      // link.download = fileName
+      // link.click()
     }
   }
 
@@ -217,12 +240,17 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                 zIndex: 1000,
                 height: '40px',
               }}>
+              {/* @ts-ignore */}
+              {/* <ReactToPdf targetRef={targetRef} filename={fileName}>
+                {({ toPdf }: any) => ( */}
               <Button
                 label="Done"
                 icon="pi pi-check"
                 className="p-button-rounded p-button-success"
-                onClick={handleSave}
+                onClick={() => handleSave()}
               />
+              {/* )}
+              </ReactToPdf> */}
               <Button
                 label="Download PDF"
                 icon="pi pi-download"
