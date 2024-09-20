@@ -942,7 +942,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     <>
       <Toast ref={toastRef} />
 
-      <div className={`"w-full h-full mb-16 ml-4" ${isLoading ? 'blurred' : ''}`}>
+      <div className={`"w-full h-full mb-20 ml-4" ${isLoading ? 'blurred' : ''}`}>
         {/* Customer Name */}
         <div className="flex gap-6">
           <div>
