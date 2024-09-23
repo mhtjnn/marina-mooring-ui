@@ -238,24 +238,19 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                 zIndex: 1000,
                 height: '40px',
               }}>
-              {/* @ts-ignore */}
-              {/* <ReactToPdf targetRef={targetRef} filename={fileName}>
-                {({ toPdf }: any) => ( */}
               <Button
                 label="Save & Download"
                 icon="pi pi-check"
                 className="p-button-rounded p-button-success"
                 onClick={() => handleSave()}
               />
-              {/* )}
-              </ReactToPdf> */}
-              <Button
+              {/* <Button
                 label="Download PDF"
                 icon="pi pi-download"
                 className="p-button-rounded p-button-info"
                 onClick={handleDownload}
                 style={{ marginLeft: '10px' }}
-              />
+              /> */}
               <Button
                 label="Undo"
                 icon="pi pi-undo"
@@ -307,31 +302,34 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
           </div>
           <Dialog
             header="Enter Text"
+            headerStyle={{ cursor: 'alias', color: 'black' }}
             visible={showDialog}
-            style={{ width: '30vw' }}
+            draggable={false}
+            style={{ width: '700px', height: '500px', borderRadius: '8px' }}
             footer={
-              <div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                 <Button label="Add" icon="pi pi-check" onClick={handleAddText} />
                 <Button
                   label="Cancel"
                   icon="pi pi-times"
                   className="p-button-secondary"
-                  onClick={() => setShowDialog(false)}
+                  onClick={() => {
+                    setShowDialog(false)
+                    setNewText('')
+                  }}
                 />
               </div>
             }
-            onHide={() => setShowDialog(false)}>
-            <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+            onHide={() => {
+              setShowDialog(false)
+              setNewText('')
+            }}>
+            <div style={{ padding: '20px', maxWidth: '100%', margin: '0 auto' }}>
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  flexGrow: 1,
-                  gap: '10px',
-                  padding: '10px',
-                  border: '1px solid #ccc',
-                  borderRadius: '5px',
-                  backgroundColor: '#f9f9f9',
+                  gap: '15px',
                 }}>
                 <InputText
                   value={newText}
@@ -339,9 +337,9 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                   placeholder="Enter your text"
                   style={{
                     flexGrow: 1,
-                    padding: '10px',
-                    border: '1px solid #007BFF',
-                    borderRadius: '4px',
+                    padding: '12px',
+                    border: '2px solid #529cd7',
+                    borderRadius: '8px',
                     fontSize: '16px',
                     transition: 'border-color 0.3s',
                   }}
@@ -354,10 +352,10 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                   onChange={(e) => setTextSize(parseInt(e.target.value))}
                   placeholder="Font size"
                   style={{
-                    width: '60px',
-                    padding: '10px',
-                    border: '1px solid #007BFF',
-                    borderRadius: '4px',
+                    width: '70px',
+                    padding: '12px',
+                    border: '2px solid #529cd7',
+                    borderRadius: '8px',
                     fontSize: '16px',
                     transition: 'border-color 0.3s',
                   }}
@@ -374,24 +372,26 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                     label={header}
                     onClick={() => handleChipClick(mooringResponse, header)}
                     style={{
-                      backgroundColor: '#e0f7fa',
-                      color: '#00796b',
+                      backgroundColor: '#529cd7',
+                      color: '#ffffff',
                       borderRadius: '20px',
                       fontWeight: 'bold',
                       transition: '0.3s',
                       cursor: 'pointer',
+                      padding: '8px 12px',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#b2ebf2'
+                      e.currentTarget.style.backgroundColor = '#2196f3'
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#e0f7fa'
+                      e.currentTarget.style.backgroundColor = '#529cd7'
                     }}
                   />
                 ))}
               </div>
             </div>
           </Dialog>
+
           <PopupModal
             mooringResponse={mooringResponse}
             visible={modalVisible}
