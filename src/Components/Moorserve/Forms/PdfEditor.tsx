@@ -7,10 +7,10 @@ import { Worker, Viewer } from '@react-pdf-viewer/core'
 import '@react-pdf-viewer/core/lib/styles/index.css'
 import { convertBytetoUrl } from '../../Helper/Helper'
 import { PreviewProps } from '../../../Type/ComponentBasedType'
-import { usePDF } from 'react-to-pdf'
+import { Margin, Resolution, usePDF } from 'react-to-pdf'
 import { InputText } from 'primereact/inputtext'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
-import PopupModal from './PopupModal'
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { Chip } from 'primereact/chip'
 import { chipValues, headerToPropertyMap } from '../../../Type/CommonType'
 
@@ -19,7 +19,12 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const [pdfUrl, setPdfUrl] = useState('')
   const [newText, setNewText] = useState('')
   const [textSize, setTextSize] = useState<any>(16)
-  const { toPDF, targetRef } = usePDF({ filename: fileName })
+  const { toPDF, targetRef } = usePDF({
+    filename: fileName,
+    // canvas: { qualityRatio: 1 },
+    // page: { format: 'letter', margin: Margin.MEDIUM },
+    resolution: Resolution.NORMAL,
+  })
   const [textEntries, setTextEntries] = useState<
     { text: string; x: number; y: number; size: number }[]
   >([])
@@ -33,9 +38,6 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const pdfRef = useRef<HTMLDivElement>(null)
   const [showDialog, setShowDialog] = useState(false)
   const { setFormData } = useContext(FormDataContext)
-
-  console.log('mooringResp', mooringResponse)
-
   const handleChipClick = (value: any, header: string) => {
     const propertyPath = headerToPropertyMap[header]
     let result
@@ -150,12 +152,18 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
       // })
 
       // const pdfBase64 = await pdfDoc.saveAsBase64({ dataUri: false })
+      const wrapperElement = document.getElementById('pdfWrappper')
+      if (wrapperElement) {
+        wrapperElement.style.height = 'auto'
+      }
       toPDF({ method: 'build' })
         // @ts-expect-error
-        .then((pdf: any) => {
+        .then(async (pdf: any) => {
           // @ts-expect-error
           window.myPdf = pdf
-          setFormData(pdf.output('datauristring').split(',')[1])
+          // Convert to Base64 string for all pages
+          const base64Pdf = pdf.output('datauristring')
+          // setFormData(base64Pdf.split(',')[1])
           // const reader = new FileReader()
           // reader.readAsDataURL(pdf) // Convert the generated PDF Blob to Base64
           // reader.onloadend = () => {
@@ -163,13 +171,61 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
           //   setFormData(base64data)
           //   console.log('Base64 PDF: ', base64data) // You can store or send this
           // }
+          // Download the PDF if necessary
         })
         .finally(() => {
           setLoading(false)
+          if (wrapperElement) {
+            wrapperElement.style.height = '100vh'
+          }
           onClose()
         })
     }
   }
+
+  // const handleSave = async () => {
+  //   if (pdfUrl) {
+  //     setLoading(true) // Show loading spinner during the process
+
+  //     // Fetch the existing PDF
+  //     const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
+
+  //     // Load the PDF document
+  //     const pdfDoc = await PDFDocument.load(existingPdfBytes)
+
+  //     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+  //     const pages = pdfDoc.getPages()
+
+  //     // Add text entries to each page
+  //     textEntries.forEach((entry) => {
+  //       pages.forEach((page) => {
+  //         const { height: pageHeight } = page.getSize()
+  //         if (entry.y <= pageHeight) {
+  //           page.drawText(entry.text, {
+  //             x: entry.x,
+  //             y: pageHeight - entry.y,
+  //             size: entry.size,
+  //             font: helveticaFont,
+  //             color: rgb(0, 0, 0),
+  //           })
+  //         }
+  //       })
+  //     })
+
+  //     // Save the modified PDF
+  //     const pdfBytes = await pdfDoc.save()
+
+  //     // Trigger the download
+  //     const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+  //     const link = document.createElement('a')
+  //     link.href = URL.createObjectURL(blob)
+  //     link.download = fileName // Set the desired file name
+  //     link.click()
+
+  //     setLoading(false)
+  //     onClose()
+  //   }
+  // }
 
   const handleDownload = async () => {
     if (pdfUrl) {
@@ -211,7 +267,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   }
 
   return (
-    <Sidebar visible position="right" style={{ width: '40vw' }} onHide={onClose}>
+    <Sidebar visible position="right" style={{ width: '50vw' }} onHide={onClose}>
       {loading ? (
         <div
           style={{
@@ -229,7 +285,14 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
       ) : (
         <>
           <div
-            style={{ display: 'flex', flexDirection: 'column', height: '100vh', padding: '20px' }}>
+            id="pdfWrappper"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100vh',
+              // width: '100vw',
+              padding: '20px',
+            }}>
             <div
               style={{
                 position: 'fixed',
@@ -308,7 +371,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
             draggable={false}
             style={{
               width: '700px',
-              height: mooringResponse ? '400px' : '300px',
+              height: mooringResponse ? '450px' : '300px',
               borderRadius: '8px',
               overflow: 'hidden',
             }}

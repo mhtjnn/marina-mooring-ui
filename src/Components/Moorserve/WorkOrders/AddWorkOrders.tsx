@@ -892,7 +892,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }, [])
 
   useEffect(() => {
-    if (workOrder.mooringId.id) getMooringDataById(workOrder.mooringId.id)
+    if (workOrder.mooringId && workOrder.mooringId.id) getMooringDataById(workOrder.mooringId.id)
   }, [workOrder.mooringId])
 
   useEffect(() => {

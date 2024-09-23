@@ -143,7 +143,8 @@ const Settings = () => {
               const hasDropdownSelected =
                 rowData?.quickbookCustomerResponseDto?.id || savedValues[rowData.id]
               if (rowData.id === currentlyEditing) {
-                UpdateMapCustomerToQuickBook(rowData)
+                // UpdateMapCustomerToQuickBook(rowData)
+                MapCustomerToQuickBook(rowData)
                 setCurrentlyEditing(null)
               } else if (dropdownValue || hasDropdownSelected) {
                 if (!(savedValues[rowData?.id] || rowData?.quickbookCustomerResponseDto?.id)) {
