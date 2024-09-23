@@ -6,7 +6,12 @@ import { GrFormSubtract } from 'react-icons/gr'
 import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 
-import { ErrorResponse, ViewFormsResponse, WorkOrderResponse } from '../../../Type/ApiTypes'
+import {
+  ErrorResponse,
+  MooringResponse,
+  ViewFormsResponse,
+  WorkOrderResponse,
+} from '../../../Type/ApiTypes'
 import {
   useAddWorkOrderMutation,
   useGetViewFormMutation,
@@ -50,6 +55,7 @@ import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { MultiSelect } from 'primereact/multiselect'
+import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -92,6 +98,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [boatyardBasedOnMooringId, setBoatyardBasedOnMooringId] = useState<MetaData[]>()
   const [customerBasedOnMooringId, setCustomerBasedOnMooringId] = useState<any[]>()
   const [technicians, setTechnicians] = useState<any[]>()
+  const [mooringDetails, setmooringDetails] = useState<any>()
   const [moorings, setMoorings] = useState<MetaData[]>()
   const [viewPdf, setViewPdf] = useState<any>()
   const [workOrderStatusValue, setWorkOrderStatusValue] = useState<MetaData[]>()
@@ -144,6 +151,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [saveWorkOrder] = useAddWorkOrderMutation()
   const [updateWorkOrder] = useUpdateWorkOrderMutation()
   const [getViewForms] = useGetViewFormMutation()
+  const [getMooringDetails] = useGetMooringByIdMutation()
   const toastRef = useRef<Toast>(null)
   const [imageVisible, setImageVisible] = useState(false)
   const [imageRequestDtoList, setimageRequestDtoList] = useState<any>()
@@ -850,6 +858,30 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
 
+  const getMooringDataById = useCallback(async (id: any) => {
+    setIsLoading(true)
+    try {
+      const params: Params = {}
+      const response = await getMooringDetails({ id: id }).unwrap()
+      const { status, content, message, totalSize } = response as MooringResponse
+      if (status === 200) {
+        setmooringDetails(content)
+      } else {
+        setIsLoading(false)
+        toastRef?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: message,
+          life: 3000,
+        })
+      }
+    } catch (error) {
+      const { message: msg } = error as ErrorResponse
+      setIsLoading(false)
+      console.error('Error occurred while fetching customer data:', msg)
+    }
+  }, [])
+
   useEffect(() => {
     if (workOrder?.workOrderStatus?.id === 10 || workOrderData?.inventoryResponseDtoList)
       fetchVendorDataAndUpdate()
@@ -858,6 +890,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   useEffect(() => {
     fetchDataAndUpdate()
   }, [])
+
+  useEffect(() => {
+    if (workOrder.mooringId.id) getMooringDataById(workOrder.mooringId.id)
+  }, [workOrder.mooringId])
 
   useEffect(() => {
     if (vendorId) {
@@ -1672,7 +1708,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           fileData={formData ? formData : viewPdf?.encodedFormData}
           fileName={viewPdf?.formName ? viewPdf?.formName : viewPdf?.fileName}
           onClose={() => setViewPdf(null)}
-          mooringResponse={workOrderData?.mooringResponseDto}
+          mooringResponse={mooringDetails || workOrderData?.mooringResponseDto}
         />
       )}
     </>

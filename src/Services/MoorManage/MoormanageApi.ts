@@ -97,6 +97,14 @@ const moormanageApi = userApi.injectEndpoints({
       }),
     }),
 
+    getMooringById: builder.mutation({
+      query: ({ id }: { id: number }) => ({
+        url: `api/v1/mooring/${id}`,
+        method: 'GET',
+        // params: { id },
+      }),
+    }),
+
     updateMoorings: builder.mutation({
       query: ({ payload, id }: { payload: UpdateMooringPayload; id: number }) => ({
         url: `api/v1/mooring/${id}`,
@@ -639,4 +647,5 @@ export const {
   useUpdateImageMutation,
   useGetCustomerWithMooringWithCustomerImagesMutation,
   useGetCustomerWithMooringWithMooringImagesMutation,
+  useGetMooringByIdMutation,
 } = moormanageApi

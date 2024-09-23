@@ -20,7 +20,6 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const [newText, setNewText] = useState('')
   const [textSize, setTextSize] = useState<any>(16)
   const { toPDF, targetRef } = usePDF({ filename: fileName })
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [textEntries, setTextEntries] = useState<
     { text: string; x: number; y: number; size: number }[]
   >([])
@@ -34,6 +33,8 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
   const pdfRef = useRef<HTMLDivElement>(null)
   const [showDialog, setShowDialog] = useState(false)
   const { setFormData } = useContext(FormDataContext)
+
+  console.log('mooringResp', mooringResponse)
 
   const handleChipClick = (value: any, header: string) => {
     const propertyPath = headerToPropertyMap[header]
@@ -305,7 +306,12 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
             headerStyle={{ cursor: 'alias', color: 'black' }}
             visible={showDialog}
             draggable={false}
-            style={{ width: '700px', height: '500px', borderRadius: '8px' }}
+            style={{
+              width: '700px',
+              height: mooringResponse ? '400px' : '300px',
+              borderRadius: '8px',
+              overflow: 'hidden',
+            }}
             footer={
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                 <Button label="Add" icon="pi pi-check" onClick={handleAddText} />
@@ -324,13 +330,9 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
               setShowDialog(false)
               setNewText('')
             }}>
-            <div style={{ padding: '20px', maxWidth: '100%', margin: '0 auto' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '15px',
-                }}>
+            <div
+              style={{ padding: '20px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <InputText
                   value={newText}
                   onChange={(e) => setNewText(e.target.value)}
@@ -365,38 +367,44 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
               </div>
 
               {/* Chips Container */}
-              <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {chipValues.map((header, index) => (
-                  <Chip
-                    key={index}
-                    label={header}
-                    onClick={() => handleChipClick(mooringResponse, header)}
-                    style={{
-                      backgroundColor: '#529cd7',
-                      color: '#ffffff',
-                      borderRadius: '20px',
-                      fontWeight: 'bold',
-                      transition: '0.3s',
-                      cursor: 'pointer',
-                      padding: '8px 12px',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#2196f3'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#529cd7'
-                    }}
-                  />
-                ))}
-              </div>
+              {mooringResponse && (
+                <div style={{ marginTop: '20px', flexGrow: 1, overflowY: 'auto' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    {chipValues
+                      .filter((header) => {
+                        const propertyPath = headerToPropertyMap[header]
+                        const value = propertyPath
+                          .split('.')
+                          .reduce((obj: any, key: any) => obj && obj[key], mooringResponse)
+                        return value !== null && value !== undefined && value !== ''
+                      })
+                      .map((header, index) => (
+                        <Chip
+                          key={index}
+                          label={header}
+                          onClick={() => handleChipClick(mooringResponse, header)}
+                          style={{
+                            backgroundColor: '#529cd7',
+                            color: '#ffffff',
+                            borderRadius: '20px',
+                            fontWeight: 'bold',
+                            transition: '0.3s',
+                            cursor: 'pointer',
+                            padding: '8px 12px',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = '#2196f3'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = '#529cd7'
+                          }}
+                        />
+                      ))}
+                  </div>
+                </div>
+              )}
             </div>
           </Dialog>
-
-          <PopupModal
-            mooringResponse={mooringResponse}
-            visible={modalVisible}
-            onHide={() => setModalVisible(false)}
-          />
         </>
       )}
     </Sidebar>
