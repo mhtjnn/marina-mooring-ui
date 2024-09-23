@@ -166,9 +166,11 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       })
       return
     }
+
     const doc = new jsPDF()
     doc.setFontSize(16)
     doc.text('Work Orders', 14, 22)
+
     const headers = [
       'Customer Name',
       'Mooring Number',
@@ -177,12 +179,14 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       'Due Date',
       'Status',
     ]
+
     const columnWidths = [40, 40, 30, 30, 30, 50]
     const xStart = 5
     const yStart = 30
     const recordsPerPage = 20
     let yPosition = yStart
     let pageCount = 1
+
     const addHeaders = () => {
       let xPosition = xStart
       doc.setFontSize(12)
@@ -190,11 +194,13 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
         doc.text(header, xPosition, yPosition)
         xPosition += columnWidths[index]
       })
-      yPosition += 5
+      yPosition += 5 // Space below headers
     }
+
     addHeaders()
-    yPosition += 10
+    yPosition += 5 // Additional space between headers and values
     doc.setFontSize(10)
+
     data.forEach((item, rowIndex) => {
       let xPosition = xStart
       const row = [
@@ -225,9 +231,11 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
         doc.addPage()
         yPosition = yStart
         addHeaders()
+        yPosition += 5 // Space between headers and values for new page
         pageCount += 1
       }
     })
+
     doc.save('WorkOrders.pdf')
   }
 
