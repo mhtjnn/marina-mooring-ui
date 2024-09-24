@@ -511,8 +511,8 @@ const Technicians = () => {
                   <ProgressSpinner
                     style={{
                       position: 'absolute',
-                      top: '70%',
-                      left: '40%',
+                      top: '55%',
+                      left: '25%',
                       transform: 'translate(-50%, -50%)',
                       width: '50px',
                       height: '50px',
@@ -611,8 +611,8 @@ const Technicians = () => {
                     <ProgressSpinner
                       style={{
                         position: 'absolute',
-                        top: '70%',
-                        left: '40%',
+                        top: '50%',
+                        left: '70%',
                         transform: 'translate(-50%, -50%)',
                         width: '50px',
                         height: '50px',

@@ -452,11 +452,11 @@ const AccountRecievable = () => {
             }
           />
           <div className="text-center">
-            {isLoading && (
+            {true && (
               <ProgressSpinner
                 style={{
                   position: 'absolute',
-                  top: '50%',
+                  top: '90%',
                   left: '55%',
                   transform: 'translate(-50%, -50%)',
                   width: '50px',
@@ -558,7 +558,7 @@ const AccountRecievable = () => {
               <ProgressSpinner
                 style={{
                   position: 'absolute',
-                  top: '70%',
+                  top: '80%',
                   left: '55%',
                   transform: 'translate(-50%, -50%)',
                   width: '50px',

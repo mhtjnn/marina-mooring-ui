@@ -453,8 +453,8 @@ const Boatyards = () => {
             <ProgressSpinner
               style={{
                 position: 'absolute',
-                top: '80%',
-                left: '60%',
+                top: '70%',
+                left: '75%',
                 transform: 'translate(-50%, -50%)',
                 width: '50px',
                 height: '50px',
@@ -631,8 +631,8 @@ const Boatyards = () => {
           <ProgressSpinner
             style={{
               position: 'absolute',
-              top: '70%',
-              left: '40%',
+              top: '50%',
+              left: '30%',
               transform: 'translate(-50%, -50%)',
               width: '50px',
               height: '50px',

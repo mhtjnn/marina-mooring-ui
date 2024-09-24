@@ -3,7 +3,7 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Dropdown } from 'primereact/dropdown'
 import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
-import { FaFileUpload } from 'react-icons/fa'
+import { FaFileUpload, FaLessThanEqual } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 
 import {
@@ -719,17 +719,49 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
 
+  // const fetchVendorDataAndUpdate = async () => {
+  //   const { vendorValue } = await getVendorValue()
+  //   if (vendorValue !== null) {
+  //     setIsLoading(false)
+  //     setVendorsName(vendorValue)
+  //     if (workOrderData?.inventoryResponseDtoList) {
+  //       const vendorList = workOrderData?.inventoryResponseDtoList
+  //         .map((item: any) => item.vendorResponseDto)
+  //         .filter((vendor: any) => vendor !== null)
+  //       setVendorsName((prevState) => [...prevState, ...vendorList])
+  //     }
+  //   }
+  // }
   const fetchVendorDataAndUpdate = async () => {
     const { vendorValue } = await getVendorValue()
+
     if (vendorValue !== null) {
       setIsLoading(false)
-      setVendorsName(vendorValue)
+
+      // Create a Set to track unique vendor IDs
+      const existingVendorIds = new Set(vendorsName.map((vendor) => vendor.id))
+
+      // Process vendorValue to add to the Set
+      vendorValue.forEach((vendor) => existingVendorIds.add(vendor.id))
+
+      // Prepare vendorList from workOrderData
+      let vendorList = []
       if (workOrderData?.inventoryResponseDtoList) {
-        const vendorList = workOrderData?.inventoryResponseDtoList
+        vendorList = workOrderData.inventoryResponseDtoList
           .map((item: any) => item.vendorResponseDto)
           .filter((vendor: any) => vendor !== null)
-        setVendorsName((prevState) => [...prevState, ...vendorList])
+
+        vendorList.forEach((vendor: any) => existingVendorIds.add(vendor.id))
       }
+
+      // Combine vendorValue and vendorList and filter unique vendors
+      const allVendors = [...vendorValue, ...vendorList]
+      const uniqueVendors = Array.from(existingVendorIds)
+        .map((id) => allVendors.find((vendor) => vendor.id === id))
+        .filter(Boolean) // Remove any undefined values
+
+      // Update the state with unique vendors
+      setVendorsName(uniqueVendors)
     }
   }
 
@@ -1392,7 +1424,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                       <span>{option.vendorName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
                         workOrderData.inventoryResponseDtoList.some(
-                          (item: any) => item?.vendorResponseDto.id === option.id,
+                          (item: any) => item?.vendorResponseDto?.id === option.id,
                         ) && (
                           <i
                             className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
