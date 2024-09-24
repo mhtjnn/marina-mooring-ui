@@ -71,7 +71,9 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
   const [firstErrorField, setFirstErrorField] = useState('')
   const [gpsCoordinatesValue, setGpsCoordinatesValue] = useState<string>()
-  const [isBoatyardDisabled, setIsBoatyardDisabled] = useState(false)
+  const [isBoatyardDisabled, setIsBoatyardDisabled] = useState(
+    mooringRowData?.mooringStatus?.id === 1,
+  )
   const [mooringImages, setMooringImages] = useState<string[]>([])
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [encodedImages, setEncodedImages] = useState<string[]>([])
@@ -650,12 +652,10 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   }, [formData?.mooringStatus?.id])
 
   useEffect(() => {
-    if (formData?.mooringStatus?.id === 1 || mooringRowData?.mooringStatus?.id === 1) {
+    if (formData?.mooringStatus?.id === 1) {
       setIsBoatyardDisabled(true)
-    } else if (formData?.mooringStatus?.id != 1) {
-      setIsBoatyardDisabled(false)
     }
-  }, [formData?.mooringStatus?.id, mooringRowData?.mooringStatus?.id])
+  }, [formData?.mooringStatus?.id])
 
   return (
     <>
