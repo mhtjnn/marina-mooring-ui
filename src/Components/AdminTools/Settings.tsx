@@ -103,7 +103,12 @@ const Settings = () => {
             <Dropdown
               optionLabel="label"
               optionValue="quickbookCustomerId"
-              value={dropdownValues[rowData.id] || rowData?.quickbookCustomerResponseDto?.id}
+              value={
+                dropdownValues[rowData.id] ||
+                rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName +
+                  '' +
+                  rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName
+              }
               options={quickBookCustomer?.map?.((option: any) => {
                 return { ...option, value: option.quickbookCustomerId }
               })}
@@ -147,14 +152,7 @@ const Settings = () => {
                 MapCustomerToQuickBook(rowData)
                 setCurrentlyEditing(null)
               } else if (dropdownValue || hasDropdownSelected) {
-                if (
-                  !(
-                    savedValues[rowData?.id] ||
-                    rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName +
-                      '' +
-                      rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName
-                  )
-                ) {
+                if (!(savedValues[rowData?.id] || rowData?.quickbookCustomerResponseDto?.id)) {
                   MapCustomerToQuickBook(rowData)
                 } else {
                   setCurrentlyEditing(rowData.id)
