@@ -164,7 +164,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
           window.myPdf = pdf
           // Convert to Base64 string for all pages
           const base64Pdf = pdf.output('datauristring')
-          // setFormData(base64Pdf.split(',')[1])
+          setFormData(base64Pdf.split(',')[1])
           // const reader = new FileReader()
           // reader.readAsDataURL(pdf) // Convert the generated PDF Blob to Base64
           // reader.onloadend = () => {

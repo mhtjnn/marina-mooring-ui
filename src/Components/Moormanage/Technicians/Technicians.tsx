@@ -59,7 +59,6 @@ const Technicians = () => {
   const [completedWorkOrder, setCompletedOrder] = useState<number>(0)
   const options: string[] = [`Open (${openWorkOrder})`, `Completed (${completedWorkOrder})`]
   const [value, setValue] = useState<string>(options[0])
-  const [visible, setVisible] = useState(false)
 
   const onPageChange = (event: any) => {
     setPageNumber(event.page)
@@ -382,11 +381,11 @@ const Technicians = () => {
 
   return (
     <>
-      <Header header="MOORMANAGE/Technicians" />
       <Toast ref={toast} />
+      <div className={`flex flex-col mb-3 h-screen`}>
+        <Header header="MOORMANAGE/Technicians" />
 
-      <div className="mt-6">
-        <div className="flex justify-end mr-[54px]">
+        <div className="flex justify-end mr-[54px] mt-6">
           <div className="flex gap-4 items-center">
             <div className="">
               <p style={{ color: '#00426F', fontWeight: '600' }}>Filter order by Date</p>
