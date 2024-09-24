@@ -197,6 +197,7 @@ const Forms = () => {
   }
 
   const downloadFormsData = async (id: any) => {
+    setIsLoading(true)
     try {
       const response = await getViewForms({ id: id }).unwrap()
       const { status, content, message } = response as ViewFormsResponse
@@ -408,7 +409,7 @@ const Forms = () => {
                   style={{
                     position: 'absolute',
                     top: '50%',
-                    left: '50%',
+                    left: '55%',
                     transform: 'translate(-50%, -50%)',
                     width: '50px',
                     height: '50px',

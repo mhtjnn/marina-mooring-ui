@@ -737,14 +737,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
     if (vendorValue !== null) {
       setIsLoading(false)
-
-      // Create a Set to track unique vendor IDs
       const existingVendorIds = new Set(vendorsName.map((vendor) => vendor.id))
-
-      // Process vendorValue to add to the Set
       vendorValue.forEach((vendor) => existingVendorIds.add(vendor.id))
-
-      // Prepare vendorList from workOrderData
       let vendorList = []
       if (workOrderData?.inventoryResponseDtoList) {
         vendorList = workOrderData.inventoryResponseDtoList
@@ -753,14 +747,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
         vendorList.forEach((vendor: any) => existingVendorIds.add(vendor.id))
       }
-
-      // Combine vendorValue and vendorList and filter unique vendors
       const allVendors = [...vendorValue, ...vendorList]
       const uniqueVendors = Array.from(existingVendorIds)
         .map((id) => allVendors.find((vendor) => vendor.id === id))
-        .filter(Boolean) // Remove any undefined values
-
-      // Update the state with unique vendors
+        .filter(Boolean)
       setVendorsName(uniqueVendors)
     }
   }

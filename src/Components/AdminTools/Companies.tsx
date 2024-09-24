@@ -45,6 +45,7 @@ const CustomerOwner = () => {
   const [searchText, setSearchText] = useState('')
   const [searchUsersText, setSearchUsersText] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoader, setIsLoader] = useState(true)
   const [getCustomerOwnerData, setgetCustomerOwnerData] = useState<CustomerPayload[]>([])
   const [getCustomerOwnerUserData, setgetCustomerOwnerUserData] = useState<CustomerPayload[]>([])
   const [selectedId, setSelectedId] = useState<any>('')
@@ -343,7 +344,7 @@ const CustomerOwner = () => {
 
   const getCustomerAdminsUsers = useCallback(
     async (id: any) => {
-      setIsLoading(true)
+      setIsLoader(true)
       try {
         let params: Params = {}
         if (searchUsersText) {
@@ -358,7 +359,7 @@ const CustomerOwner = () => {
         const response = await getUser(params).unwrap()
         const { status, message, content, totalSize, currentSize } = response as GetUserResponse
         if (status === 200 && Array.isArray(content)) {
-          setIsLoading(false)
+          setIsLoader(false)
           if (content.length > 0) {
             setgetCustomerOwnerUserData(content)
             setCustomerAdminId(id)
@@ -368,7 +369,7 @@ const CustomerOwner = () => {
             setCustomerAdminId(id)
           }
         } else {
-          setIsLoading(false)
+          setIsLoader(false)
           setgetCustomerOwnerUserData([])
         }
       } catch (error) {
@@ -567,7 +568,6 @@ const CustomerOwner = () => {
                     fontWeight: 600,
                     backgroundColor: '#F9FAFB',
                   }}
-                  // scrollable={true}
                   selectionMode="single"
                   onSelectionChange={(e) => {
                     setSelectedProduct(e.value)
@@ -590,6 +590,21 @@ const CustomerOwner = () => {
                     </div>
                   }
                 />
+              </div>
+              <div data-testid="progress">
+                {isLoading && (
+                  <ProgressSpinner
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '40%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '50px',
+                      height: '50px',
+                    }}
+                    strokeWidth="4"
+                  />
+                )}
               </div>
               <div data-testid="paginatorOne" className="mt-auto">
                 <Paginator
@@ -644,21 +659,7 @@ const CustomerOwner = () => {
                 height: '18px',
               }}
             />
-            <div data-testid="progress">
-              {isLoading && (
-                <ProgressSpinner
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '50px',
-                    height: '50px',
-                  }}
-                  strokeWidth="4"
-                />
-              )}
-            </div>
+
             <div
               data-testid="customerDataAdmin"
               className="flex flex-col overflow-hidden p-4"
@@ -687,6 +688,21 @@ const CustomerOwner = () => {
                     </div>
                   }
                 />
+              </div>
+              <div data-testid="progress">
+                {isLoader && (
+                  <ProgressSpinner
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '80%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '50px',
+                      height: '50px',
+                    }}
+                    strokeWidth="4"
+                  />
+                )}
               </div>
               <div data-testid="paginatorTwo" className="mt-auto">
                 <Paginator

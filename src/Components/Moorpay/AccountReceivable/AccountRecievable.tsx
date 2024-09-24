@@ -451,21 +451,6 @@ const AccountRecievable = () => {
               </div>
             }
           />
-          <div className="text-center">
-            {true && (
-              <ProgressSpinner
-                style={{
-                  position: 'absolute',
-                  top: '90%',
-                  left: '55%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '50px',
-                  height: '50px',
-                }}
-                strokeWidth="4"
-              />
-            )}
-          </div>
         </div>
 
         <div className="">
@@ -558,7 +543,7 @@ const AccountRecievable = () => {
               <ProgressSpinner
                 style={{
                   position: 'absolute',
-                  top: '80%',
+                  top: '70%',
                   left: '55%',
                   transform: 'translate(-50%, -50%)',
                   width: '50px',
