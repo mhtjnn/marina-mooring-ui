@@ -858,29 +858,32 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
 
-  const getMooringDataById = useCallback(async (id: any) => {
-    setIsLoading(true)
-    try {
-      const params: Params = {}
-      const response = await getMooringDetails({ id: id }).unwrap()
-      const { status, content, message, totalSize } = response as MooringResponse
-      if (status === 200) {
-        setmooringDetails(content)
-      } else {
+  const getMooringDataById = useCallback(
+    async (id: any) => {
+      setIsLoading(true)
+      try {
+        const params: Params = {}
+        const response = await getMooringDetails({ id: id }).unwrap()
+        const { status, content, message, totalSize } = response as MooringResponse
+        if (status === 200) {
+          setmooringDetails(content)
+        } else {
+          setIsLoading(false)
+          toastRef?.current?.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: message,
+            life: 3000,
+          })
+        }
+      } catch (error) {
+        const { message: msg } = error as ErrorResponse
         setIsLoading(false)
-        toastRef?.current?.show({
-          severity: 'error',
-          summary: 'Error',
-          detail: message,
-          life: 3000,
-        })
+        console.error('Error occurred while fetching customer data:', msg)
       }
-    } catch (error) {
-      const { message: msg } = error as ErrorResponse
-      setIsLoading(false)
-      console.error('Error occurred while fetching customer data:', msg)
-    }
-  }, [])
+    },
+    [workOrder.mooringId],
+  )
 
   useEffect(() => {
     if (workOrder?.workOrderStatus?.id === 10 || workOrderData?.inventoryResponseDtoList)

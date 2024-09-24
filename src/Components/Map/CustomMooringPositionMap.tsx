@@ -158,7 +158,7 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                         <MooringMapModal
                           gpsValue={position}
                           mooringId={mooring?.mooringNumber}
-                          mooringData={mooringData}
+                          mooringData={mooring}
                         />
                       </Popup>
                     </Marker>
