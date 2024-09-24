@@ -13,6 +13,7 @@ import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { Chip } from 'primereact/chip'
 import { chipValues, headerToPropertyMap } from '../../../Type/CommonType'
+import jsPDF from 'jspdf'
 
 const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, mooringResponse }) => {
   const [loading, setLoading] = useState(false)
@@ -156,14 +157,14 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
       if (wrapperElement) {
         wrapperElement.style.height = 'auto'
       }
-      toPDF({ method: 'build' })
+      toPDF()
         // @ts-expect-error
         .then(async (pdf: any) => {
           // @ts-expect-error
           window.myPdf = pdf
           // Convert to Base64 string for all pages
           const base64Pdf = pdf.output('datauristring')
-          setFormData(base64Pdf.split(',')[1])
+          // setFormData(base64Pdf.split(',')[1])
           // const reader = new FileReader()
           // reader.readAsDataURL(pdf) // Convert the generated PDF Blob to Base64
           // reader.onloadend = () => {
@@ -182,50 +183,6 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
         })
     }
   }
-
-  // const handleSave = async () => {
-  //   if (pdfUrl) {
-  //     setLoading(true) // Show loading spinner during the process
-
-  //     // Fetch the existing PDF
-  //     const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
-
-  //     // Load the PDF document
-  //     const pdfDoc = await PDFDocument.load(existingPdfBytes)
-
-  //     const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
-  //     const pages = pdfDoc.getPages()
-
-  //     // Add text entries to each page
-  //     textEntries.forEach((entry) => {
-  //       pages.forEach((page) => {
-  //         const { height: pageHeight } = page.getSize()
-  //         if (entry.y <= pageHeight) {
-  //           page.drawText(entry.text, {
-  //             x: entry.x,
-  //             y: pageHeight - entry.y,
-  //             size: entry.size,
-  //             font: helveticaFont,
-  //             color: rgb(0, 0, 0),
-  //           })
-  //         }
-  //       })
-  //     })
-
-  //     // Save the modified PDF
-  //     const pdfBytes = await pdfDoc.save()
-
-  //     // Trigger the download
-  //     const blob = new Blob([pdfBytes], { type: 'application/pdf' })
-  //     const link = document.createElement('a')
-  //     link.href = URL.createObjectURL(blob)
-  //     link.download = fileName // Set the desired file name
-  //     link.click()
-
-  //     setLoading(false)
-  //     onClose()
-  //   }
-  // }
 
   const handleDownload = async () => {
     if (pdfUrl) {
@@ -312,7 +269,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                 label="Download PDF"
                 icon="pi pi-download"
                 className="p-button-rounded p-button-info"
-                onClick={handleDownload}
+                onClick={() => toPDF()}
                 style={{ marginLeft: '10px' }}
               /> */}
               <Button
@@ -334,7 +291,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
             </div>
 
             <div ref={targetRef} style={{ flexGrow: 1, overflow: 'auto', position: 'relative' }}>
-              <div ref={pdfRef} style={{ position: 'relative', height: '100%' }}>
+              <div ref={pdfRef}>
                 <div
                   onClick={handleClick}
                   style={{

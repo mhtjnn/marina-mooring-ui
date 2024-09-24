@@ -282,7 +282,7 @@ const AdminLayout = () => {
             style={{
               background: '#F2F2F2',
               transition: 'width 0.3s ease-in-out',
-              // marginLeft: open ? '25px' : '6px',
+              marginLeft: open ? '25px' : '6px',
             }}>
             <NavLink
               to={''}

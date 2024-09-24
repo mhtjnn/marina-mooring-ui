@@ -23,6 +23,7 @@ import { useSelector } from 'react-redux'
 import { selectCustomerId } from '../../../Store/Slice/userSlice'
 import { properties } from '../../Utils/MeassageProperties'
 import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { Paginator } from 'primereact/paginator'
 
 const InventoryDetails: React.FC = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -31,6 +32,10 @@ const InventoryDetails: React.FC = () => {
   const [inventoryData, setInventoryData] = useState<any[]>()
   const [vendorData, setVendorData] = useState<any>()
   const [sectectedInventory, setSelectedInventory] = useState<any>([])
+  const [pageNumber, setPageNumber] = useState(0)
+  const [pageNumber1, setPageNumber1] = useState(0)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalRecords, setTotalRecords] = useState<number>()
   const [editMode, setEditMode] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const location = useLocation()
@@ -40,6 +45,13 @@ const InventoryDetails: React.FC = () => {
   const [getVendorById] = useGetVendorByIdMutation()
   const [deleteInventory] = useDeleteInventoryMutation()
   const toast = useRef<Toast>(null)
+
+  const onPageChange = (event: any) => {
+    setPageNumber(event.page)
+    setPageNumber1(event.first)
+    setPageSize(event.rows)
+  }
+
   const handleEdit = (rowData: any) => {
     setEditMode(true)
     setModalVisible(true)
@@ -255,108 +267,115 @@ const InventoryDetails: React.FC = () => {
 
   return (
     <>
-      <Header header="MOORMANAGE/Vendor" />
       <Toast ref={toast} />
-
-      <div className="flex justify-end">
-        <div className="flex gap-4 mr-12 mt-8">
-          <div>
+      <div className={`flex flex-col mb-3 h-screen ${modalVisible ? 'backdrop-blur-lg' : ''}`}>
+        <Header header="MOORMANAGE/Vendor" />
+        <div className="flex justify-end">
+          <div className="flex gap-4 mr-12 mt-8">
             <div className="p-input-icon-left">
               <IoSearchSharp className="text-blue-900" />
               <InputText
                 value={searchText}
                 onChange={handleSearch}
                 placeholder="search sku, name, type"
-                className="h-[44px] w-[237px] cursor-pointer pl-8 rounded-lg text-bold  "
+                className="h-[44px] w-[237px] cursor-pointer pl-8 rounded-lg text-bold"
               />
             </div>
-          </div>
 
-          <CustomModal
-            buttonText={'ADD NEW'}
-            children={
-              <AddInventory
-                id={vendorId}
-                toastRef={toast}
-                editMode={editMode}
-                selectedInventory={sectectedInventory}
-                getInventoryHandler={getInventoryHandler}
-                closeModal={handleModalClose}
-              />
-            }
-            headerText={<h1 className="text-xl font-extrabold text-black ml-4">Add Inventory</h1>}
-            visible={modalVisible}
-            onClick={handleButtonClick}
-            onHide={handleModalClose}
-            buttonStyle={AddNewButtonStyle}
-            icon={<img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8" />}
-            dialogStyle={{
-              height: '400px',
-              minHeight: '400px',
-              ...DialogStyle,
-            }}
-          />
-        </div>
-      </div>
-      {inventoryData && (
-        <div className="rounded-md border-[1px] border-gray-300 w-100% h-[90px] ml-14 mr-10 mt-5 bg-white">
-          <div className="flex justify-between pr-4 pl-4  mt-4">
-            <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
-              <p>ID:</p>
-              <p className="mt-1 text-lg">{vendorData?.id}</p>
-            </div>
-            <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
-              <p>Sales Representative:</p>
-              <p className="mt-1 text-lg">
-                {vendorData?.firstName} {''}
-                {vendorData?.lastName}
-              </p>
-            </div>
-            <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
-              <p>Phone Number:</p>
-              <p className="mt-1 text-lg">{vendorData?.salesRepPhoneNumber}</p>
-            </div>
-            <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
-              <p>Email Address:</p>
-              <p className="mt-1 text-lg">{vendorData?.salesRepEmail}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="bg-white rounded-md border-[1px] h-[600px]  border-gray-300 w-100% ml-14 mr-10 mt-8">
-        <DataTableComponent
-          tableStyle={{
-            fontSize: '12px',
-            color: '#000000',
-            fontWeight: 600,
-            backgroundColor: '#D9D9D9',
-          }}
-          columns={VendorInventoryColumns}
-          actionButtons={ActionButtonColumn}
-          scrollable={true}
-          data={inventoryData}
-          style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
-          emptyMessage={
-            <div className="text-center mt-40">
-              <img src="/assets/images/empty.png" alt="Empty Data" className="w-28 mx-auto mb-4" />
-              <p className="text-gray-500">{properties.noDataMessage}</p>
-              {isLoading && (
-                <ProgressSpinner
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '50px',
-                    height: '50px',
-                  }}
-                  strokeWidth="4"
+            <CustomModal
+              buttonText={'ADD NEW'}
+              children={
+                <AddInventory
+                  id={vendorId}
+                  toastRef={toast}
+                  editMode={editMode}
+                  selectedInventory={sectectedInventory}
+                  getInventoryHandler={getInventoryHandler}
+                  closeModal={handleModalClose}
                 />
-              )}
+              }
+              headerText={<h1 className="text-xl font-extrabold text-black ml-4">Add Inventory</h1>}
+              visible={modalVisible}
+              onClick={handleButtonClick}
+              onHide={handleModalClose}
+              buttonStyle={AddNewButtonStyle}
+              icon={<img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8" />}
+              dialogStyle={{
+                height: '400px',
+                minHeight: '400px',
+                ...DialogStyle,
+              }}
+            />
+          </div>
+        </div>
+
+        {inventoryData && (
+          <div className="rounded-md border-[1px] border-gray-300 w-100% h-[90px] ml-14 mr-10 mt-5 bg-white">
+            <div className="flex justify-between pr-4 pl-4 mt-4">
+              <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
+                <p>ID:</p>
+                <p className="mt-1 text-lg">{vendorData?.id}</p>
+              </div>
+              <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
+                <p>Sales Representative:</p>
+                <p className="mt-1 text-lg">
+                  {vendorData?.firstName} {vendorData?.lastName}
+                </p>
+              </div>
+              <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
+                <p>Phone Number:</p>
+                <p className="mt-1 text-lg">{vendorData?.salesRepPhoneNumber}</p>
+              </div>
+              <div style={{ fontSize: '14px', color: '#000000', fontWeight: '500' }}>
+                <p>Email Address:</p>
+                <p className="mt-1 text-lg">{vendorData?.salesRepEmail}</p>
+              </div>
             </div>
-          }
-        />
+          </div>
+        )}
+
+        <div className="flex-grow overflow-hidden ml-[3rem] mr-[2.30rem] mt-3 border border-solid border-[#D5E1EA] bg-white rounded-lg">
+          <div className="flex flex-col h-full">
+            <div className="flex-grow overflow-auto">
+              <DataTableComponent
+                tableStyle={{
+                  fontSize: '12px',
+                  color: '#000000',
+                  fontWeight: 600,
+                  backgroundColor: '#D9D9D9',
+                }}
+                columns={VendorInventoryColumns}
+                actionButtons={ActionButtonColumn}
+                scrollable={true}
+                data={inventoryData}
+                style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
+                emptyMessage={
+                  <div className="text-center mt-40">
+                    <img
+                      src="/assets/images/empty.png"
+                      alt="Empty Data"
+                      className="w-28 mx-auto mb-4"
+                    />
+                    <p className="text-gray-500">{properties.noDataMessage}</p>
+                    {isLoading && (
+                      <ProgressSpinner
+                        style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          width: '50px',
+                          height: '50px',
+                        }}
+                        strokeWidth="4"
+                      />
+                    )}
+                  </div>
+                }
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </>
   )

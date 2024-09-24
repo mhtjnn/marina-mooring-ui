@@ -205,35 +205,16 @@ const Vendors = () => {
   return (
     <>
       <Toast ref={toast} />
-      <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
+      <div className={`flex flex-col mb-3 h-screen ${modalVisible ? 'backdrop-blur-lg' : ''}`}>
         <Header header="MOORMANAGE/Vendor" />
         <div className="flex justify-end">
           <div className="flex gap-4 mr-12 mt-6">
-            <div>
-              <div className="p-input-icon-left">
-                <InputText
-                  value={searchText}
-                  onChange={handleSearch}
-                  placeholder="Search"
-                  className="h-[44px] w-[237px] cursor-pointer pl-8 rounded-lg text-bold  "
-                />
-                <img
-                  src="/assets/images/Search.svg"
-                  alt="Search Icon"
-                  className="p-clickable"
-                  style={{
-                    position: 'absolute',
-                    left: '10px',
-                    right: '-10px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: '18px',
-                    height: '18px',
-                  }}
-                />
-              </div>
-            </div>
-
+            <InputText
+              value={searchText}
+              onChange={handleSearch}
+              placeholder="Search"
+              className="h-[44px] w-[237px] cursor-pointer pl-8 rounded-lg text-bold"
+            />
             <CustomModal
               buttonText={'ADD NEW'}
               buttonStyle={AddNewButtonStyle}
@@ -253,12 +234,9 @@ const Vendors = () => {
                 </h1>
               }
               visible={modalVisible}
-              onClick={() => {
-                setModalVisible(true)
-              }}
+              onClick={() => setModalVisible(true)}
               onHide={handleModalClose}
               dialogStyle={{
-                height: '630px',
                 minHeight: '630px',
                 ...DialogStyle,
               }}
@@ -266,16 +244,8 @@ const Vendors = () => {
           </div>
         </div>
 
-        <div
-          style={{
-            height: '700px',
-            borderRadius: '10px',
-            border: '1px solid #D5E1EA',
-            backgroundColor: '#FFFFFF',
-            position: 'relative',
-          }}
-          className={`ml-[3rem] mr-[2.30rem] mt-3 `}>
-          <div data-testid="customer" className="flex flex-col h-full ">
+        <div className="flex-grow overflow-hidden ml-[3rem] mr-[2.30rem] mt-3 border border-solid border-[#D5E1EA] bg-white rounded-lg">
+          <div className="flex flex-col h-full">
             <div className="flex-grow overflow-auto">
               <DataTableComponent
                 tableStyle={{
@@ -316,7 +286,8 @@ const Vendors = () => {
                 }
               />
             </div>
-            <div data-testid="PaginatorOne" className="mt-auto">
+
+            <div data-testid="PaginatorOne" className="mt-4">
               <Paginator
                 first={pageNumber1}
                 rows={pageSize}
@@ -324,9 +295,6 @@ const Vendors = () => {
                 rowsPerPageOptions={[5, 10, 20, 30]}
                 onPageChange={onPageChange}
                 style={{
-                  position: 'sticky',
-                  bottom: 0,
-                  zIndex: 1,
                   backgroundColor: 'white',
                   borderTop: '1px solid #D5E1EA',
                   padding: '0.5rem',
