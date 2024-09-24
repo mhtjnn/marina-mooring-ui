@@ -106,7 +106,7 @@ const Settings = () => {
               value={
                 dropdownValues[rowData.id] ||
                 rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName +
-                  '' +
+                  ' ' +
                   rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName
               }
               options={quickBookCustomer?.map?.((option: any) => {
