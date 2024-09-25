@@ -38,6 +38,7 @@ import { AiOutlineDelete } from 'react-icons/ai'
 import { NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUtils'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
+import { validateFiles } from '../../Helper/Helper'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -195,47 +196,19 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     const files = Array.from(fileInput.files || [])
 
     if (files.length === 0) return
-
-    // Filter out valid image files
-    const validImageFiles = files.filter(
-      (file) => file.type.startsWith('image/') && file.size >= 5120 && file.size <= 1048576,
-    )
-
-    // Identify invalid files
-    const invalidTypeFiles = files.filter((file) => !file.type.startsWith('image/'))
-    const invalidSizeFiles = files.filter((file) => file.size < 5120 || file.size > 1048576)
-
-    // Log invalid files for debugging
-    console.log('Invalid Type Files:', invalidTypeFiles)
-    console.log('Invalid Size Files:', invalidSizeFiles)
-
+    const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
+      min: 5120,
+      max: 1048576,
+    })
     if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
-      let detailMessage = 'Only image files are allowed.'
-
-      // Check if there are any invalid size files
-      if (invalidSizeFiles.length > 0) {
-        detailMessage = 'Images must be between 5 KB and 1 MB.'
-      }
-
-      // Show error message
-      toastRef?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: detailMessage,
-        life: 3000,
-      })
-
-      // Clear the input value
       fileInput.value = ''
       return
     }
-
-    // Proceed with base64 encoding for valid files
     const newBase64Strings: string[] = []
     const newImageUrls: string[] = []
     const newImageRequestDtoList: { imageName: string; imageData: string; note: string }[] = []
 
-    for (const file of validImageFiles) {
+    for (const file of validFiles) {
       try {
         const base64String = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader()
@@ -257,14 +230,12 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
         newImageRequestDtoList.push({
           imageName: file.name,
           imageData: base64String,
-          note: '', // Initialize with an empty note
+          note: '',
         })
       } catch (error) {
         console.error('Error reading file:', error)
       }
     }
-
-    // Update state with valid images
     setImages((prevImages) => [...prevImages, ...newImageUrls])
     setEncodedImages((prevEncoded) => [...prevEncoded, ...newBase64Strings])
     setImageRequestDtoList((prevList) => [...prevList, ...newImageRequestDtoList])

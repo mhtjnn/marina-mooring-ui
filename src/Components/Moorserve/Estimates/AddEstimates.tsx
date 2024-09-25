@@ -3,7 +3,6 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Dropdown } from 'primereact/dropdown'
 import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
-import { Dialog } from 'primereact/dialog'
 import { ErrorResponse, WorkOrderResponse } from '../../../Type/ApiTypes'
 import {
   useAddEstimateMutation,
@@ -33,7 +32,6 @@ import { selectCustomerId } from '../../../Store/Slice/userSlice'
 import { Calendar } from 'primereact/calendar'
 import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
-import ShowImages from '../../CommonComponent/UploadImages'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { InputText } from 'primereact/inputtext'
 
@@ -92,8 +90,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [lastChangedField, setLastChangedField] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
-  const [customerImages, setCustomerImages] = useState<string[]>([])
   const [vendorId, setVendorId] = useState<any>()
   const { getMooringBasedOnCustomerIdAndBoatyardIdData } = GetMooringBasedOnCustomerIdAndBoatyardId(
     workOrder?.customerName?.id && workOrder?.customerName?.id,
@@ -121,8 +117,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const [saveEstimation] = useAddEstimateMutation()
   const [updateEstimate] = useUpdateEstimateMutation()
   const toastRef = useRef<Toast>(null)
-  const [imageVisible, setImageVisible] = useState(false)
-  const [imageRequestDtoList, setimageRequestDtoList] = useState<any>()
   const boatyardsNameOptions = workOrder?.mooringId?.id ? boatyardBasedOnMooringId : boatyardsName
   const CustomerNameOptions = workOrder?.mooringId?.id
     ? customerBasedOnMooringId
@@ -171,12 +165,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     }
     setErrorMessage(errors)
     return errors
-  }
-
-  const handleNoteChange = (index: number, note: string) => {
-    setimageRequestDtoList((prevList: any[]) =>
-      prevList?.map((item, i) => (i === index ? { ...item, note } : item)),
-    )
   }
 
   const handleInputChange = (field: string, value: any) => {
@@ -322,65 +310,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (!dateString) return null
     const [month, day, year] = dateString?.split('/')
     return new Date(year, month - 1, day)
-  }
-
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileInput = event.target
-    const files = Array.from(fileInput.files || [])
-    if (files.length === 0) return
-    const validImageFiles = files.filter(
-      (file) => file.type.startsWith('image/') && file.size >= 5120 && file.size <= 1048576,
-    )
-    const invalidTypeFiles = files.filter((file) => !file.type.startsWith('image/'))
-    const invalidSizeFiles = files.filter((file) => file.size < 5120 || file.size > 1048576)
-    if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
-      let detailMessage = 'Only image files are allowed'
-      if (invalidSizeFiles.length > 0) detailMessage = 'Images must be between 5 KB and 1 MB.'
-      toastRef?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: detailMessage,
-        life: 3000,
-      })
-      return
-    }
-    const newBase64Strings: string[] = []
-    const newImageUrls: string[] = []
-    const imageRequestDtoList: { imageName: string; imageData: string }[] = []
-    for (const file of validImageFiles) {
-      try {
-        const base64String = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = () => {
-            if (typeof reader.result === 'string') {
-              resolve(reader.result?.split(',')[1])
-            } else {
-              reject(new Error('FileReader result is not a string.'))
-            }
-          }
-          reader.onerror = () => {
-            reject(new Error('Error reading file.'))
-          }
-          reader.readAsDataURL(file)
-        })
-        newBase64Strings.push(base64String)
-        newImageUrls.push(`data:image/png;base64,${base64String}`)
-        imageRequestDtoList?.push({
-          imageName: file.name,
-          imageData: base64String,
-        })
-      } catch (error) {
-        console.error('Error reading file:', error)
-      }
-    }
-    setCustomerImages((prevImages) => [...prevImages, ...newImageUrls])
-    setimageRequestDtoList(imageRequestDtoList)
-  }
-
-  const handleRemoveImage = (index: number) => {
-    const newImages = [...customerImages]
-    newImages.splice(index, 1)
-    setCustomerImages(newImages)
   }
 
   const SaveEstimate = async () => {
@@ -566,7 +495,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     }
     if (mooringIds !== null) {
       setIsLoading(false)
-      setMoorings(mooringIds)
+      const filteredMoorings = mooringIds?.filter((mooring) => mooring?.mooringNumber !== '')
+      setMoorings(filteredMoorings)
     }
     if (WorkOrderStatus !== null) {
       setIsLoading(false)
@@ -1291,35 +1221,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           }}
         />
       </div>
-
-      <Dialog
-        position="center"
-        style={{
-          width: '800px',
-          minWidth: '800px',
-          height: '580px',
-          minHeight: '580px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
-        }}
-        draggable={false}
-        visible={imageVisible}
-        onHide={() => setImageVisible(false)}
-        header={'Images'}>
-        <ShowImages
-          handleNoteChange={handleNoteChange}
-          hoveredIndex={hoveredIndex}
-          handleRemoveImage={handleRemoveImage}
-          setHoveredIndex={setHoveredIndex}
-          handleImageChange={handleImageChange}
-          setImageVisible={setImageVisible}
-          imageRequestDtoList={imageRequestDtoList}
-          isLoading={isLoading}
-          images={customerImages}
-        />
-        <Toast ref={toastRef} />
-      </Dialog>
     </>
   )
 }

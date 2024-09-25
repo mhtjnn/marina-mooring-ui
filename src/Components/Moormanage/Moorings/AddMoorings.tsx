@@ -33,6 +33,7 @@ import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
+import { validateFiles } from '../../Helper/Helper'
 
 const AddMoorings: React.FC<AddMooringProps> = ({
   moorings,
@@ -305,36 +306,20 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target
     const files = Array.from(fileInput.files || [])
-
     if (files.length === 0) return
-
-    const validImageFiles = files.filter(
-      (file) => file.type.startsWith('image/') && file.size >= 5120 && file.size <= 1048576,
-    )
-
-    const invalidTypeFiles = files.filter((file) => !file.type.startsWith('image/'))
-    const invalidSizeFiles: any = files.filter((file) => file.size < 5120 || file.size > 1048576)
-
+    const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
+      min: 5120,
+      max: 1048576,
+    })
     if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
-      let detailMessage = 'Only image files are allowed.'
-      if (invalidSizeFiles.length > 0) detailMessage = 'Images must be between 5 KB and 1 MB.'
-
-      toastRef?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: detailMessage,
-        life: 3000,
-      })
-
       fileInput.value = ''
       return
     }
-
     const newBase64Strings: string[] = []
     const newImageUrls: string[] = []
     const newImageRequestDtoList: { imageName: string; imageData: string; note: string }[] = []
 
-    for (const file of validImageFiles) {
+    for (const file of validFiles) {
       try {
         const base64String = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader()

@@ -56,6 +56,7 @@ import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { MultiSelect } from 'primereact/multiselect'
 import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
+import { validateFiles } from '../../Helper/Helper'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -361,36 +362,20 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = event.target
     const files = Array.from(fileInput.files || [])
-
     if (files.length === 0) return
-
-    const validImageFiles = files.filter(
-      (file) => file.type.startsWith('image/') && file.size >= 5120 && file.size <= 1048576,
-    )
-
-    const invalidTypeFiles = files.filter((file) => !file.type.startsWith('image/'))
-    const invalidSizeFiles = files.filter((file) => file.size < 5120 || file.size > 1048576)
-
+    const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
+      min: 5120,
+      max: 1048576,
+    })
     if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
-      let detailMessage = 'Only image files are allowed'
-
-      if (invalidSizeFiles.length > 0) detailMessage = 'Images must be between 5 KB and 1 MB.'
-
-      toastRef?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: detailMessage,
-        life: 3000,
-      })
-      // fileInput.value = ''
+      fileInput.value = ''
       return
     }
-
     const newBase64Strings: string[] = []
     const newImageUrls: string[] = []
     const imageRequestDtoList: { imageName: string; imageData: string }[] = []
 
-    for (const file of validImageFiles) {
+    for (const file of validFiles) {
       try {
         const base64String = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader()
@@ -718,19 +703,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
 
-  // const fetchVendorDataAndUpdate = async () => {
-  //   const { vendorValue } = await getVendorValue()
-  //   if (vendorValue !== null) {
-  //     setIsLoading(false)
-  //     setVendorsName(vendorValue)
-  //     if (workOrderData?.inventoryResponseDtoList) {
-  //       const vendorList = workOrderData?.inventoryResponseDtoList
-  //         .map((item: any) => item.vendorResponseDto)
-  //         .filter((vendor: any) => vendor !== null)
-  //       setVendorsName((prevState) => [...prevState, ...vendorList])
-  //     }
-  //   }
-  // }
   const fetchVendorDataAndUpdate = async () => {
     const { vendorValue } = await getVendorValue()
 
