@@ -481,6 +481,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
 
   const getUserHandler = async () => {
     try {
+      setIsLoading(true)
       dispatch(setCustomerId(''))
       dispatch(setCustomerName(''))
       const response = await getUsersData({}).unwrap()

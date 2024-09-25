@@ -266,7 +266,6 @@ const Settings = () => {
   const UpdateMapCustomerToQuickBook = async (rowData: any) => {
     try {
       setIsLoading(true)
-
       const response = await editMapCustomerToQuickBook({
         customerId: rowData?.id,
         quickbookCustomerId: Object.values(dropdownValues)?.map((value: any) => value.id)?.[0],

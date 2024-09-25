@@ -329,6 +329,7 @@ const Boatyards = () => {
 
   const getMooringsWithBoatyardData = async () => {
     try {
+      setIsLoading(true)
       await getMooringsWithBoatyard({
         id: selectedBoatYard?.id,
         pageNumber: pageNumberTwo,

@@ -6,6 +6,7 @@ import { ImageDataProps } from '../../../Type/CommonType'
 import { useUpdateImageMutation } from '../../../Services/MoorManage/MoormanageApi'
 import { CustomerResponse, ErrorResponse } from '../../../Type/ApiTypes'
 import { Toast } from 'primereact/toast'
+import { ProgressSpinner } from 'primereact/progressspinner'
 
 const AddImage: React.FC<ImageDataProps> = ({
   imageData,
@@ -137,7 +138,19 @@ const AddImage: React.FC<ImageDataProps> = ({
             )}
           </div>
         </div>
-
+        {isLoading && (
+          <ProgressSpinner
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '50px',
+              height: '50px',
+            }}
+            strokeWidth="4"
+          />
+        )}
         <div className="py-3 pl-3 mb-20 mt-4 rounded-lg" style={{ height: '90px' }}>
           <div className="flex">
             <div className="mt-2 mr-12">

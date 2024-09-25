@@ -348,6 +348,7 @@ const ServiceArea = () => {
 
   const getMooringsWithServiceAreaData = async () => {
     try {
+      setIsLoading(true)
       await getMooringsWithServiceArea({
         id: selectedServiceArea?.id,
         pageNumber: pageNumberTwo,

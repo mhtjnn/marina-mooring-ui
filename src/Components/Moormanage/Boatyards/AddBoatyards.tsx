@@ -176,8 +176,6 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
       setErrorMessage(errors)
       return
     }
-    setIsLoading(true)
-
     try {
       setIsLoading(true)
       const editBoatYardPayload = {

@@ -659,9 +659,9 @@ const AddMoorings: React.FC<AddMooringProps> = ({
 
   return (
     <>
-      <Toast ref={toastRef} />
-
       <div className={isLoading ? 'blurred' : ''}>
+        <Toast ref={toastRef} />
+
         <>
           {/* Row 1 */}
           <div className="flex gap-6 mt-3">
@@ -1314,75 +1314,73 @@ const AddMoorings: React.FC<AddMooringProps> = ({
           </div>
         </>
       </div>
-      <>
-        <div
-          className={`"flex gap-6 bottom-2 absolute left-6" ${isLoading ? 'blurred' : ''}`}
+      <div
+        className={`"flex gap-6 bottom-2 absolute left-6" ${isLoading ? 'blurred' : ''}`}
+        style={{
+          width: '100%',
+          height: '80px',
+          backgroundColor: 'white',
+          padding: '0 12px',
+          bottom: '0px',
+        }}>
+        <Button
+          onClick={handleClick}
+          label={'Save'}
           style={{
-            width: '100%',
-            height: '80px',
-            backgroundColor: 'white',
-            padding: '0 12px',
-            bottom: '0px',
-          }}>
-          <Button
-            onClick={handleClick}
-            label={'Save'}
-            style={{
-              width: '89px',
-              height: '42px',
-              backgroundColor: '#0098FF',
-              cursor: 'pointer',
-              fontWeight: 'bolder',
-              fontSize: '1rem',
-              boxShadow: 'none',
-              color: 'white',
-              borderRadius: '0.50rem',
-              marginTop: '10px',
-            }}
-          />
-          <Button
-            onClick={closeModal}
-            label={'Back'}
-            text={true}
-            style={{
-              backgroundColor: 'white',
-              color: '#000000',
-              border: 'none',
-              width: '89px',
-              height: '42px',
-              marginTop: '10px',
-            }}
-          />
-        </div>
-        <Dialog
-          position="center"
-          style={{
-            width: '800px',
-            minWidth: '800px',
-            height: '650px',
-            minHeight: '650px',
-            borderRadius: '1rem',
-            fontWeight: '400',
-            cursor: 'alias',
+            width: '89px',
+            height: '42px',
+            backgroundColor: '#0098FF',
+            cursor: 'pointer',
+            fontWeight: 'bolder',
+            fontSize: '1rem',
+            boxShadow: 'none',
+            color: 'white',
+            borderRadius: '0.50rem',
+            marginTop: '10px',
           }}
-          draggable={false}
-          visible={imageVisible}
-          onHide={() => setImageVisible(false)}
-          header={'Images'}>
-          <UploadImages
-            handleNoteChange={handleNoteChange}
-            hoveredIndex={hoveredIndex}
-            handleRemoveImage={handleRemoveImage}
-            setHoveredIndex={setHoveredIndex}
-            handleImageChange={handleImageChange}
-            setImageVisible={setImageVisible}
-            imageRequestDtoList={imageRequestDtoList}
-            isLoading={isLoading}
-            images={mooringImages}
-          />
-          <Toast ref={toastRef} />
-        </Dialog>
-      </>
+        />
+        <Button
+          onClick={closeModal}
+          label={'Back'}
+          text={true}
+          style={{
+            backgroundColor: 'white',
+            color: '#000000',
+            border: 'none',
+            width: '89px',
+            height: '42px',
+            marginTop: '10px',
+          }}
+        />
+      </div>
+      <Dialog
+        position="center"
+        style={{
+          width: '800px',
+          minWidth: '800px',
+          height: '650px',
+          minHeight: '650px',
+          borderRadius: '1rem',
+          fontWeight: '400',
+          cursor: 'alias',
+        }}
+        draggable={false}
+        visible={imageVisible}
+        onHide={() => setImageVisible(false)}
+        header={'Images'}>
+        <UploadImages
+          handleNoteChange={handleNoteChange}
+          hoveredIndex={hoveredIndex}
+          handleRemoveImage={handleRemoveImage}
+          setHoveredIndex={setHoveredIndex}
+          handleImageChange={handleImageChange}
+          setImageVisible={setImageVisible}
+          imageRequestDtoList={imageRequestDtoList}
+          isLoading={isLoading}
+          images={mooringImages}
+        />
+        <Toast ref={toastRef} />
+      </Dialog>
       <Toast ref={toastRef} />
     </>
   )

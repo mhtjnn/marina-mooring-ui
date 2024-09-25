@@ -239,7 +239,6 @@ const Technicians = () => {
   const getOpenWorkOrder = useCallback(
     async (id: any) => {
       setIsLoading(true)
-
       try {
         const response = await getOpenWork({
           technicianId: id,
@@ -284,7 +283,6 @@ const Technicians = () => {
   const getClosedWorkOrder = useCallback(
     async (id: any) => {
       setIsLoading(true)
-
       try {
         const response = await getWorkedClosed({
           technicianId: id,

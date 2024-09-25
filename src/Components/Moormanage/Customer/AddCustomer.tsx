@@ -196,17 +196,28 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
     if (files.length === 0) return
 
+    // Filter out valid image files
     const validImageFiles = files.filter(
       (file) => file.type.startsWith('image/') && file.size >= 5120 && file.size <= 1048576,
     )
 
+    // Identify invalid files
     const invalidTypeFiles = files.filter((file) => !file.type.startsWith('image/'))
-    const invalidSizeFiles: any = files.filter((file) => file.size < 5120 || file.size > 1048576)
+    const invalidSizeFiles = files.filter((file) => file.size < 5120 || file.size > 1048576)
+
+    // Log invalid files for debugging
+    console.log('Invalid Type Files:', invalidTypeFiles)
+    console.log('Invalid Size Files:', invalidSizeFiles)
 
     if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
       let detailMessage = 'Only image files are allowed.'
-      if (invalidSizeFiles.length > 0) detailMessage = 'Images must be between 5 KB and 1 MB.'
 
+      // Check if there are any invalid size files
+      if (invalidSizeFiles.length > 0) {
+        detailMessage = 'Images must be between 5 KB and 1 MB.'
+      }
+
+      // Show error message
       toastRef?.current?.show({
         severity: 'error',
         summary: 'Error',
@@ -214,10 +225,12 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
         life: 3000,
       })
 
+      // Clear the input value
       fileInput.value = ''
       return
     }
 
+    // Proceed with base64 encoding for valid files
     const newBase64Strings: string[] = []
     const newImageUrls: string[] = []
     const newImageRequestDtoList: { imageName: string; imageData: string; note: string }[] = []
@@ -228,7 +241,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
           const reader = new FileReader()
           reader.onload = () => {
             if (typeof reader.result === 'string') {
-              resolve(reader.result?.split(',')[1])
+              resolve(reader.result.split(',')[1])
             } else {
               reject(new Error('FileReader result is not a string.'))
             }
@@ -238,6 +251,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
           }
           reader.readAsDataURL(file)
         })
+
         newBase64Strings.push(base64String)
         newImageUrls.push(`data:image/png;base64,${base64String}`)
         newImageRequestDtoList.push({
@@ -250,9 +264,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       }
     }
 
+    // Update state with valid images
     setImages((prevImages) => [...prevImages, ...newImageUrls])
     setEncodedImages((prevEncoded) => [...prevEncoded, ...newBase64Strings])
-    setImageRequestDtoList((prevList: any) => [...prevList, ...newImageRequestDtoList])
+    setImageRequestDtoList((prevList) => [...prevList, ...newImageRequestDtoList])
   }
 
   const handleCustomerImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -950,6 +965,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   return (
     <>
       <Toast ref={toastRef} />
+
       <div className={isLoading ? 'blurred' : ''}>
         {/* Add Customer */}
         {!editMooringMode && (
@@ -2118,7 +2134,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             isLoading={isLoading}
             images={mooringImages}
           />
-          <Toast ref={toastRef} />
         </Dialog>
       </div>
     </>

@@ -134,7 +134,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
       return
     }
     setIsLoading(true)
-
     try {
       const Payload = {
         id: id,

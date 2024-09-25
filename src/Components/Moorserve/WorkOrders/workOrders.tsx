@@ -351,22 +351,22 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   const handleModalClose = () => {
     setVisible(false)
     setEditMode(false)
-    getWorkOrderData()
+    // getWorkOrderData()
   }
   const handleButtonClick = () => {
     setVisible(true)
   }
 
-  useEffect(() => {
-    getWorkOrderData()
-  }, [pageNumber, completedWorkOrder, pageSize])
+  // useEffect(() => {
+  //   getWorkOrderData()
+  // }, [pageNumber, completedWorkOrder, pageSize])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       getWorkOrderData()
     }, 600)
     return () => clearTimeout(timeoutId)
-  }, [searchText, selectedCustomerId, pageSize, pageNumber])
+  }, [searchText, selectedCustomerId, pageSize, pageNumber, completedWorkOrder])
 
   useEffect(() => {
     if (selectedCustomerId) {

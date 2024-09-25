@@ -433,7 +433,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setErrorMessage(errors)
       return
     }
-
     const payload: any = {
       mooringId: workOrder?.mooringId?.id,
       customerId: workOrder?.customerName?.id,
@@ -469,6 +468,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       ]
     }
     try {
+      setIsLoading(true)
       const response = await saveWorkOrder(payload).unwrap()
       const { status, message } = response as WorkOrderResponse
       if (status === 200 || status === 201) {
@@ -686,7 +686,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setIsLoading(false)
       setWorkOrderStatusValue(WorkOrderStatus)
     }
-
     if (attachFormsTypeValue != null) {
       setIsLoading(false)
       setFormsData(attachFormsTypeValue)

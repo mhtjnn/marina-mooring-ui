@@ -139,6 +139,7 @@ const Estimates = () => {
 
   const getEstimateData = useCallback(async () => {
     try {
+      setIsLoading(true)
       let params: Params = {}
       if (searchText) {
         params.searchText = searchText
@@ -235,10 +236,6 @@ const Estimates = () => {
   const handleButtonClick = () => {
     setVisible(true)
   }
-
-  useEffect(() => {
-    getEstimateData()
-  }, [pageNumber, pageSize, selectedCustomerId])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {

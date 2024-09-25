@@ -410,6 +410,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       ]
     }
     try {
+      setIsLoading(true)
       const response = await saveEstimation(payload).unwrap()
       const { status, message } = response as WorkOrderResponse
       if (status === 200 || status === 201) {
@@ -447,7 +448,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (Object.keys(errors).length > 0) {
       return
     }
-
     try {
       setIsLoading(true)
       const editPayload: any = {}
