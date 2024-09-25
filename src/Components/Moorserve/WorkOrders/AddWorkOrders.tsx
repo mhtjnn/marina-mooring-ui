@@ -213,7 +213,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
   const handleInputChange = (field: string, value: any) => {
     const numberRegex = /^\d+$/
-
     if (field === 'cost') {
       if (value !== '' && !numberRegex.test(value)) {
         return
@@ -680,7 +679,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
     if (mooringIds !== null) {
       setIsLoading(false)
-      setMoorings(mooringIds)
+      const filteredMoorings = mooringIds?.filter((mooring) => mooring?.mooringNumber !== '')
+      setMoorings(filteredMoorings)
     }
     if (WorkOrderStatus !== null) {
       setIsLoading(false)
