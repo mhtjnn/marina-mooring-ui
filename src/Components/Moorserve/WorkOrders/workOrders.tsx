@@ -351,7 +351,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   const handleModalClose = () => {
     setVisible(false)
     setEditMode(false)
-    // getWorkOrderData()
+    getWorkOrderData()
   }
   const handleButtonClick = () => {
     setVisible(true)

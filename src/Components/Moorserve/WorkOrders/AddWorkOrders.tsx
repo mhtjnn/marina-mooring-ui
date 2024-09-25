@@ -1695,6 +1695,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           imageRequestDtoList={imageRequestDtoList}
           isLoading={isLoading}
           images={customerImages}
+          toastRef={toastRef}
         />
         {/* <Toast ref={toastRef} /> */}
       </Dialog>

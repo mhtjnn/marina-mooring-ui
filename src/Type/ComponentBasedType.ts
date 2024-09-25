@@ -285,6 +285,7 @@ export interface ShowImagesProps {
   imageRequestDtoList: { note: string }[]
   isLoading: boolean
   images: string[]
+  toastRef?: any
 }
 
 export interface ResetModalProps {

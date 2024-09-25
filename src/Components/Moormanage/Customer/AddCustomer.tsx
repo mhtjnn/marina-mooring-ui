@@ -2049,7 +2049,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
           }}
         />
 
-        {/* Upload Image */}
+        {/* Upload Customer Image */}
         <Dialog
           position="center"
           style={{
@@ -2075,10 +2075,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             imageRequestDtoList={customerImageRequestDtoList}
             isLoading={isLoading}
             images={customerImages}
+            toastRef={toastRef}
           />
-          <Toast ref={toastRef} />
         </Dialog>
-
+        {/* Upload Mooring Image */}
         <Dialog
           position="center"
           style={{
@@ -2104,6 +2104,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             imageRequestDtoList={mooringImageRequestDtoList}
             isLoading={isLoading}
             images={mooringImages}
+            toastRef={toastRef}
           />
         </Dialog>
       </div>

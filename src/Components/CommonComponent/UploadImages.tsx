@@ -16,9 +16,8 @@ const UploadImages: React.FC<ShowImagesProps> = ({
   imageRequestDtoList,
   isLoading,
   images,
+  toastRef,
 }) => {
-  const toastRef = useRef<Toast>(null)
-
   return (
     <div>
       <Toast ref={toastRef} />
