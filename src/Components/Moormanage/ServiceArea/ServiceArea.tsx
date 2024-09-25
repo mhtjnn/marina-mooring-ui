@@ -220,14 +220,10 @@ const ServiceArea = () => {
   )
 
   const handleRowClickServiceAreaDetail = (rowData: any) => {
-    setIsLoader(true)
-    setSelectedServiceArea('')
+    getMooringsWithServiceAreaData()
+    setSelectedServiceArea(rowData)
     setMooringWithServiceAreasData([])
     setServiceAreaRecord(true)
-    const timeoutId = setTimeout(() => {
-      setSelectedServiceArea(rowData.data)
-    }, 600)
-    return () => clearTimeout(timeoutId)
   }
 
   const handleEdit = () => {
@@ -690,7 +686,7 @@ const ServiceArea = () => {
                     rowStyle={(rowData: any) => rowData}
                     dataKey="id"
                     columns={serviceAreaColumns}
-                    onRowClick={(e: any) => handleRowClickServiceAreaDetail(e)}
+                    onRowClick={(row: any) => handleRowClickServiceAreaDetail(row?.data)}
                     emptyMessage={
                       <div className="text-center mt-14">
                         <img
