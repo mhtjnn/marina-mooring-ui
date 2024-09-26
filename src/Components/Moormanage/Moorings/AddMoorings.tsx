@@ -45,8 +45,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   getCustomerRecord,
   toastRef,
 }) => {
-  console.log('mooring', moorings)
-
   const selectedCustomerId = useSelector(selectCustomerId)
   const { getTypeOfBoatTypeData } = TypeOfBoatType()
   const { getTypeOfMooringStatusData } = TypeOfMooringStatus()
@@ -400,10 +398,14 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       serviceAreaId: mooringRowData?.serviceAreaResponseDto?.serviceAreaName || '',
       mooringStatus: mooringRowData?.mooringStatus?.status || '',
     }))
-    if (mooringRowData?.mooringStatus?.id != 2) {
+
+    if (mooringRowData?.mooringStatus?.id !== 2) {
+      setFormData((prevData: any) => ({
+        ...prevData,
+        boatYardName: '',
+      }))
       setIsBoatyardDisabled(true)
     }
-    console.log('am here', formData)
   }
 
   const SaveMoorings = async () => {
@@ -615,8 +617,12 @@ const AddMoorings: React.FC<AddMooringProps> = ({
 
   const handleDropdownChange = (e: any) => {
     handleInputChange('mooringStatus', e.target.value)
-    if (e.target.value.id === 2) {
-      setIsBoatyardDisabled(false)
+    if (e.target.value?.id !== 2) {
+      setFormData((prevData: any) => ({
+        ...prevData,
+        boatYardName: '',
+      }))
+      setIsBoatyardDisabled(true)
     }
   }
 

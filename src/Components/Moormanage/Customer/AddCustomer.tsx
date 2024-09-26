@@ -1349,7 +1349,17 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                     <div className="mt-2">
                       <Dropdown
                         value={formData?.mooringStatus}
-                        onChange={(e) => handleInputChange('mooringStatus', e.target.value)}
+                        onChange={(e) => {
+                          handleInputChange('mooringStatus', e.target.value)
+                          if (e.target.value?.id !== 2) {
+                            console.log(' am here')
+
+                            setFormData({
+                              ...formData,
+                              boatYardName: '',
+                            })
+                          }
+                        }}
                         options={mooringStatus}
                         optionLabel="status"
                         editable
