@@ -61,6 +61,9 @@ export interface TimeLineProps {
   mooringId: any
   viewEditClick?: any
   mooringData?: any
+  boatId?: any
+  boatName?: any
+  mooringPage?: boolean
   showMapModal?: boolean
   setShowMapModal?: React.Dispatch<React.SetStateAction<boolean>>
 }

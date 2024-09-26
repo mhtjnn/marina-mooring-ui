@@ -531,7 +531,7 @@ const ServiceArea = () => {
   return (
     <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
       <Toast ref={toast} />
-      <Header header="MOORMANAGE/Service Area" />
+      <Header header="MOORMANAGE/Service Areas" />
       <div className="flex justify-end mr-14 mt-6 ">
         <div className="flex gap-6 ">
           <div>

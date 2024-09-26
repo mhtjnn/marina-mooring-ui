@@ -329,6 +329,7 @@ export interface MooringPayload {
   boatyardName: string
   boatName: string
   boatSize: string
+  boatId: any
   boatType: MooringMetaDataTypes
   boatWeight: string
   eyeCondition: MooringMetaDataTypes

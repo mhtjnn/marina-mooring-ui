@@ -39,6 +39,7 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
     const [latitude, longitude] = coordinates?.split(' ').map(parseFloat)
     return isNaN(latitude) || isNaN(longitude) ? null : [latitude, longitude]
   }
+  // console.log('morrings', moorings)
 
   const handleOpenMap = () => {
     setZoom((prevZoom) => !prevZoom)
@@ -129,6 +130,8 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                   const coordinates = parseCoordinates(mooring.gpsCoordinates) || [
                     39.4926173, -117.5714859,
                   ]
+                  console.log(mooring)
+
                   const position: LatLngExpression = coordinates
                   const iconKey = mooring?.mooringStatus?.id as keyof typeof iconsByStatusId
                   const icon = iconsByStatusId[iconKey] || DefaultIcon
@@ -139,6 +142,8 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                           gpsValue={position}
                           mooringId={mooring?.mooringNumber}
                           mooringData={mooring}
+                          boatId={mooring?.boatId}
+                          boatName={mooring?.boatName}
                         />
                       </Popup>
                     </Marker>
@@ -158,7 +163,8 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                         <MooringMapModal
                           gpsValue={position}
                           mooringId={mooring?.mooringNumber}
-                          mooringData={mooring}
+                          mooringData={mooringData}
+                          mooringPage={true}
                         />
                       </Popup>
                     </Marker>

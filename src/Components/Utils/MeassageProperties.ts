@@ -1,6 +1,6 @@
 export const properties = {
   header: 'MOORMANAGE/Boatyards',
-  customerPageHeader: 'MOORMANAGE/Customer',
+  customerPageHeader: 'MOORMANAGE/Customers',
   boatyardMooringHeader: 'Boatyard Moorings',
   serviceAreaMooringHeader: 'Service Area Moorings',
   boatyardDetail: 'Boatyards Detail',

@@ -13,6 +13,9 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
   mooringId,
   viewEditClick,
   mooringData,
+  boatId,
+  boatName,
+  mooringPage,
   showMapModal,
   setShowMapModal,
 }) => {
@@ -22,6 +25,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
   const [isLoading, setIsLoading] = useState(true)
   const [getMooringDetails] = useGetMooringByIdMutation()
   const toastRef = useRef<Toast>(null)
+  // console.log('mooring', mooringData?.boatName)
 
   const getMooringDataById = useCallback(async (id: any) => {
     try {
@@ -63,9 +67,19 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
         <div>
           <div>
             <p className="text-sm m-0 font-bold text-white">
-              B45
-              <br />
-              Suncatcher
+              {mooringPage ? (
+                <>
+                  {mooringData?.boatId != null && mooringData?.boatId}
+                  <br />
+                  {mooringData?.boatName != null && mooringData?.boatName}
+                </>
+              ) : (
+                <>
+                  {boatId != null && boatId}
+                  <br />
+                  {boatName != null && boatName}
+                </>
+              )}
             </p>
           </div>
           <div>

@@ -80,11 +80,15 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const [imageRequestDtoList, setimageRequestDtoList] = useState<
     { imageName: string; imageData: string; note: string }[]
   >([])
-
   const toastRef = useRef<Toast>(null)
   const firstErrorRef = useRef<HTMLDivElement>(null)
   const getFomattedCoordinate = (gpsCoordinatesValue: any) => {
     try {
+      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ')
+      let coordinates = gpsCoordinatesValue?.split(' ')
+      if (coordinates.length !== 2) {
+        coordinates = coordinates.filter((coordinate: any) => coordinate)
+      }
       let [lat, long]: any = gpsCoordinatesValue?.split(' ')
       if (lat?.split('.').length > 2) {
         const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
@@ -109,6 +113,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       ? getFomattedCoordinate(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
+
   const [saveMoorings] = useAddMooringsMutation()
   const [updateMooring] = useUpdateMooringsMutation()
   const [isLoading, setIsLoading] = useState(true)

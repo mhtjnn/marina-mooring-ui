@@ -84,6 +84,11 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   const getFomattedCoordinate = (gpsCoordinatesValue: any) => {
     try {
+      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ')
+      let coordinates = gpsCoordinatesValue?.split(' ')
+      if (coordinates.length !== 2) {
+        coordinates = coordinates.filter((coordinate: any) => coordinate)
+      }
       let [lat, long]: any = gpsCoordinatesValue?.split(' ')
       if (lat?.split('.').length > 2) {
         const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
