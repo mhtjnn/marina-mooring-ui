@@ -122,7 +122,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   const [mooringImages, setMooringImages] = useState<string[]>([])
   const [encodedMooringImages, setEncodedMooringImages] = useState<string[]>([])
   const [mooringImageRequestDtoList, setMooringImageRequestDtoList] = useState<any[]>([])
-
+  const [isBoatyardDisabled, setIsBoatyardDisabled] = useState(false)
   const [formData, setFormData] = useState<any>({
     mooringNumber: '',
     mooringName: '',
@@ -873,6 +873,19 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     )
   }
 
+  const handleDropdownChange = (e: any) => {
+    handleInputChange('mooringStatus', e.target.value)
+    if (e.target.value?.id !== 2) {
+      setFormData((prevData: any) => ({
+        ...prevData,
+        boatYardName: '',
+      }))
+      setIsBoatyardDisabled(true)
+    } else if (e.target.value?.id === 2) {
+      setIsBoatyardDisabled(false)
+    }
+  }
+
   useEffect(() => {
     handleFocus()
   }, [checkedMooring])
@@ -922,22 +935,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       setSelectedCustomerType(undefined)
     }
   }, [checkedDock])
-
-  // useEffect(() => {
-  //   if (country?.id === 13) {
-  //     setSelectedCustomerType('')
-  //     setState('')
-  //   }
-  // }, [country?.id === 13])
-
-  // useEffect(() => {
-  //   if (formData?.mooringStatus?.id === 1) {
-  //     setFormData({
-  //       ...formData,
-  //       boatYardName: '',
-  //     })
-  //   }
-  // }, [formData?.mooringStatus?.id])
 
   return (
     <>
@@ -1349,17 +1346,18 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                     <div className="mt-2">
                       <Dropdown
                         value={formData?.mooringStatus}
-                        onChange={(e) => {
-                          handleInputChange('mooringStatus', e.target.value)
-                          if (e.target.value?.id !== 2) {
-                            console.log(' am here')
+                        onChange={handleDropdownChange}
+                        // onChange={(e) => {
+                        //   handleInputChange('mooringStatus', e.target.value)
+                        //   if (e.target.value?.id !== 2) {
+                        //     console.log(' am here')
 
-                            setFormData({
-                              ...formData,
-                              boatYardName: '',
-                            })
-                          }
-                        }}
+                        //     setFormData({
+                        //       ...formData,
+                        //       boatYardName: '',
+                        //     })
+                        //   }
+                        // }}
                         options={mooringStatus}
                         optionLabel="status"
                         editable
@@ -1419,7 +1417,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                         onChange={(e) => handleInputChange('boatYardName', e.target.value)}
                         options={boatyardName}
                         optionLabel="boatyardName"
-                        disabled={formData?.mooringStatus?.id === 1}
+                        disabled={isBoatyardDisabled}
                         editable
                         placeholder="Select"
                         style={{

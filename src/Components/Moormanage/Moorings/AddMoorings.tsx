@@ -623,6 +623,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
         boatYardName: '',
       }))
       setIsBoatyardDisabled(true)
+    } else if (e.target.value?.id === 2) {
+      setIsBoatyardDisabled(false)
     }
   }
 
@@ -642,21 +644,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       setCenter(coordinates)
     }
   }, [gpsCoordinatesValue])
-
-  // useEffect(() => {
-  //   if (formData?.mooringStatus?.id != 2) {
-  //     setFormData({
-  //       ...formData,
-  //       boatYardName: '',
-  //     })
-  //   }
-  // }, [formData?.mooringStatus?.id])
-
-  useEffect(() => {
-    if (formData?.mooringStatus?.id != 2) {
-      setIsBoatyardDisabled(true)
-    }
-  }, [formData?.mooringStatus?.id])
 
   return (
     <>
