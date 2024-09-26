@@ -48,12 +48,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
   const toastRef = useRef<Toast>(null)
   const getFormattedCoordinate = (coordinates: any) => {
     try {
-      // gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ')
-      // let coordinates = gpsCoordinatesValue?.split(' ')
-      // if (coordinates.length !== 2) {
-      //   coordinates = coordinates.filter((coordinate: any) => coordinate)
-      // }
-
       let [lat, long] = coordinates?.split(/[ ,]+/)
 
       const convertToDecimal = (coordinate: any) => {
@@ -102,12 +96,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
       errors.gpsCoordinatesValue = 'GPS Coordinates is required'
     }
     return errors
-  }
-
-  const handleGpsCoordinatesChange = (e: any) => {
-    const value = e.target.value
-    setGpsCoordinatesValue(value)
-    setErrorMessage((prev) => ({ ...prev, gpsCoordinatesValue: '' }))
   }
 
   const handlePositionChange = (lat: number, lng: number) => {
@@ -411,7 +399,7 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
               </div>
             </div>
             <ul className="mt-1 flex w-[230px] overflow-y-auto ">
-              {storageList.map((item, index) => (
+              {storageList?.map((item, index) => (
                 <li
                   key={index}
                   style={{
