@@ -43,6 +43,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   closeModal,
   getCustomer,
   getCustomerRecord,
+  toastRef,
 }) => {
   const selectedCustomerId = useSelector(selectCustomerId)
   const { getTypeOfBoatTypeData } = TypeOfBoatType()
@@ -80,7 +81,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const [imageRequestDtoList, setimageRequestDtoList] = useState<
     { imageName: string; imageData: string; note: string }[]
   >([])
-  const toastRef = useRef<Toast>(null)
+  // const toastRef = useRef<Toast>(null)
   const firstErrorRef = useRef<HTMLDivElement>(null)
   const getFomattedCoordinate = (gpsCoordinatesValue: any) => {
     try {
@@ -1368,9 +1369,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
           isLoading={isLoading}
           images={mooringImages}
         />
-        <Toast ref={toastRef} />
       </Dialog>
-      <Toast ref={toastRef} />
     </>
   )
 }

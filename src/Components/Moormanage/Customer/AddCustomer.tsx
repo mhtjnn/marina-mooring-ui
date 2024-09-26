@@ -48,6 +48,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   editMooringMode,
   closeModal,
   getCustomer,
+  // toastRef,
   getCustomerRecord,
 }) => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -2051,66 +2052,65 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             fontWeight: '500',
           }}
         />
-
-        {/* Upload Customer Image */}
-        <Dialog
-          position="center"
-          style={{
-            width: '800px',
-            minWidth: '800px',
-            height: '650px',
-            minHeight: '650px',
-            borderRadius: '1rem',
-            fontWeight: '400',
-            cursor: 'alias',
-          }}
-          draggable={false}
-          visible={customerImageVisible}
-          onHide={() => setCustomerImageVisible(false)}
-          header={'Images'}>
-          <UploadImages
-            handleNoteChange={handleCustomerNoteChange}
-            hoveredIndex={hoveredIndex}
-            handleRemoveImage={handleRemoveCustomerImage}
-            setHoveredIndex={setHoveredIndex}
-            handleImageChange={handleCustomerImageChange}
-            setImageVisible={setCustomerImageVisible}
-            imageRequestDtoList={customerImageRequestDtoList}
-            isLoading={isLoading}
-            images={customerImages}
-            toastRef={toastRef}
-          />
-        </Dialog>
-        {/* Upload Mooring Image */}
-        <Dialog
-          position="center"
-          style={{
-            width: '800px',
-            minWidth: '800px',
-            height: '650px',
-            minHeight: '650px',
-            borderRadius: '1rem',
-            fontWeight: '400',
-            cursor: 'alias',
-          }}
-          draggable={false}
-          visible={mooringImageVisible}
-          onHide={() => setMooringImageVisible(false)}
-          header={'Mooring Images'}>
-          <UploadImages
-            handleNoteChange={handleMooringNoteChange}
-            hoveredIndex={hoveredIndex}
-            handleRemoveImage={handleRemoveMooringImage}
-            setHoveredIndex={setHoveredIndex}
-            handleImageChange={handleMooringImageChange}
-            setImageVisible={setMooringImageVisible}
-            imageRequestDtoList={mooringImageRequestDtoList}
-            isLoading={isLoading}
-            images={mooringImages}
-            toastRef={toastRef}
-          />
-        </Dialog>
       </div>
+
+      <Dialog
+        position="center"
+        style={{
+          width: '800px',
+          minWidth: '800px',
+          height: '650px',
+          minHeight: '650px',
+          borderRadius: '1rem',
+          fontWeight: '400',
+          cursor: 'alias',
+        }}
+        draggable={false}
+        visible={customerImageVisible}
+        onHide={() => setCustomerImageVisible(false)}
+        header={'Images'}>
+        <UploadImages
+          handleNoteChange={handleCustomerNoteChange}
+          hoveredIndex={hoveredIndex}
+          handleRemoveImage={handleRemoveCustomerImage}
+          setHoveredIndex={setHoveredIndex}
+          handleImageChange={handleCustomerImageChange}
+          setImageVisible={setCustomerImageVisible}
+          imageRequestDtoList={customerImageRequestDtoList}
+          isLoading={isLoading}
+          images={customerImages}
+          toastRef={toastRef}
+        />
+      </Dialog>
+      {/* Upload Mooring Image */}
+      <Dialog
+        position="center"
+        style={{
+          width: '800px',
+          minWidth: '800px',
+          height: '650px',
+          minHeight: '650px',
+          borderRadius: '1rem',
+          fontWeight: '400',
+          cursor: 'alias',
+        }}
+        draggable={false}
+        visible={mooringImageVisible}
+        onHide={() => setMooringImageVisible(false)}
+        header={'Mooring Images'}>
+        <UploadImages
+          handleNoteChange={handleMooringNoteChange}
+          hoveredIndex={hoveredIndex}
+          handleRemoveImage={handleRemoveMooringImage}
+          setHoveredIndex={setHoveredIndex}
+          handleImageChange={handleMooringImageChange}
+          setImageVisible={setMooringImageVisible}
+          imageRequestDtoList={mooringImageRequestDtoList}
+          isLoading={isLoading}
+          images={mooringImages}
+          toastRef={toastRef}
+        />
+      </Dialog>
     </>
   )
 }
