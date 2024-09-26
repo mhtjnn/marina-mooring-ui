@@ -49,34 +49,9 @@ const Settings = () => {
     fontWeight: 700,
   }
 
-  const DropdownCell: React.FC<DropdownCellProps & { disabled: boolean }> = ({
-    value,
-    onChange,
-    disabled,
-  }: any) => {
-    return (
-      <Dropdown
-        optionLabel="label"
-        value={value}
-        options={quickBookCustomer}
-        disabled={disabled}
-        onChange={onChange}
-        editable
-        dataKey="id"
-        style={{
-          height: '32px',
-          border: '1px solid #D5E1EA',
-          borderRadius: '0.50rem',
-          fontSize: '0.8rem',
-          width: '40%',
-          textAlign: 'center',
-        }}
-      />
-    )
-  }
-
   const firstLastName = (data: any) => {
     if (data.firstName === null) return '-'
+    if (data.lasttName === null) return '-'
     else return data.firstName + ' ' + data.lastName
   }
 
@@ -105,10 +80,21 @@ const Settings = () => {
               optionValue="quickbookCustomerId"
               value={
                 dropdownValues[rowData.id] ||
-                rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName +
-                  ' ' +
-                  rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName
+                (rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName &&
+                  (rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName === null
+                    ? '-'
+                    : rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName) +
+                    ' ' +
+                    (rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName === null
+                      ? '-'
+                      : rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName))
               }
+              // value={
+              //   dropdownValues[rowData.id] ||
+              //   rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName +
+              //     ' ' +
+              //     rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName
+              // }
               options={quickBookCustomer?.map?.((option: any) => {
                 return { ...option, value: option.quickbookCustomerId }
               })}
