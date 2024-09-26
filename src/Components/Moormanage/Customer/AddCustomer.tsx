@@ -928,14 +928,14 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   //   }
   // }, [country?.id === 13])
 
-  useEffect(() => {
-    if (formData?.mooringStatus?.id === 1) {
-      setFormData({
-        ...formData,
-        boatYardName: '',
-      })
-    }
-  }, [formData?.mooringStatus?.id])
+  // useEffect(() => {
+  //   if (formData?.mooringStatus?.id === 1) {
+  //     setFormData({
+  //       ...formData,
+  //       boatYardName: '',
+  //     })
+  //   }
+  // }, [formData?.mooringStatus?.id])
 
   return (
     <>

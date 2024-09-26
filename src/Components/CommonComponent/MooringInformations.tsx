@@ -1,6 +1,8 @@
 import React from 'react'
 
 const MooringInformations: React.FC<any> = ({ mooringRowData }) => {
+  console.log('mooring', mooringRowData)
+
   return (
     <div>
       <hr className="border border-[#000000] my-0 mx-0"></hr>

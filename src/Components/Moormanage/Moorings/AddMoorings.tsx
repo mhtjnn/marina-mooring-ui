@@ -45,6 +45,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   getCustomerRecord,
   toastRef,
 }) => {
+  console.log('mooring', moorings)
+
   const selectedCustomerId = useSelector(selectCustomerId)
   const { getTypeOfBoatTypeData } = TypeOfBoatType()
   const { getTypeOfMooringStatusData } = TypeOfMooringStatus()
@@ -401,6 +403,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     if (mooringRowData?.mooringStatus?.id != 2) {
       setIsBoatyardDisabled(true)
     }
+    console.log('am here', formData)
   }
 
   const SaveMoorings = async () => {
@@ -632,14 +635,14 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     }
   }, [gpsCoordinatesValue])
 
-  useEffect(() => {
-    if (formData?.mooringStatus?.id != 2) {
-      setFormData({
-        ...formData,
-        boatYardName: '',
-      })
-    }
-  }, [formData?.mooringStatus?.id])
+  // useEffect(() => {
+  //   if (formData?.mooringStatus?.id != 2) {
+  //     setFormData({
+  //       ...formData,
+  //       boatYardName: '',
+  //     })
+  //   }
+  // }, [formData?.mooringStatus?.id])
 
   useEffect(() => {
     if (formData?.mooringStatus?.id != 2) {
