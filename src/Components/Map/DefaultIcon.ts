@@ -7,6 +7,13 @@ const defaultIconOptions: IconOptions = {
 
 export const DefaultIcon = L.icon(defaultIconOptions)
 
+const mooringIconOptions: IconOptions = {
+  iconUrl: '/assets/images/east.png',
+  iconSize: [90, 100],
+}
+
+export const MooringIcon = L.icon(mooringIconOptions)
+
 const gearOnIconOptions: IconOptions = {
   iconUrl: '/assets/images/GearOn.png',
   iconSize: [40, 50],

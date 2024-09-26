@@ -11,6 +11,7 @@ export interface CustomSelectPositionMapProps {
   onPositionChange: (lat: number, lng: number) => void
   center: LatLngExpression | undefined
   zoomLevel: number
+  defaultIcon?: boolean
 }
 
 export interface DisplayPositionProps {

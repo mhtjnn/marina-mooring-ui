@@ -4,13 +4,14 @@ import L from 'leaflet'
 import './CustomMap.css'
 import DisplayPosition from './DisplayPosition'
 import { CustomSelectPositionMapProps } from '../../Type/Components/MapTypes'
-import { DefaultIcon } from './DefaultIcon'
+import { DefaultIcon, MooringIcon } from './DefaultIcon'
 import { Toast } from 'primereact/toast'
 
 const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
   onPositionChange,
   center,
   zoomLevel,
+  defaultIcon,
 }) => {
   const [map, setMap] = useState<any>()
   const markerRef = useRef(null)
@@ -32,7 +33,7 @@ const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
         <Marker
           ref={markerRef}
           position={center ? center : [30.6983149, 76.656095]}
-          icon={DefaultIcon}></Marker>
+          icon={defaultIcon ? DefaultIcon : MooringIcon}></Marker>
       </MapContainer>
     )
   }, [center, zoomLevel])

@@ -166,9 +166,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
-    const formattedLat = lat.toFixed(3)
-    const formattedLng = lng.toFixed(3)
-    const concatenatedValue = `${formattedLat} ${formattedLng}`
+    const concatenatedValue = `${lat} ${lng}`
     setGpsCoordinatesValue(concatenatedValue)
   }
 
