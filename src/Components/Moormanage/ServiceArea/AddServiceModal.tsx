@@ -48,11 +48,11 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
   const toastRef = useRef<Toast>(null)
   const getFormattedCoordinate = (coordinates: any) => {
     try {
-      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ')
-      let coordinates = gpsCoordinatesValue?.split(' ')
-      if (coordinates.length !== 2) {
-        coordinates = coordinates.filter((coordinate: any) => coordinate)
-      }
+      // gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ')
+      // let coordinates = gpsCoordinatesValue?.split(' ')
+      // if (coordinates.length !== 2) {
+      //   coordinates = coordinates.filter((coordinate: any) => coordinate)
+      // }
 
       let [lat, long] = coordinates?.split(/[ ,]+/)
 
