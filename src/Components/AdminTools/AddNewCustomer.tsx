@@ -489,7 +489,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
       if (status === 200 && Array.isArray(content)) {
         setIsLoading(false)
         if (content.length > 0) {
-          const firstLastName = content.map((item) => ({
+          const firstLastName = content?.map((item) => ({
             label: item.firstName + ' ' + item.lastName,
             value: item,
           }))

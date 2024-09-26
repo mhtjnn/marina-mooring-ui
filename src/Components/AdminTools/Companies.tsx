@@ -50,7 +50,7 @@ const CustomerOwner = () => {
   const [getCustomerOwnerUserData, setgetCustomerOwnerUserData] = useState<CustomerPayload[]>([])
   const [selectedId, setSelectedId] = useState<any>('')
   const [selectedProduct, setSelectedProduct] = useState()
-  const id = getCustomerOwnerData.map((items) => items.id)
+  const id = getCustomerOwnerData?.map((items) => items.id)
   const [getUser] = useGetUsersMutation()
   const [deleteCustomerOwner] = useDeleteUserMutation()
 

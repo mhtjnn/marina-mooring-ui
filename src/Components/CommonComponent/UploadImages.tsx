@@ -66,7 +66,7 @@ const UploadImages: React.FC<ShowImagesProps> = ({
           {images.length > 0 && (
             <div className="mt-2">
               <div className="flex gap-16 flex-wrap">
-                {images.map((image: string | undefined, index: number) => (
+                {images?.map((image: string | undefined, index: number) => (
                   <div
                     key={index}
                     style={{ position: 'relative', display: 'inline-block' }}

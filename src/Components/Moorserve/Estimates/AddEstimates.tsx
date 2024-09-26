@@ -523,7 +523,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setVendorsName(vendorValue)
       if (workOrderData?.inventoryResponseDtoList) {
         const vendorList = workOrderData?.inventoryResponseDtoList
-          .map((item: any) => item.vendorResponseDto)
+          ?.map((item: any) => item.vendorResponseDto)
           .filter((vendor: any) => vendor !== null)
         setVendorsName((prevState) => [...prevState, ...vendorList])
       }

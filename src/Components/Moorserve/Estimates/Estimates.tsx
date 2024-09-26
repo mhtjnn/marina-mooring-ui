@@ -203,7 +203,7 @@ const Estimates = () => {
   }, [])
 
   const dataToXlsx = (data: WorkOrderPayload[], fileName = 'EstimateData.xlsx') => {
-    const formattedData = data.map((item) => ({
+    const formattedData = data?.map((item) => ({
       CustomerName: `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`,
       MooringNumber: item.mooringResponseDto.mooringNumber,
       Boatyard: item.boatyardResponseDto.boatyardId,

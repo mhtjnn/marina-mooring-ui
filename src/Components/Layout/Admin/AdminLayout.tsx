@@ -150,7 +150,7 @@ const AdminLayout = () => {
                 marginBottom: '50px',
               }}
             />
-            {menuItems.map((item, index) => (
+            {menuItems?.map((item, index) => (
               <React.Fragment key={index}>
                 {item.name && (
                   <NavLink
@@ -216,7 +216,7 @@ const AdminLayout = () => {
                 {/* Submenu Items */}
                 {item.subcategories && openSubMenus[index] && (
                   <div style={{ marginTop: '10px' }}>
-                    {item.subcategories.map((subcategory, subIndex) => (
+                    {item.subcategories?.map((subcategory, subIndex) => (
                       <NavLink
                         to={subcategory.link}
                         style={{

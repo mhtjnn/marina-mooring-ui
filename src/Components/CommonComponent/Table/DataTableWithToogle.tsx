@@ -41,7 +41,7 @@ const DataTableWithToogle: React.FC<RowExpansionDemoProps> = ({
       selectionMode={selectionMode}
       rowClassName={getRowClassName}
       emptyMessage={emptyMessage}>
-      {columns.map((col) => (
+      {columns?.map((col) => (
         <Column
           key={generateRandomKey()}
           field={col.field}

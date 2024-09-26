@@ -90,7 +90,7 @@ const CustomServiceAreaMoorinMap: React.FC<CustomServiceAreaMoorinMapProps> = ({
               />
 
               {moorings &&
-                moorings.map((mooring: MooringPayload, index: number) => {
+                moorings?.map((mooring: MooringPayload, index: number) => {
                   const coordinates = parseCoordinates(mooring.gpsCoordinates) || [
                     39.4926173, -117.5714859,
                   ]

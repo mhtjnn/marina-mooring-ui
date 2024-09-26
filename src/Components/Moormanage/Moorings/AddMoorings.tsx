@@ -357,7 +357,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
 
   const handleNoteChange = (index: number, note: string) => {
     setimageRequestDtoList((prevList: any[]) =>
-      prevList.map((item, i) => (i === index ? { ...item, note } : item)),
+      prevList?.map((item, i) => (i === index ? { ...item, note } : item)),
     )
   }
 

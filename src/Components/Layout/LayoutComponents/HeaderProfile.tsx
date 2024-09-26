@@ -144,7 +144,7 @@ const HeaderProfile: React.FC<HeaderProps> = ({ customer }) => {
               zIndex: 2,
             }}>
             <ul style={{ listStyleType: 'none', margin: 0, padding: 0 }}>
-              {['Upload Photo', 'Reset Password', 'Logout'].map((item) => (
+              {['Upload Photo', 'Reset Password', 'Logout']?.map((item) => (
                 <li
                   key={item}
                   style={tooltipItemStyle}

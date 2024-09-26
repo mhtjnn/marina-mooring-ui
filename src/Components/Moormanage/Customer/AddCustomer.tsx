@@ -91,11 +91,11 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       }
       let [lat, long]: any = gpsCoordinatesValue?.split(' ')
       if (lat?.split('.').length > 2) {
-        const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
+        const [degree, minute, second]: any = lat?.split('.')?.map((num: any) => parseInt(num))
         lat = degree + minute / 60 + second / 3600
       }
       if (long?.split('.').length > 2) {
-        const [degree, minute, second]: any = long?.split('.').map((num: any) => parseInt(num))
+        const [degree, minute, second]: any = long?.split('.')?.map((num: any) => parseInt(num))
         long = degree + minute / 60 + second / 3600
       }
       if (!(isNaN(lat) || isNaN(long))) {

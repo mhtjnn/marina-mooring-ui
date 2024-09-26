@@ -699,7 +699,7 @@ const Customer = () => {
             </div>
             <div className="flex gap-4 ml-2">
               {boatYardData.length > 0 ? (
-                boatYardData.map((boatyard, index) => (
+                boatYardData?.map((boatyard, index) => (
                   <p
                     key={index}
                     style={{

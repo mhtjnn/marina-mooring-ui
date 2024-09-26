@@ -302,7 +302,7 @@ const PDFEditor: React.FC<PreviewProps> = ({ fileData, fileName, onClose, moorin
                     workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}>
                     <Viewer fileUrl={pdfUrl} />
                   </Worker>
-                  {textEntries.map((entry, index) => (
+                  {textEntries?.map((entry, index) => (
                     <span
                       key={index}
                       style={{

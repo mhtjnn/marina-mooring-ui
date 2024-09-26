@@ -208,7 +208,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
   const handleNoteChange = (index: number, note: string) => {
     setimageRequestDtoList((prevList: any[]) =>
-      prevList.map((item, i) => (i === index ? { ...item, note } : item)),
+      prevList?.map((item, i) => (i === index ? { ...item, note } : item)),
     )
   }
 
