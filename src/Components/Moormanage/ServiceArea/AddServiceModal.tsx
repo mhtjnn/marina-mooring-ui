@@ -10,7 +10,6 @@ import {
 import { ServiceAreaProps } from '../../../Type/ComponentBasedType'
 import { Country, ServiceAreaType, State } from '../../../Type/CommonType'
 import { ErrorResponse, ServiceAreaResponse } from '../../../Type/ApiTypes'
-import CustomSelectPositionMap from '../../Map/CustomSelectPositionMap'
 import {
   CountriesData,
   ServiceAreaTypeData,
@@ -20,6 +19,7 @@ import { Toast } from 'primereact/toast'
 import { IoMdAdd, IoMdClose } from 'react-icons/io'
 import { InputText } from 'primereact/inputtext'
 import { debounce } from 'lodash'
+import CustomSelectPositionMap from '../../Map/CustomSelectBoatyardPosition'
 
 const AddServiceModal: React.FC<ServiceAreaProps> = ({
   closeModal,

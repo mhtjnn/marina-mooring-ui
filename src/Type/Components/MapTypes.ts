@@ -12,6 +12,7 @@ export interface CustomSelectPositionMapProps {
   center: LatLngExpression | undefined
   zoomLevel: number
   defaultIcon?: boolean
+  mooringStatus?: any
 }
 
 export interface DisplayPositionProps {

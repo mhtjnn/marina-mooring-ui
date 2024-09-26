@@ -1347,17 +1347,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                       <Dropdown
                         value={formData?.mooringStatus}
                         onChange={handleDropdownChange}
-                        // onChange={(e) => {
-                        //   handleInputChange('mooringStatus', e.target.value)
-                        //   if (e.target.value?.id !== 2) {
-                        //     console.log(' am here')
-
-                        //     setFormData({
-                        //       ...formData,
-                        //       boatYardName: '',
-                        //     })
-                        //   }
-                        // }}
                         options={mooringStatus}
                         optionLabel="status"
                         editable
@@ -2014,6 +2003,9 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                         onPositionChange={handlePositionChange}
                         zoomLevel={15}
                         center={center}
+                        mooringStatus={
+                          formData?.mooringStatus?.id || mooringRowData?.mooringStatus?.id
+                        }
                       />
                     </div>
                   </div>

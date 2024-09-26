@@ -9,7 +9,6 @@ import {
 import { BoatYardProps } from '../../../Type/ComponentBasedType'
 import { Country, State } from '../../../Type/CommonType'
 import { BoatYardResponse, ErrorResponse } from '../../../Type/ApiTypes'
-import CustomSelectPositionMap from '../../Map/CustomSelectPositionMap'
 import { CountriesData, StatesData } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import { useSelector } from 'react-redux'
@@ -18,6 +17,7 @@ import { Toast } from 'primereact/toast'
 import { IoMdAdd, IoMdClose } from 'react-icons/io'
 import { InputText } from 'primereact/inputtext'
 import { debounce } from 'lodash'
+import CustomSelectPositionMap from '../../Map/CustomSelectBoatyardPosition'
 
 const AddBoatyards: React.FC<BoatYardProps> = ({
   closeModal,

@@ -1296,6 +1296,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                   onPositionChange={handlePositionChange}
                   zoomLevel={15}
                   center={center}
+                  mooringStatus={formData?.mooringStatus?.id || mooringRowData?.mooringStatus?.id}
                 />
               </div>
             </div>
