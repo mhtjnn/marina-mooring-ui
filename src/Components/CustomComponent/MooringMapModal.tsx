@@ -25,8 +25,6 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
   const [isLoading, setIsLoading] = useState(true)
   const [getMooringDetails] = useGetMooringByIdMutation()
   const toastRef = useRef<Toast>(null)
-  // console.log('mooring', mooringData?.boatName)
-
   const getMooringDataById = useCallback(async (id: any) => {
     try {
       const response = await getMooringDetails({ id: id }).unwrap()

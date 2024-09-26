@@ -17,7 +17,6 @@ import {
 import { MooringPayload, MooringWithGpsCoordinates } from '../../Type/ApiTypes'
 import MooringMapModal from '../CustomComponent/MooringMapModal'
 import { Toast } from 'primereact/toast'
-import { InputSwitch } from 'primereact/inputswitch'
 
 const CustomDashboardMooringMap: React.FC<CustomMooringPositionMapProps> = ({
   position,
@@ -178,6 +177,8 @@ const CustomDashboardMooringMap: React.FC<CustomMooringPositionMapProps> = ({
                           gpsValue={position}
                           mooringId={mooring?.mooringNumber}
                           mooringData={mooring}
+                          boatId={mooring?.boatId}
+                          boatName={mooring?.boatName}
                         />
                       </Popup>
                     </Marker>
