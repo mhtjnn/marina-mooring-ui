@@ -222,7 +222,6 @@ const ServiceArea = () => {
   const handleRowClickServiceAreaDetail = (rowData: any) => {
     getMooringsWithServiceAreaData()
     setSelectedServiceArea(rowData)
-    setMooringWithServiceAreasData([])
     setServiceAreaRecord(true)
   }
 
@@ -264,7 +263,7 @@ const ServiceArea = () => {
         toast.current?.show({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error while deleting customer',
+          detail: message || 'Error while deleting customer',
           life: 3000,
         })
       }
@@ -365,6 +364,7 @@ const ServiceArea = () => {
             setTotalRecordsTwo(totalSize)
           } else {
             setIsLoading(false)
+            setMooringWithServiceAreasData([])
           }
         })
     } catch (error) {
