@@ -1209,7 +1209,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                     optionLabel="type"
                     editable
                     placeholder="Customer Type"
-                    disabled={isLoading || country?.id === 13}
+                    disabled={isLoading}
                     style={{
                       width: '230px',
                       height: '32px',

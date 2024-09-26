@@ -103,7 +103,7 @@ const SidebarMenu = () => {
         subcategories: [
           {
             icon: '/assets/images/customer.svg',
-            name: 'Customer',
+            name: 'Customers',
             link: 'moormanage/customer',
           },
           {
@@ -128,7 +128,7 @@ const SidebarMenu = () => {
           },
           {
             icon: '/assets/images/serviceAreaIcon.svg',
-            name: 'Service Area',
+            name: 'Service Areas',
             link: 'moormanage/serviceArea',
           },
         ],
