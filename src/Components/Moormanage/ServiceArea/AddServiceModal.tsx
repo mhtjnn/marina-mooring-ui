@@ -100,7 +100,9 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
-    const concatenatedValue = `${lat} ${lng}`
+    const formattedLat = lat.toFixed(6)
+    const formattedLng = lng.toFixed(6)
+    const concatenatedValue = `${formattedLat} ${formattedLng}`
     setGpsCoordinatesValue(concatenatedValue)
     setErrorMessage((prev) => ({ ...prev, gpsCoordinatesValue: '' }))
   }
