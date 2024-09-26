@@ -921,12 +921,12 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     }
   }, [checkedDock])
 
-  useEffect(() => {
-    if (country?.id === 13) {
-      setSelectedCustomerType('')
-      setState('')
-    }
-  }, [country?.id === 13])
+  // useEffect(() => {
+  //   if (country?.id === 13) {
+  //     setSelectedCustomerType('')
+  //     setState('')
+  //   }
+  // }, [country?.id === 13])
 
   useEffect(() => {
     if (formData?.mooringStatus?.id === 1) {
