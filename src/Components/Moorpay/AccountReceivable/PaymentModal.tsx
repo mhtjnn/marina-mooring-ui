@@ -7,6 +7,7 @@ import { useSavePaymentMutation } from '../../../Services/MoorServe/MoorserveApi
 import { Toast } from 'primereact/toast'
 import { ErrorResponse, SaveUserResponse } from '../../../Type/ApiTypes'
 import { PaymentOptionType } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
+import { ProgressSpinner } from 'primereact/progressspinner'
 
 const PaymentModal: React.FC<PaymentModalProps> = ({ onHide, workOrderInvoiceId }) => {
   const [amount, setAmount] = useState<any>()
@@ -98,7 +99,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ onHide, workOrderInvoiceId 
     <>
       <Toast ref={toastRef} />
 
-      <div>
+      <div style={{ paddingBottom: '50px' }} className={isLoading ? 'blurred' : ''}>
         <div className="flex gap-6">
           <div className="mt-">
             <span className="font-medium text-sm text-[#000000]">
@@ -165,7 +166,19 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ onHide, workOrderInvoiceId 
             </div>
           </div>
         </div>
-
+        {isLoading && (
+          <ProgressSpinner
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '40%',
+              transform: 'translate(-50%, -50%)',
+              width: '50px',
+              height: '50px',
+            }}
+            strokeWidth="4"
+          />
+        )}
         <div className="flex gap-6 ml-1 mt-40">
           <div
             className={`"flex gap-6 bottom-2 absolute left-7"`}
