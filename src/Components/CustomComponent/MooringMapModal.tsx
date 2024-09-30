@@ -11,13 +11,11 @@ import { ProgressSpinner } from 'primereact/progressspinner'
 const MooringMapModal: React.FC<TimeLineProps> = ({
   gpsValue,
   mooringId,
-  viewEditClick,
   mooringData,
   boatId,
   boatName,
   mooringPage,
-  showMapModal,
-  setShowMapModal,
+  selectedMooring,
 }) => {
   const [customerModalVisible, setCustomerModalVisible] = useState(false)
   const { isMapModalOpen, setMapModalOpen } = useContext(AppContext)
@@ -48,7 +46,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
   }, [])
 
   const viewEdit = () => {
-    getMooringDataById(mooringData.id)
+    getMooringDataById(selectedMooring.id)
     setMapModalOpen((prevState: any) => ({ ...prevState, editMode: true }))
     setCustomerModalVisible(true)
   }

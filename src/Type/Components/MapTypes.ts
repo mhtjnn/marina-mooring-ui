@@ -66,6 +66,7 @@ export interface TimeLineProps {
   boatName?: any
   mooringPage?: boolean
   showMapModal?: boolean
+  selectedMooring?: any
   setShowMapModal?: React.Dispatch<React.SetStateAction<boolean>>
 }
 
