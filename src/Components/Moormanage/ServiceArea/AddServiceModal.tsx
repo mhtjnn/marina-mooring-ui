@@ -20,6 +20,7 @@ import { IoMdAdd, IoMdClose } from 'react-icons/io'
 import { InputText } from 'primereact/inputtext'
 import { debounce } from 'lodash'
 import CustomSelectPositionMap from '../../Map/CustomSelectBoatyardPosition'
+import { formatGpsCoordinates } from '../../Helper/Helper'
 
 const AddServiceModal: React.FC<ServiceAreaProps> = ({
   closeModal,
@@ -46,64 +47,10 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [mapPositionChanged, setMapPositionChanged] = useState<boolean>(true)
   const toastRef = useRef<Toast>(null)
-  // const getFormattedCoordinate = (coordinates: any) => {
-  //   try {
-  //     let [lat, long] = coordinates?.split(/[ ,]+/)
 
-  //     const convertToDecimal = (coordinate: any) => {
-  //       if (coordinate?.split('.').length > 2) {
-  //         const [degree, minute, second] = coordinate?.split('.').map((num: any) => parseFloat(num))
-  //         return degree + minute / 60 + second / 3600
-  //       }
-  //       return parseFloat(coordinate)
-  //     }
-
-  //     lat = convertToDecimal(lat)
-  //     long = convertToDecimal(long)
-
-  //     if (!isNaN(lat) && !isNaN(long)) {
-  //       return [lat, long]
-  //     } else {
-  //       throw new Error('Parsed coordinates are NaN')
-  //     }
-  //   } catch (error) {
-  //     console.error('Error In Setting Center:', error)
-  //     return [41.56725, 70.94045]
-  //   }
-  // }
-  const getFormattedCoordinate = (gpsCoordinatesValue: any) => {
-    try {
-      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ').replace(/\s+/g, ' ').trim()
-
-      let coordinates = gpsCoordinatesValue?.split(' ')
-
-      if (coordinates.length !== 2) {
-        coordinates = coordinates.filter((coordinate: any) => coordinate)
-      }
-
-      let [lat, long]: any = coordinates
-
-      if (lat?.split('.').length > 2) {
-        const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
-        lat = degree + minute / 60 + second / 3600
-      }
-
-      if (long?.split('.').length > 2) {
-        const [degree, minute, second]: any = long?.split('.').map((num: any) => parseInt(num))
-        long = degree + minute / 60 + second / 3600
-      }
-
-      if (!(isNaN(lat) || isNaN(long))) {
-        return [+lat, +long]
-      }
-    } catch (error) {
-      console.log('Error In Setting Center', error)
-      return [39.4926173, -117.5714859]
-    }
-  }
   const [center, setCenter] = useState<any>(
     customerData?.gpsCoordinates || gpsCoordinatesValue
-      ? getFormattedCoordinate(customerData?.gpsCoordinates || gpsCoordinatesValue)
+      ? formatGpsCoordinates(customerData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
   const [isLoading, setIsLoading] = useState(true)
@@ -325,7 +272,7 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
 
   useEffect(() => {
     if (gpsCoordinatesValue) {
-      const coordinates = getFormattedCoordinate(gpsCoordinatesValue)
+      const coordinates = formatGpsCoordinates(gpsCoordinatesValue)
       setCenter(coordinates)
     }
   }, [gpsCoordinatesValue])
@@ -584,7 +531,7 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
                   {...(mapPositionChanged ? { value: gpsCoordinatesValue } : '')}
                   onFocus={() => setMapPositionChanged(false)}
                   onBlur={() => setMapPositionChanged(true)}
-                  defaultValue={getFormattedCoordinate(customerData?.gpsCoordinates)?.join(' ')}
+                  defaultValue={formatGpsCoordinates(customerData?.gpsCoordinates)?.join(' ')}
                   onChange={debounce((e) => {
                     setGpsCoordinatesValue(e.target.value)
                   })}

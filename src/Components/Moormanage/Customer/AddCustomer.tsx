@@ -38,7 +38,7 @@ import { AiOutlineDelete } from 'react-icons/ai'
 import { NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUtils'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
-import { validateFiles } from '../../Helper/Helper'
+import { formatGpsCoordinates, validateFiles } from '../../Helper/Helper'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -83,40 +83,9 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   const [mooringStatus, setMooringStatus] = useState<MetaData[]>([])
   const [mapPositionChanged, setMapPositionChanged] = useState<boolean>(true)
 
-  const getFormattedCoordinate = (gpsCoordinatesValue: any) => {
-    try {
-      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ').replace(/\s+/g, ' ').trim()
-
-      let coordinates = gpsCoordinatesValue?.split(' ')
-
-      if (coordinates.length !== 2) {
-        coordinates = coordinates.filter((coordinate: any) => coordinate)
-      }
-
-      let [lat, long]: any = coordinates
-
-      if (lat?.split('.').length > 2) {
-        const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
-        lat = degree + minute / 60 + second / 3600
-      }
-
-      if (long?.split('.').length > 2) {
-        const [degree, minute, second]: any = long?.split('.').map((num: any) => parseInt(num))
-        long = degree + minute / 60 + second / 3600
-      }
-
-      if (!(isNaN(lat) || isNaN(long))) {
-        return [+lat, +long]
-      }
-    } catch (error) {
-      console.log('Error In Setting Center', error)
-      return [39.4926173, -117.5714859]
-    }
-  }
-
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
-      ? getFormattedCoordinate(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
+      ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
   const [firstErrorField, setFirstErrorField] = useState('')
@@ -910,7 +879,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   useEffect(() => {
     if (gpsCoordinatesValue) {
-      const coordinates = getFormattedCoordinate(gpsCoordinatesValue)
+      const coordinates = formatGpsCoordinates(gpsCoordinatesValue)
       setCenter(coordinates)
     }
   }, [gpsCoordinatesValue])
