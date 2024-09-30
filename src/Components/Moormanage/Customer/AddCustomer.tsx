@@ -83,22 +83,28 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   const [mooringStatus, setMooringStatus] = useState<MetaData[]>([])
   const [mapPositionChanged, setMapPositionChanged] = useState<boolean>(true)
 
-  const getFomattedCoordinate = (gpsCoordinatesValue: any) => {
+  const getFormattedCoordinate = (gpsCoordinatesValue: any) => {
     try {
-      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ')
+      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ').replace(/\s+/g, ' ').trim()
+
       let coordinates = gpsCoordinatesValue?.split(' ')
+
       if (coordinates.length !== 2) {
         coordinates = coordinates.filter((coordinate: any) => coordinate)
       }
-      let [lat, long]: any = gpsCoordinatesValue?.split(' ')
+
+      let [lat, long]: any = coordinates
+
       if (lat?.split('.').length > 2) {
-        const [degree, minute, second]: any = lat?.split('.')?.map((num: any) => parseInt(num))
+        const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
         lat = degree + minute / 60 + second / 3600
       }
+
       if (long?.split('.').length > 2) {
-        const [degree, minute, second]: any = long?.split('.')?.map((num: any) => parseInt(num))
+        const [degree, minute, second]: any = long?.split('.').map((num: any) => parseInt(num))
         long = degree + minute / 60 + second / 3600
       }
+
       if (!(isNaN(lat) || isNaN(long))) {
         return [+lat, +long]
       }
@@ -110,7 +116,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
-      ? getFomattedCoordinate(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
+      ? getFormattedCoordinate(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
   const [firstErrorField, setFirstErrorField] = useState('')
@@ -904,7 +910,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   useEffect(() => {
     if (gpsCoordinatesValue) {
-      const coordinates = getFomattedCoordinate(gpsCoordinatesValue)
+      const coordinates = getFormattedCoordinate(gpsCoordinatesValue)
       setCenter(coordinates)
     }
   }, [gpsCoordinatesValue])

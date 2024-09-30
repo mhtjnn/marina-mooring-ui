@@ -42,28 +42,58 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
   const [storage, setStorage] = useState('')
   const [storageList, setStorageList] = useState<string[]>([])
   const [mapPositionChanged, setMapPositionChanged] = useState<boolean>(true)
-  const getFormattedCoordinate = (coordinates: any) => {
-    try {
-      let [lat, long] = coordinates?.split(/[ ,]+/)
+  // const getFormattedCoordinate = (coordinates: any) => {
+  //   try {
+  //     let [lat, long] = coordinates?.split(/[ ,]+/)
 
-      const convertToDecimal = (coordinate: any) => {
-        if (coordinate?.split('.').length > 2) {
-          const [degree, minute, second] = coordinate?.split('.').map((num: any) => parseFloat(num))
-          return degree + minute / 60 + second / 3600
-        }
-        return parseFloat(coordinate)
+  //     const convertToDecimal = (coordinate: any) => {
+  //       if (coordinate?.split('.').length > 2) {
+  //         const [degree, minute, second] = coordinate?.split('.').map((num: any) => parseFloat(num))
+  //         return degree + minute / 60 + second / 3600
+  //       }
+  //       return parseFloat(coordinate)
+  //     }
+
+  //     lat = convertToDecimal(lat)
+  //     long = convertToDecimal(long)
+
+  //     if (!isNaN(lat) && !isNaN(long)) {
+  //       return [lat, long]
+  //     } else {
+  //       throw new Error('Parsed coordinates are NaN')
+  //     }
+  //   } catch (error) {
+  //     console.error('Error In Setting Center:', error)
+  //     return [39.4926173, -117.5714859]
+  //   }
+  // }
+  const getFormattedCoordinate = (gpsCoordinatesValue: any) => {
+    try {
+      gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ').replace(/\s+/g, ' ').trim()
+
+      let coordinates = gpsCoordinatesValue?.split(' ')
+
+      if (coordinates.length !== 2) {
+        coordinates = coordinates.filter((coordinate: any) => coordinate)
       }
 
-      lat = convertToDecimal(lat)
-      long = convertToDecimal(long)
+      let [lat, long]: any = coordinates
 
-      if (!isNaN(lat) && !isNaN(long)) {
-        return [lat, long]
-      } else {
-        throw new Error('Parsed coordinates are NaN')
+      if (lat?.split('.').length > 2) {
+        const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
+        lat = degree + minute / 60 + second / 3600
+      }
+
+      if (long?.split('.').length > 2) {
+        const [degree, minute, second]: any = long?.split('.').map((num: any) => parseInt(num))
+        long = degree + minute / 60 + second / 3600
+      }
+
+      if (!(isNaN(lat) || isNaN(long))) {
+        return [+lat, +long]
       }
     } catch (error) {
-      console.error('Error In Setting Center:', error)
+      console.log('Error In Setting Center', error)
       return [39.4926173, -117.5714859]
     }
   }

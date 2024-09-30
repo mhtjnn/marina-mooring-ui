@@ -83,33 +83,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   >([])
   // const toastRef = useRef<Toast>(null)
   const firstErrorRef = useRef<HTMLDivElement>(null)
-  // const getFomattedCoordinate = (gpsCoordinatesValue: any) => {
-  //   try {
-  //     gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ')
-  //     let coordinates = gpsCoordinatesValue?.split(' ')
-  //     if (coordinates.length !== 2) {
-  //       coordinates = coordinates.filter((coordinate: any) => coordinate)
-  //     }
-  //     let [lat, long]: any = gpsCoordinatesValue?.split(' ')
-  //     if (lat?.split('.').length > 2) {
-  //       const [degree, minute, second]: any = lat?.split('.').map((num: any) => parseInt(num))
-  //       lat = degree + minute / 60 + second / 3600
-  //     }
-  //     if (long?.split('.').length > 2) {
-  //       const [degree, minute, second]: any = long?.split('.').map((num: any) => parseInt(num))
-  //       long = degree + minute / 60 + second / 3600
-  //     }
-  //     if (!(isNaN(lat) || isNaN(long))) {
-  //       return [+lat, +long]
-  //     }
-  //   } catch (error) {
-  //     console.log('Error In Setting Center', error)
-  //     return [39.4926173, -117.5714859]
-  //   }
-  //   // return [39.4926173,-117.5714859]
-  // }
 
-  const getFomattedCoordinate = (gpsCoordinatesValue: any) => {
+  const getFormattedCoordinate = (gpsCoordinatesValue: any) => {
     try {
       gpsCoordinatesValue = gpsCoordinatesValue.replaceAll(',', ' ').replace(/\s+/g, ' ').trim()
 
@@ -142,7 +117,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
 
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
-      ? getFomattedCoordinate(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
+      ? getFormattedCoordinate(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
 
@@ -671,7 +646,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
 
   useEffect(() => {
     if (gpsCoordinatesValue) {
-      const coordinates = getFomattedCoordinate(gpsCoordinatesValue)
+      const coordinates = getFormattedCoordinate(gpsCoordinatesValue)
       setCenter(coordinates)
     }
   }, [gpsCoordinatesValue])
