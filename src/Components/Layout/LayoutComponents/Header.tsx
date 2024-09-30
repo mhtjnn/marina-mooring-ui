@@ -41,8 +41,10 @@ const Header: React.FC<HeaderProps> = ({ header, customer }) => {
             value: item,
           }))
           setgetCustomerOwnerData(firstLastName)
-          dispatch(setCustomerName(firstLastName[0]?.label))
-          dispatch(setCustomerId(firstLastName[0]?.value?.id))
+          if (!selectedCustomerName) {
+            dispatch(setCustomerName(firstLastName[0]?.label))
+            dispatch(setCustomerId(firstLastName[0]?.value?.id))
+          }
         } else {
           setgetCustomerOwnerData([])
         }
