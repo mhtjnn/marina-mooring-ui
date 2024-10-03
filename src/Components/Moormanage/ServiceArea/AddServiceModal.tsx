@@ -531,7 +531,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
                   {...(mapPositionChanged ? { value: gpsCoordinatesValue } : '')}
                   onFocus={() => setMapPositionChanged(false)}
                   onBlur={() => setMapPositionChanged(true)}
-                  defaultValue={formatGpsCoordinates(customerData?.gpsCoordinates)?.join(' ')}
                   onChange={debounce((e) => {
                     setGpsCoordinatesValue(e.target.value)
                   })}

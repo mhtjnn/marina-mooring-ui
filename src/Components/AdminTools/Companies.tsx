@@ -597,7 +597,7 @@ const CustomerOwner = () => {
                     style={{
                       position: 'absolute',
                       top: '50%',
-                      left: '40%',
+                      left: '43%',
                       transform: 'translate(-50%, -50%)',
                       width: '50px',
                       height: '50px',
