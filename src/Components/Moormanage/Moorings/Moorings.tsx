@@ -248,6 +248,7 @@ const Moorings = () => {
       {
         id: 'customerName',
         label: 'Customer Name',
+        body: (rowData: any) => (rowData.customerName !== null ? rowData.customerName : '-'),
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',

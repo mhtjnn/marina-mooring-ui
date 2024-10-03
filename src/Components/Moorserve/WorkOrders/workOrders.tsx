@@ -87,13 +87,16 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   }
 
   const firstLastName = (data: any) => {
-    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
+    const firstName = data?.customerResponseDto?.firstName
+    const lastName = data?.customerResponseDto?.lastName
+    return firstName !== null ? `${firstName} ${lastName}` : '-'
   }
 
   const TechnicianfirstLastName = (data: any) => {
-    return (
-      data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
-    )
+    const firstName = data?.technicianUserResponseDto?.firstName
+    const lastName = data?.technicianUserResponseDto?.lastName
+
+    return firstName !== null ? `${firstName} ${lastName}` : '-'
   }
 
   const workOrderColumns = useMemo(
@@ -109,38 +112,12 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
         label: 'Mooring Number',
         style: columnStyle,
       },
-      // {
-      //   id: 'Boatyard',
-      //   label: 'Boatyard',
-      //   style: columnStyle,
-      // },
-      // {
-      //   id: 'ServiceArea',
-      //   label: 'Service Area',
-      //   style: columnStyle,
-      // },
-      // {
-      //   id: 'jobType',
-      //   label: 'Job Type',
-      //   style: columnStyle,
-      // },
-
       {
         id: 'technicianUserResponseDto.name',
         label: 'Assigned to',
         style: columnStyle,
         body: TechnicianfirstLastName,
       },
-      // {
-      //   id: 'orderDate',
-      //   label: 'Order Date',
-      //   style: columnStyle,
-      // },
-      // {
-      //   id: 'Creation Date',
-      //   label: 'Creation Date',
-      //   style: columnStyle,
-      // },
       {
         id: 'dueDate',
         label: 'Due Date',
@@ -356,10 +333,6 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   const handleButtonClick = () => {
     setVisible(true)
   }
-
-  // useEffect(() => {
-  //   getWorkOrderData()
-  // }, [pageNumber, completedWorkOrder, pageSize])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
