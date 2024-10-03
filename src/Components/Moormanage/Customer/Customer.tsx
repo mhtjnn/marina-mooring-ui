@@ -850,7 +850,7 @@ const Customer = () => {
                   style={{
                     position: 'absolute',
                     top: '60%',
-                    left: '20%',
+                    left: '25%',
                     transform: 'translate(-50%, -50%)',
                     width: '50px',
                     height: '50px',
@@ -944,8 +944,8 @@ const Customer = () => {
                 <ProgressSpinner
                   style={{
                     position: 'absolute',
-                    top: '30%',
-                    left: '85%',
+                    top: '40%',
+                    left: '80%',
                     transform: 'translate(-50%, -50%)',
                     width: '50px',
                     height: '50px',

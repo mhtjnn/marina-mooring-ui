@@ -727,7 +727,7 @@ const ServiceArea = () => {
             style={{
               position: 'absolute',
               top: '65%',
-              left: '20%',
+              left: '28%',
               transform: 'translate(-50%, -50%)',
               width: '50px',
               height: '50px',
