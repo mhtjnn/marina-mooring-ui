@@ -558,7 +558,7 @@ const CustomerOwner = () => {
             <div
               data-testid="customerData"
               className="flex flex-col overflow-hidden p-4"
-              style={{ height: '500px' }}>
+              style={{ height: '85vh' }}>
               <div className="flex-grow overflow-auto">
                 <DataTableComponent
                   data={getCustomerOwnerData}
@@ -663,7 +663,7 @@ const CustomerOwner = () => {
             <div
               data-testid="customerDataAdmin"
               className="flex flex-col overflow-hidden p-4"
-              style={{ height: '500px' }}>
+              style={{ height: '85vh' }}>
               <div className="flex-grow overflow-auto">
                 <DataTableComponent
                   tableStyle={{

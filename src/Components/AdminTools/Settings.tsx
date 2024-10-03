@@ -214,7 +214,7 @@ const Settings = () => {
       setIsLoading(true)
       const selectedValue: any = dropdownValues[rowData.id]
       const response = await mapCustomerToQuickBook({
-        quickbookCustomerId: selectedValue,
+        quickbookCustomerId: selectedValue || rowData?.quickbookCustomerResponseDto?.id,
         customerId: rowData?.id,
       }).unwrap()
       const { status, message } = response as CustomerResponse
