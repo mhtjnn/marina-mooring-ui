@@ -348,12 +348,12 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   }, [selectedCustomerId])
 
   return (
-    <div style={{ height: '95vh' }} className={visible ? 'backdrop-blur-lg' : ''}>
+    <div style={{ height: '100vh' }} className={visible ? 'backdrop-blur-lg' : ''}>
       <Toast ref={toast} />
       {!report && <Header header="MOORSERVE/Work Orders" />}{' '}
       <div className="">
         {!report && (
-          <div className="flex justify-end gap-6 mt-6 mr-16">
+          <div className="flex justify-end gap-4 mt-6 mr-12">
             <Button
               onClick={handleExportPdf}
               style={{
