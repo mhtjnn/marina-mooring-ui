@@ -29,6 +29,7 @@ const CustomDisplayPositionMap: React.FC<CustomDisplayPositionMapProps> = ({
         center={position}
         zoom={zoomLevel}
         scrollWheelZoom={false}
+        worldCopyJump={true}
         attributionControl={false}
         ref={setMap}>
         <TileLayer

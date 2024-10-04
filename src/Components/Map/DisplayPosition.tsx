@@ -7,7 +7,6 @@ import { DefaultIcon } from './DefaultIcon'
 const DisplayPosition: React.FC<DisplayPositionProps> = ({ map, onPositionChange }) => {
   const onMove = useCallback(() => {
     const newPosition = map.getCenter()
-
     if (onPositionChange) {
       onPositionChange(newPosition.lat, newPosition.lng)
     }

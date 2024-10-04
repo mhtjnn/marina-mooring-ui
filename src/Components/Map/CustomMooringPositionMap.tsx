@@ -118,6 +118,7 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
             center={position}
             zoom={position ? zoomLevel : 4}
             scrollWheelZoom={false}
+            worldCopyJump={true}
             attributionControl={false}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

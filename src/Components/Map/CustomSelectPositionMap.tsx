@@ -50,7 +50,12 @@ const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
     <div>
       <Toast ref={toast} />
       {map && <DisplayPosition map={map} onPositionChange={onPositionChange} />}
-      <MapContainer center={center} zoom={zoomLevel} attributionControl={false} ref={setMap}>
+      <MapContainer
+        center={center}
+        zoom={zoomLevel}
+        worldCopyJump={true}
+        attributionControl={false}
+        ref={setMap}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

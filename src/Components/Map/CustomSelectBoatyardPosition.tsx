@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { MapContainer, Marker, TileLayer } from 'react-leaflet'
+import { MapContainer, Marker, TileLayer, ZoomControl } from 'react-leaflet'
 import L from 'leaflet'
 import './CustomMap.css'
 import DisplayPosition from './DisplayPosition'
@@ -25,10 +25,15 @@ const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
   const displayMap = useMemo(() => {
     return (
       <>
-        <MapContainer center={center} zoom={zoomLevel} attributionControl={false} ref={setMap}>
+        <MapContainer
+          center={center}
+          zoom={15}
+          worldCopyJump={true}
+          attributionControl={false}
+          ref={setMap}>
           <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Marker
             ref={markerRef}

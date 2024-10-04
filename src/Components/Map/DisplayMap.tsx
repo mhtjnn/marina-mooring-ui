@@ -10,7 +10,7 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ center, zoomLevel = 10 }) => {
   return (
     <>
       <Toast ref={toast} />
-      <MapContainer center={center} zoom={zoomLevel} scrollWheelZoom={false}>
+      <MapContainer center={center} zoom={zoomLevel} worldCopyJump={true} scrollWheelZoom={false}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <Marker position={center} />
       </MapContainer>
