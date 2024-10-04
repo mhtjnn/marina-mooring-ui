@@ -27,7 +27,7 @@ const CustomDisplayPositionMap: React.FC<CustomDisplayPositionMapProps> = ({
       <MapContainer
         style={style}
         center={position}
-        zoom={zoomLevel}
+        zoom={8}
         scrollWheelZoom={false}
         worldCopyJump={true}
         attributionControl={false}
