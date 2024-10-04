@@ -412,7 +412,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
         topChainConditionId: formData?.topChainCondition?.id,
         bottomChainConditionId: formData?.bottomChainCondition?.id,
         shackleSwivelConditionId: formData?.shackleSwivelCondition?.id,
-        pendantConditionId: formData?.pendantCondition,
+        pendantCondition: formData?.pendantCondition,
         depthAtMeanHighWater: formData?.depthAtMeanHighWater,
         statusId: formData?.mooringStatus?.id,
         inspectionDate: formData?.inspectionDate,

@@ -467,7 +467,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             topChainConditionId: formData?.topChainCondition?.id,
             bottomChainConditionId: formData?.bottomChainCondition?.id,
             shackleSwivelConditionId: formData?.shackleSwivelCondition?.id,
-            pendantConditionId: formData?.pendantCondition,
+            pendantCondition: formData?.pendantCondition,
             depthAtMeanHighWater: formData?.depthAtMeanHighWater,
             imageRequestDtoList: mooringImageRequestDtoList,
             statusId: formData?.mooringStatus?.id,
