@@ -33,7 +33,7 @@ import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
-import { formatGpsCoordinates, validateFiles } from '../../Helper/Helper'
+import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
 
 const AddMoorings: React.FC<AddMooringProps> = ({
   moorings,
@@ -578,14 +578,40 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     }
   }
 
-  const handlePositionChange = (lat: number, lng: number) => {
-    setCenter([lat, lng])
-    console.log('lat.lng', lat, lng)
+  // const handlePositionChange = (lat: number, lng: number) => {
+  //   setCenter([lat, lng])
+  //   console.log('lat.lng', lat, lng)
 
-    const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
-    const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
-    const concatenatedValue = `${lat} ${lng}`
-    setGpsCoordinatesValue(concatenatedValue)
+  //   const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
+  //   const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
+  //   const concatenatedValue = `${formattedLat} ${formattedLng}`
+  //   setGpsCoordinatesValue(concatenatedValue)
+  // }
+
+  const handlePositionChange = (lat: number, lng: number) => {
+    console.log('Raw latitude:', lat)
+    console.log('Raw longitude:', lng)
+
+    setCenter([lat, lng])
+    const formattedLat = lat.toFixed(
+      (window as any).latDecimalCount
+        ? (window as any).latDecimalCount > 7
+          ? 7
+          : (window as any).latDecimalCount
+        : 7,
+    )
+    const formattedLng = lng.toFixed(
+      (window as any).lngDecimalCount
+        ? (window as any).lngDecimalCount > 7
+          ? 7
+          : (window as any).lngDecimalCount
+        : 7,
+    )
+    console.log('Formatted latitude:', formattedLat)
+    console.log('Formatted longitude:', formattedLng)
+
+    const concatenatedValue = `${formattedLat} ${formattedLng}`
+    if (mapPositionChanged) setGpsCoordinatesValue(concatenatedValue)
   }
 
   const handleClick = () => {
@@ -859,7 +885,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                   onBlur={() => setMapPositionChanged(true)}
                   defaultValue={mooringRowData?.gpsCoordinates}
                   onChange={debounce((e) => {
-                    const inputValue = e.target.value
+                    let inputValue = e.target.value
+                    inputValue = normalizeGpsCoordinates(inputValue)
                     setGpsCoordinatesValue(inputValue)
                     const coordinates = inputValue.trim().split(' ')
                     let latDecimalCount = 0
