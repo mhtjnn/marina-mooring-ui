@@ -82,12 +82,17 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     { imageName: string; imageData: string; note: string }[]
   >([])
   const firstErrorRef = useRef<HTMLDivElement>(null)
+  // console.log('gpsCoordinatesValue', gpsCoordinatesValue)
 
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
       ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
+  // console.log(
+  //   'formatGpsCoordinates(gpsCoordinatesValue)',
+  //   formatGpsCoordinates(gpsCoordinatesValue),
+  // )
 
   const [saveMoorings] = useAddMooringsMutation()
   const [updateMooring] = useUpdateMooringsMutation()
@@ -575,9 +580,11 @@ const AddMoorings: React.FC<AddMooringProps> = ({
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
-    const formattedLat = lat.toFixed(6)
-    const formattedLng = lng.toFixed(6)
-    const concatenatedValue = `${formattedLat} ${formattedLng}`
+    console.log('lat.lng', lat, lng)
+
+    const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
+    const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
+    const concatenatedValue = `${lat} ${lng}`
     setGpsCoordinatesValue(concatenatedValue)
   }
 
@@ -852,7 +859,18 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                   onBlur={() => setMapPositionChanged(true)}
                   defaultValue={mooringRowData?.gpsCoordinates}
                   onChange={debounce((e) => {
-                    setGpsCoordinatesValue(e.target.value)
+                    const inputValue = e.target.value
+                    setGpsCoordinatesValue(inputValue)
+                    const coordinates = inputValue.trim().split(' ')
+                    let latDecimalCount = 0
+                    let lngDecimalCount = 0
+                    if (coordinates.length === 2) {
+                      const [lat, lng] = coordinates
+                      latDecimalCount = (lat.split('.')[1] || '').length
+                      lngDecimalCount = (lng.split('.')[1] || '').length
+                    }
+                    ;(window as any).latDecimalCount = latDecimalCount
+                    ;(window as any).lngDecimalCount = lngDecimalCount
                     setFieldErrors((prevErrors) => ({ ...prevErrors, gpsCoordinatesValue: '' }))
                   })}
                   style={{
