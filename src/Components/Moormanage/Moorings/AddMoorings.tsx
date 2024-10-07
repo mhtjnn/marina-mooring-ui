@@ -82,7 +82,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     { imageName: string; imageData: string; note: string }[]
   >([])
   const firstErrorRef = useRef<HTMLDivElement>(null)
-  // console.log('gpsCoordinatesValue', gpsCoordinatesValue)
+  console.log('gpsCoordinatesValue', gpsCoordinatesValue)
 
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
@@ -883,7 +883,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                   {...(mapPositionChanged ? { value: gpsCoordinatesValue } : '')}
                   onFocus={() => setMapPositionChanged(false)}
                   onBlur={() => setMapPositionChanged(true)}
-                  defaultValue={mooringRowData?.gpsCoordinates}
                   onChange={debounce((e) => {
                     let inputValue = e.target.value
                     inputValue = normalizeGpsCoordinates(inputValue)
