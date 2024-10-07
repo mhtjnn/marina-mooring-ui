@@ -300,7 +300,7 @@ const Settings = () => {
   }, [selectedCustomerId, pageSize, pageNumber])
 
   return (
-    <div>
+    <div className='overflow-hidden'>
       <Header header="MOORMANAGE/Permission" />
       <Toast ref={toast} />
       <div
@@ -314,7 +314,6 @@ const Settings = () => {
           style={{
             flexGrow: 1,
             borderRadius: '10px',
-            minHeight: 'calc(40vw - 550px)',
           }}>
           <div className="text-md font-semibold rounded-t-lg bg-[#00426F]">
             <h1 className="p-4 text-xl font-extrabold  text-white">{properties.Settings}</h1>
@@ -322,7 +321,7 @@ const Settings = () => {
           <div
             data-testid="customer-admin-data"
             className="flex flex-col"
-            style={{ height: '700px' }}>
+            style={{ height: '75vh' }}>
             <div className="flex-grow overflow-auto">
               <DataTableComponent
                 tableStyle={{
