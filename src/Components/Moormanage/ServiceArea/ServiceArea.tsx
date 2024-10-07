@@ -448,7 +448,8 @@ const ServiceArea = () => {
         </div>
 
         <div
-          className={`bg-#00426F overflow-x-hidden h-[260px] mt-[3px] table-container flex flex-col`}>
+          className={`bg-#00426F overflow-x-hidden mt-[3px] table-container flex flex-col`}
+          style={{ height: 'calc(100vh - 640px)' }}>
           <div className="flex-grow overflow-y-auto">
             <DataTableComponent
               tableStyle={{
@@ -669,7 +670,8 @@ const ServiceArea = () => {
                 }}
               />
               <div
-                className={`bg-#00426F overflow-x-hidden h-[590px] mt-[3px] table-container flex flex-col`}>
+                className={`bg-#00426F overflow-x-hidden mt-[3px] table-container flex flex-col`}
+                style={{ height: 'calc(100vh - 320px)' }}>
                 <div className="flex-grow overflow-auto">
                   <DataTableComponent
                     tableStyle={{
@@ -738,7 +740,7 @@ const ServiceArea = () => {
 
         <div
           data-testid="customer-admin-users-table"
-          className="flex-grow bg-[#FFFFFF] rounded-xl border-[1px] border-gray-300 w-[515px] h-[732px] mr-[50px] ml-[30px] mb-0 ">
+          className="flex-grow bg-[#FFFFFF] rounded-xl border-[1px] border-gray-300 w-[515px] mr-[50px] ml-[30px] mb-0 ">
           <div className="flex flex-col h-full">
             <div className="text-sm font-extrabold rounded-sm w-full bg-[#D9D9D9]">
               <div

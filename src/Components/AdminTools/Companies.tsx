@@ -468,7 +468,7 @@ const CustomerOwner = () => {
   return (
     <>
       <Toast ref={toast} />
-      <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
+      <div style={{ height: '100vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
         <Header header="MOORMANAGE/Permission" customer={customerUpdated} />
 
         <div className="flex mr-12 justify-end ">
@@ -558,7 +558,7 @@ const CustomerOwner = () => {
             <div
               data-testid="customerData"
               className="flex flex-col overflow-hidden p-4"
-              style={{ height: '85vh' }}>
+              style={{ height: 'calc(100vh - 350px)' }}>
               <div className="flex-grow overflow-auto">
                 <DataTableComponent
                   data={getCustomerOwnerData}
@@ -663,7 +663,7 @@ const CustomerOwner = () => {
             <div
               data-testid="customerDataAdmin"
               className="flex flex-col overflow-hidden p-4"
-              style={{ height: '85vh' }}>
+              style={{ height: 'calc(100vh - 350px)' }}>
               <div className="flex-grow overflow-auto">
                 <DataTableComponent
                   tableStyle={{

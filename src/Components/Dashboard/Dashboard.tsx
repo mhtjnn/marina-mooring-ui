@@ -467,8 +467,8 @@ const Dashboard = () => {
                 position={coordinatesArray ? coordinatesArray : initialPosition}
                 zoomLevel={10}
                 style={{
-                  height: leftContainerWidth ? '650px' : '400px',
-                  minHeight: leftContainerWidth ? '650px' : '400px',
+                  height: leftContainerWidth ? 'calc(100vh - 250px)' : 'calc(100vh - 480px)',
+                  minHeight: leftContainerWidth ? 'calc(100vh - 250px)' : 'calc(100vh - 480px)',
                   width: '100%',
                 }}
                 iconsByStatus={iconsByStatus}
@@ -485,7 +485,7 @@ const Dashboard = () => {
           {leftContainerWidth ? (
             <div
               style={{
-                height: '720px',
+                height: 'calc(100vh - 350px)',
                 minHeight: '720px',
                 width: '40px',
                 minWidth: '40px',
@@ -611,7 +611,8 @@ const Dashboard = () => {
                   <div
                     className={`content transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div
-                      className={`bg-#00426F overflow-x-hidden h-[320px] table-container flex flex-col`}>
+                      className={`bg-#00426F overflow-x-hidden table-container flex flex-col`}
+                      style={{ height: 'calc(100vh - 550px)' }}>
                       <div className="flex-grow" style={{ overflow: 'auto' }}>
                         <DataTableComponent
                           data={workOrderData}
@@ -652,7 +653,10 @@ const Dashboard = () => {
 
                 <div
                   className="tab px-5 py-3 bg-white border-[1px] border-[#D5E1EA] relative mb-2 rounded-xl mr-8"
-                  style={{ width: '600px', maxWidth: '600px' }}>
+                  style={{
+                    width: '600px',
+                    maxWidth: '600px',
+                  }}>
                   <label
                     htmlFor="faq3"
                     className="cursor-pointer flex items-center justify-between h-8"
