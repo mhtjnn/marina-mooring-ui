@@ -192,7 +192,6 @@ const Boatyards = () => {
         style: columnStyle,
       },
     ],
-    // [allowExpansion],
     [],
   )
 
@@ -344,6 +343,7 @@ const Boatyards = () => {
             setTotalRecordsTwo(totalSize)
           } else {
             setIsLoading(false)
+            setMooringWithBoatyardsData([])
           }
         })
     } catch (error) {
@@ -412,74 +412,6 @@ const Boatyards = () => {
             marginRight: '10px',
           }}>
           <CustomDisplayPositionMap position={[latitude, longitude]} zoomLevel={15} />
-        </div>
-
-        <div
-          className={`bg-#00426F overflow-x-hidden h-[360px] mt-[3px] table-container flex flex-col`}>
-          <div className="flex-grow overflow-y-auto">
-            <DataTableComponent
-              tableStyle={{
-                fontSize: '12px',
-                color: '#000000',
-              }}
-              data={mooringWithBoatyardsData || []}
-              columns={tableColumnsBoatyards}
-              actionButtons={ActionButtonColumn}
-              selectionMode="single"
-              dataKey="id"
-              onSelectionChange={(e) => {
-                setSelectedProduct(e.value)
-              }}
-              selection={selectedProduct}
-              rowStyle={(rowData) => rowData}
-              style={{
-                borderBottom: '1px solid #D5E1EA',
-                marginLeft: '5px',
-                fontWeight: '400',
-                color: '#000000',
-              }}
-              emptyMessage={
-                <div className="text-center mt-14">
-                  <img
-                    src="/assets/images/empty.png"
-                    alt="Empty Data"
-                    className="w-20 mx-auto mb-4"
-                  />
-                  <p className="text-gray-500">{properties.noDataMessage}</p>
-                </div>
-              }
-            />
-          </div>
-          {isLoader && (
-            <ProgressSpinner
-              style={{
-                position: 'absolute',
-                top: '70%',
-                left: '75%',
-                transform: 'translate(-50%, -50%)',
-                width: '50px',
-                height: '50px',
-              }}
-              strokeWidth="4"
-            />
-          )}
-          <div className="mt-auto">
-            <Paginator
-              first={pageNumberOne}
-              rows={pageSizeTwo}
-              totalRecords={totalRecordsTwo}
-              rowsPerPageOptions={[5, 10, 20, 30]}
-              onPageChange={onPageChangeTwo}
-              style={{
-                position: 'sticky',
-                bottom: 0,
-                zIndex: 1,
-                backgroundColor: 'white',
-                borderTop: '1px solid #D5E1EA',
-                padding: '0.5rem',
-              }}
-            />
-          </div>
         </div>
       </>
     )
@@ -687,7 +619,76 @@ const Boatyards = () => {
 
             <div className="flex-grow overflow-auto">
               {selectedBoatYard ? (
-                BoatyardMoorings
+                <>
+                  {BoatyardMoorings}{' '}
+                  <div
+                    className={`bg-#00426F overflow-x-hidden h-[360px] mt-[3px] table-container flex flex-col`}>
+                    <div className="flex-grow overflow-y-auto">
+                      <DataTableComponent
+                        tableStyle={{
+                          fontSize: '12px',
+                          color: '#000000',
+                        }}
+                        data={mooringWithBoatyardsData || []}
+                        columns={tableColumnsBoatyards}
+                        actionButtons={ActionButtonColumn}
+                        selectionMode="single"
+                        dataKey="id"
+                        onSelectionChange={(e) => {
+                          setSelectedProduct(e.value)
+                        }}
+                        selection={selectedProduct}
+                        rowStyle={(rowData) => rowData}
+                        style={{
+                          borderBottom: '1px solid #D5E1EA',
+                          marginLeft: '5px',
+                          fontWeight: '400',
+                          color: '#000000',
+                        }}
+                        emptyMessage={
+                          <div className="text-center mt-14">
+                            <img
+                              src="/assets/images/empty.png"
+                              alt="Empty Data"
+                              className="w-20 mx-auto mb-4"
+                            />
+                            <p className="text-gray-500">{properties.noDataMessage}</p>
+                          </div>
+                        }
+                      />
+                    </div>
+                    {isLoader && (
+                      <ProgressSpinner
+                        style={{
+                          position: 'absolute',
+                          top: '70%',
+                          left: '75%',
+                          transform: 'translate(-50%, -50%)',
+                          width: '50px',
+                          height: '50px',
+                        }}
+                        strokeWidth="4"
+                      />
+                    )}
+                    <div className="mt-auto">
+                      <Paginator
+                        first={pageNumberOne}
+                        rows={pageSizeTwo}
+                        totalRecords={totalRecordsTwo}
+                        rowsPerPageOptions={[5, 10, 20, 30]}
+                        onPageChange={onPageChangeTwo}
+                        style={{
+                          position: 'sticky',
+                          bottom: 0,
+                          zIndex: 1,
+                          backgroundColor: 'white',
+                          borderTop: '1px solid #D5E1EA',
+                          padding: '0.5rem',
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
               ) : (
                 <div className="text-center mt-40 mb-10">
                   <img

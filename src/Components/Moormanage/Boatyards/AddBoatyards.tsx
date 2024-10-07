@@ -18,7 +18,7 @@ import { IoMdAdd, IoMdClose } from 'react-icons/io'
 import { InputText } from 'primereact/inputtext'
 import { debounce } from 'lodash'
 import CustomSelectPositionMap from '../../Map/CustomSelectBoatyardPosition'
-import { formatGpsCoordinates } from '../../Helper/Helper'
+import { formatGpsCoordinates, normalizeGpsCoordinates } from '../../Helper/Helper'
 
 const AddBoatyards: React.FC<BoatYardProps> = ({
   closeModal,
@@ -72,10 +72,22 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
-    const formattedLat = lat.toFixed(6)
-    const formattedLng = lng.toFixed(6)
+    const formattedLat = lat.toFixed(
+      (window as any).latDecimalCount
+        ? (window as any).latDecimalCount > 7
+          ? 7
+          : (window as any).latDecimalCount
+        : 7,
+    )
+    const formattedLng = lng.toFixed(
+      (window as any).lngDecimalCount
+        ? (window as any).lngDecimalCount > 7
+          ? 7
+          : (window as any).lngDecimalCount
+        : 7,
+    )
     const concatenatedValue = `${formattedLat} ${formattedLng}`
-    setGpsCoordinatesValue(concatenatedValue)
+    if (mapPositionChanged) setGpsCoordinatesValue(concatenatedValue)
     setErrorMessage((prev) => ({ ...prev, gpsCoordinatesValue: '' }))
   }
 
@@ -209,10 +221,6 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
     } else {
       saveBoatyards()
     }
-  }
-
-  const handleBack = () => {
-    setModalVisible(false)
   }
 
   const handleAddStorage = () => {
@@ -354,7 +362,6 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
                     }}
                     onClick={() => handleDeleteStorage(index)}
                   />
-
                   <button></button>
                 </li>
               ))}
@@ -476,9 +483,20 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
                   {...(mapPositionChanged ? { value: gpsCoordinatesValue } : '')}
                   onFocus={() => setMapPositionChanged(false)}
                   onBlur={() => setMapPositionChanged(true)}
-                  defaultValue={formatGpsCoordinates(customerData?.gpsCoordinates)?.join(' ')}
                   onChange={debounce((e) => {
-                    setGpsCoordinatesValue(e.target.value)
+                    let inputValue = e.target.value
+                    inputValue = normalizeGpsCoordinates(inputValue)
+                    setGpsCoordinatesValue(inputValue)
+                    const coordinates = inputValue.trim().split(' ')
+                    let latDecimalCount = 0
+                    let lngDecimalCount = 0
+                    if (coordinates.length === 2) {
+                      const [lat, lng] = coordinates
+                      latDecimalCount = (lat.split('.')[1] || '').length
+                      lngDecimalCount = (lng.split('.')[1] || '').length
+                    }
+                    ;(window as any).latDecimalCount = latDecimalCount
+                    ;(window as any).lngDecimalCount = lngDecimalCount
                   })}
                   placeholder="GPS Coordinates"
                   style={{
@@ -566,7 +584,7 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
 
         <Button
           label={'Back'}
-          onClick={handleBack}
+          onClick={() => setModalVisible(false)}
           text={true}
           style={{
             backgroundColor: 'white',

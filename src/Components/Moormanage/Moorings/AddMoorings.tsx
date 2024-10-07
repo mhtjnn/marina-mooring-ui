@@ -82,18 +82,11 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     { imageName: string; imageData: string; note: string }[]
   >([])
   const firstErrorRef = useRef<HTMLDivElement>(null)
-  // console.log('gpsCoordinatesValue', gpsCoordinatesValue)
-
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
       ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
-  // console.log(
-  //   'formatGpsCoordinates(gpsCoordinatesValue)',
-  //   formatGpsCoordinates(gpsCoordinatesValue),
-  // )
-
   const [saveMoorings] = useAddMooringsMutation()
   const [updateMooring] = useUpdateMooringsMutation()
   const [isLoading, setIsLoading] = useState(true)
@@ -578,20 +571,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     }
   }
 
-  // const handlePositionChange = (lat: number, lng: number) => {
-  //   setCenter([lat, lng])
-  //   console.log('lat.lng', lat, lng)
-
-  //   const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
-  //   const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
-  //   const concatenatedValue = `${formattedLat} ${formattedLng}`
-  //   setGpsCoordinatesValue(concatenatedValue)
-  // }
-
   const handlePositionChange = (lat: number, lng: number) => {
-    console.log('Raw latitude:', lat)
-    console.log('Raw longitude:', lng)
-
     setCenter([lat, lng])
     const formattedLat = lat.toFixed(
       (window as any).latDecimalCount
@@ -607,9 +587,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
           : (window as any).lngDecimalCount
         : 7,
     )
-    console.log('Formatted latitude:', formattedLat)
-    console.log('Formatted longitude:', formattedLng)
-
     const concatenatedValue = `${formattedLat} ${formattedLng}`
     if (mapPositionChanged) setGpsCoordinatesValue(concatenatedValue)
   }
@@ -883,7 +860,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                   {...(mapPositionChanged ? { value: gpsCoordinatesValue } : '')}
                   onFocus={() => setMapPositionChanged(false)}
                   onBlur={() => setMapPositionChanged(true)}
-                  defaultValue={mooringRowData?.gpsCoordinates}
                   onChange={debounce((e) => {
                     let inputValue = e.target.value
                     inputValue = normalizeGpsCoordinates(inputValue)

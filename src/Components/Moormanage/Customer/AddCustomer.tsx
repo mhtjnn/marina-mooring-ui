@@ -38,7 +38,7 @@ import { AiOutlineDelete } from 'react-icons/ai'
 import { NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUtils'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
-import { formatGpsCoordinates, validateFiles } from '../../Helper/Helper'
+import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -147,10 +147,22 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
-    const formattedLat = lat.toFixed(6)
-    const formattedLng = lng.toFixed(6)
+    const formattedLat = lat.toFixed(
+      (window as any).latDecimalCount
+        ? (window as any).latDecimalCount > 7
+          ? 7
+          : (window as any).latDecimalCount
+        : 7,
+    )
+    const formattedLng = lng.toFixed(
+      (window as any).lngDecimalCount
+        ? (window as any).lngDecimalCount > 7
+          ? 7
+          : (window as any).lngDecimalCount
+        : 7,
+    )
     const concatenatedValue = `${formattedLat} ${formattedLng}`
-    setGpsCoordinatesValue(concatenatedValue)
+    if (mapPositionChanged) setGpsCoordinatesValue(concatenatedValue)
   }
 
   const handleFocus = () => {
@@ -1035,7 +1047,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                       options={countriesData}
                       optionLabel="name"
                       editable
-                      // placeholder="Country"
                       disabled={isLoading}
                       className=""
                       style={{
@@ -1129,7 +1140,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                         onChange={(e) => handleInputChangeCustomer('state', e.target.value)}
                         optionLabel="name"
                         editable
-                        // placeholder="State"
                         disabled={isLoading}
                         style={{
                           width: '230px',
@@ -1156,7 +1166,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                         id="pinCode"
                         value={pinCode}
                         onChange={(e) => handleInputChangeCustomer('pinCode', e.target.value)}
-                        // placeholder="Zip Code"
                         style={{
                           width: '230px',
                           height: '32px',
@@ -1479,9 +1488,20 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
                         {...(mapPositionChanged ? { value: gpsCoordinatesValue } : '')}
                         onFocus={() => setMapPositionChanged(false)}
                         onBlur={() => setMapPositionChanged(true)}
-                        defaultValue={mooringRowData?.gpsCoordinates}
                         onChange={debounce((e) => {
-                          setGpsCoordinatesValue(e.target.value)
+                          let inputValue = e.target.value
+                          inputValue = normalizeGpsCoordinates(inputValue)
+                          setGpsCoordinatesValue(inputValue)
+                          const coordinates = inputValue.trim().split(' ')
+                          let latDecimalCount = 0
+                          let lngDecimalCount = 0
+                          if (coordinates.length === 2) {
+                            const [lat, lng] = coordinates
+                            latDecimalCount = (lat.split('.')[1] || '').length
+                            lngDecimalCount = (lng.split('.')[1] || '').length
+                          }
+                          ;(window as any).latDecimalCount = latDecimalCount
+                          ;(window as any).lngDecimalCount = lngDecimalCount
                           setFieldErrors((prevErrors) => ({
                             ...prevErrors,
                             gpsCoordinatesValue: '',
