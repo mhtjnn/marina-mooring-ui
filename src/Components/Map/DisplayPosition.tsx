@@ -9,6 +9,7 @@ const DisplayPosition: React.FC<DisplayPositionProps> = ({ map, onPositionChange
     const newPosition = map.getCenter()
     if (onPositionChange) {
       onPositionChange(newPosition.lat, newPosition.lng)
+      console.log('newPosition', newPosition)
     }
   }, [map, onPositionChange])
 

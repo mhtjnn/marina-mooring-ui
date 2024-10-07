@@ -22,6 +22,8 @@ const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
   defaultIcon,
   mooringStatus,
 }) => {
+  console.log('center', center)
+
   const [map, setMap] = useState<any>()
   const markerRef = useRef(null)
   const toast = useRef<Toast>(null)
@@ -61,7 +63,7 @@ const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <Marker
-          key={mooringStatus} // Use the icon as a key to force re-render
+          key={mooringStatus}
           ref={markerRef}
           position={center ? center : [30.6983149, 76.656095]}
           icon={icon}
