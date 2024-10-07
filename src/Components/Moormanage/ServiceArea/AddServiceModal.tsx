@@ -20,7 +20,7 @@ import { IoMdAdd, IoMdClose } from 'react-icons/io'
 import { InputText } from 'primereact/inputtext'
 import { debounce } from 'lodash'
 import CustomSelectPositionMap from '../../Map/CustomSelectBoatyardPosition'
-import { formatGpsCoordinates } from '../../Helper/Helper'
+import { formatGpsCoordinates, normalizeGpsCoordinates } from '../../Helper/Helper'
 
 const AddServiceModal: React.FC<ServiceAreaProps> = ({
   closeModal,
@@ -74,12 +74,33 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
     return errors
   }
 
+  // const handlePositionChange = (lat: number, lng: number) => {
+  //   setCenter([lat, lng])
+  //   const formattedLat = lat.toFixed(6)
+  //   const formattedLng = lng.toFixed(6)
+  //   const concatenatedValue = `${formattedLat} ${formattedLng}`
+  //   setGpsCoordinatesValue(concatenatedValue)
+  //   setErrorMessage((prev) => ({ ...prev, gpsCoordinatesValue: '' }))
+  // }
+
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
-    const formattedLat = lat.toFixed(6)
-    const formattedLng = lng.toFixed(6)
+    const formattedLat = lat.toFixed(
+      (window as any).latDecimalCount
+        ? (window as any).latDecimalCount > 7
+          ? 7
+          : (window as any).latDecimalCount
+        : 7,
+    )
+    const formattedLng = lng.toFixed(
+      (window as any).lngDecimalCount
+        ? (window as any).lngDecimalCount > 7
+          ? 7
+          : (window as any).lngDecimalCount
+        : 7,
+    )
     const concatenatedValue = `${formattedLat} ${formattedLng}`
-    setGpsCoordinatesValue(concatenatedValue)
+    if (mapPositionChanged) setGpsCoordinatesValue(concatenatedValue)
     setErrorMessage((prev) => ({ ...prev, gpsCoordinatesValue: '' }))
   }
 
@@ -447,10 +468,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
                 }}
               />
             </div>
-
-            {/* <p>
-              {errorMessage.address && <small className="p-error">{errorMessage.address}</small>}
-            </p> */}
           </div>
 
           <div className="">
@@ -476,9 +493,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
                 color: 'black',
               }}
             />
-            {/* <p>
-              {errorMessage.aptSuite && <small className="p-error">{errorMessage.aptSuite}</small>}
-            </p> */}
           </div>
 
           <div className="flex flex-col ">
@@ -486,7 +500,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
               value={zipCode}
               onChange={(e) => {
                 setZipCode(e.target.value)
-                // setErrorMessage((prev) => ({ ...prev, zipCode: '' }))
               }}
               placeholder="Zip Code"
               style={{
@@ -498,8 +511,6 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
                 padding: '0.5rem',
               }}
             />
-
-            {/* <p> {errorMessage.state && <small className="p-error">{errorMessage.state}</small>}</p> */}
           </div>
         </div>
 
@@ -532,7 +543,19 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
                   onFocus={() => setMapPositionChanged(false)}
                   onBlur={() => setMapPositionChanged(true)}
                   onChange={debounce((e) => {
-                    setGpsCoordinatesValue(e.target.value)
+                    let inputValue = e.target.value
+                    inputValue = normalizeGpsCoordinates(inputValue)
+                    setGpsCoordinatesValue(inputValue)
+                    const coordinates = inputValue.trim().split(' ')
+                    let latDecimalCount = 0
+                    let lngDecimalCount = 0
+                    if (coordinates.length === 2) {
+                      const [lat, lng] = coordinates
+                      latDecimalCount = (lat.split('.')[1] || '').length
+                      lngDecimalCount = (lng.split('.')[1] || '').length
+                    }
+                    ;(window as any).latDecimalCount = latDecimalCount
+                    ;(window as any).lngDecimalCount = lngDecimalCount
                   })}
                   placeholder="GPS Coordinates"
                   style={{
