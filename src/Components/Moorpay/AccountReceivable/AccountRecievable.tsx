@@ -389,7 +389,7 @@ const AccountRecievable = () => {
 
       <div
         style={{
-          height: '400px',
+          height: 'auto',
           gap: '0px',
           borderRadius: '10px',
           border: '1px solid #D5E1EA',
@@ -428,7 +428,7 @@ const AccountRecievable = () => {
             </div>
           </div>
         </div>
-        <div className="h-[293px] overflow-auto">
+        <div className="h-[40vh] overflow-auto">
           <DataTableComponent
             tableStyle={{
               fontSize: '13px',
@@ -453,7 +453,7 @@ const AccountRecievable = () => {
           />
         </div>
 
-        <div className="">
+        <div>
           <Paginator
             first={pageNumber1}
             rows={pageSize}
@@ -476,12 +476,14 @@ const AccountRecievable = () => {
       {/* second data table  */}
       <div
         style={{
-          height: '400px',
+          height: 'auto',
           gap: '0px',
           borderRadius: '10px',
           border: '1px solid #D5E1EA',
           opacity: '0px',
           backgroundColor: '#FFFFFF',
+          marginBottom: "20px",
+          
         }}
         className="bg-[F2F2F2]  ml-12  mt-6 mr-14">
         <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2   rounded-tl-[10px] rounded-tr-[10px]">
@@ -515,7 +517,7 @@ const AccountRecievable = () => {
             </div>
           </div>
         </div>
-        <div className="h-[293px] overflow-auto">
+        <div className="h-[45vh] overflow-auto">
           <DataTableComponent
             tableStyle={{
               fontSize: '13px',
@@ -571,6 +573,9 @@ const AccountRecievable = () => {
               padding: '0.5rem',
               borderBottomRightRadius: '10px',
               borderBottomLeftRadius: '10px',
+              height: "50px",
+              marginBottom: ""
+
             }}
           />
         </div>
