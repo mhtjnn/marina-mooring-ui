@@ -82,18 +82,11 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     { imageName: string; imageData: string; note: string }[]
   >([])
   const firstErrorRef = useRef<HTMLDivElement>(null)
-  console.log('gpsCoordinatesValue', gpsCoordinatesValue)
-
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
       ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
-  // console.log(
-  //   'formatGpsCoordinates(gpsCoordinatesValue)',
-  //   formatGpsCoordinates(gpsCoordinatesValue),
-  // )
-
   const [saveMoorings] = useAddMooringsMutation()
   const [updateMooring] = useUpdateMooringsMutation()
   const [isLoading, setIsLoading] = useState(true)

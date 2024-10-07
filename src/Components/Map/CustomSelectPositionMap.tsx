@@ -22,8 +22,6 @@ const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
   defaultIcon,
   mooringStatus,
 }) => {
-  console.log('center', center)
-
   const [map, setMap] = useState<any>()
   const markerRef = useRef(null)
   const toast = useRef<Toast>(null)

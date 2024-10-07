@@ -6,12 +6,9 @@ import { DefaultIcon } from './DefaultIcon'
 
 const DisplayPosition: React.FC<DisplayPositionProps> = ({ map, onPositionChange }) => {
   const onMove = useCallback(() => {
-    console.log('it is working')
     const newPosition = map.getCenter()
     if (onPositionChange) {
-      console.log('it is working')
       onPositionChange(newPosition.lat, newPosition.lng)
-      console.log('newPosition', newPosition)
     }
   }, [map, onPositionChange])
 
