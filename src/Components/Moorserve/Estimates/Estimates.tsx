@@ -335,7 +335,7 @@ const Estimates = () => {
   
         <div
           data-testid="customer-admin-data"
-          className="flex flex-col h-full"
+          className="flex flex-col"
           style={{ height: 'calc(100vh - 250px)' }}
         >
           <div className="flex-grow overflow-auto">
