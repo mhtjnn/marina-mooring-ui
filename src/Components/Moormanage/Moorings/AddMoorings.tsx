@@ -578,13 +578,39 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     }
   }
 
-  const handlePositionChange = (lat: number, lng: number) => {
-    setCenter([lat, lng])
-    console.log('lat.lng', lat, lng)
+  // const handlePositionChange = (lat: number, lng: number) => {
+  //   setCenter([lat, lng])
+  //   console.log('lat.lng', lat, lng)
 
-    const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
-    const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
-    const concatenatedValue = `${lat} ${lng}`
+  //   const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
+  //   const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
+  //   const concatenatedValue = `${formattedLat} ${formattedLng}`
+  //   setGpsCoordinatesValue(concatenatedValue)
+  // }
+
+  const handlePositionChange = (lat: number, lng: number) => {
+    console.log('Raw latitude:', lat)
+    console.log('Raw longitude:', lng)
+
+    setCenter([lat, lng])
+    const formattedLat = lat.toFixed(
+      (window as any).latDecimalCount
+        ? (window as any).latDecimalCount > 7
+          ? 7
+          : (window as any).latDecimalCount
+        : 7,
+    )
+    const formattedLng = lng.toFixed(
+      (window as any).lngDecimalCount
+        ? (window as any).lngDecimalCount > 7
+          ? 7
+          : (window as any).lngDecimalCount
+        : 7,
+    )
+    console.log('Formatted latitude:', formattedLat)
+    console.log('Formatted longitude:', formattedLng)
+
+    const concatenatedValue = `${formattedLat} ${formattedLng}`
     setGpsCoordinatesValue(concatenatedValue)
   }
 
