@@ -472,7 +472,7 @@ const Customer = () => {
     return (
       <div
         style={{
-          height: 'calc(100vh - 300px)',
+          height: 'calc(100vh - 250px)',
           minHeight: 'calc(100vh - 250px)',
           // minHeight: '700px',
           width: '500px',

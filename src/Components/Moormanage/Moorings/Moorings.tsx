@@ -604,9 +604,8 @@ const Moorings = () => {
   return (
     <>
       <Toast ref={toast} />
-
       <div
-        style={{ height: '150vh' }}
+        style={{ height: '100vh', overflow: 'hidden' }}
         className={
           modalVisible ||
           dialogVisible ||
@@ -697,8 +696,8 @@ const Moorings = () => {
             <>
               <div
                 style={{
-                  height: '700px',
-                  minHeight: '700px',
+                  height: 'calc(100vh - 250px)',
+                  minHeight: 'calc(100vh - 250px)',
                   width: '500px',
                   minWidth: '500px',
                   backgroundColor: '#FFFFFF',
@@ -837,13 +836,13 @@ const Moorings = () => {
           {/* middle container */}
 
           <div
-            className={`min-h-[600] rounded-md border-[1px] ml-5 ${modalVisible || customerModalVisible || isUploadImageDialogVisible || imageVisible || imageEditVisible || dialogVisible || IsdialogVisible || isUploadImageDialogVisible || isMapModalOpen.editMode ? 'blur-screen' : ''}`}
-            style={{ flexGrow: '1' }}>
+            className={`rounded-md border-[1px] ml-5 ${modalVisible || customerModalVisible || isUploadImageDialogVisible || imageVisible || imageEditVisible || dialogVisible || IsdialogVisible || isUploadImageDialogVisible || isMapModalOpen.editMode ? 'blur-screen' : ''}`}
+            style={{ flexGrow: '1', height: 'calc(100vh - 250px)' }}>
             <CustomMooringPositionMap
               position={coordinatesArray ? coordinatesArray : initialPosition}
               zoomLevel={10}
               style={{
-                height: '700px',
+                height: 'calc(100vh - 250px)',
                 width: 'auto',
                 maxWidth: 'auto',
                 flexGrow: 1,
@@ -1034,7 +1033,8 @@ const Moorings = () => {
                             fontSize: '15px',
                           }}>
                           <div
-                            className={`bg-#00426F overflow-x-hidden h-[320px]  table-container flex flex-col`}>
+                            className={`bg-#00426F overflow-x-hidden table-container flex flex-col`}
+                            style={{ height: 'calc(100vh - 650px)' }}>
                             <div className="flex-grow" style={{ overflow: 'auto' }}>
                               <DataTableComponent
                                 style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
@@ -1137,7 +1137,8 @@ const Moorings = () => {
                   <div
                     className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div
-                      className={`bg-#00426F overflow-x-hidden h-[330px] table-container flex flex-col`}>
+                      className={`bg-#00426F overflow-x-hidden table-container flex flex-col`}
+                      style={{ height: 'calc(100vh - 618px)' }}>
                       <div className="flex-grow" style={{ overflow: 'auto' }}>
                         <DataTableComponent
                           style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}

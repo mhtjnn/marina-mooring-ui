@@ -380,15 +380,13 @@ const Technicians = () => {
   return (
     <>
       <Toast ref={toast} />
-      <div className={`flex flex-col mb-3 h-screen`}>
+      <div style={{ height: '150vh' }}>
         <Header header="MOORMANAGE/Technicians" />
-
         <div className="flex justify-end mr-[54px] mt-6">
           <div className="flex gap-4 items-center">
             <div className="">
               <p style={{ color: '#00426F', fontWeight: '600' }}>Filter order by Date</p>
             </div>
-
             <div
               className="flex-auto"
               style={{
@@ -435,7 +433,6 @@ const Technicians = () => {
           <div
             style={{
               width: '700px',
-              height: '700px',
               backgroundColor: '#FFFFFF',
               border: '1px solid #D5E1EA',
               borderRadius: '5px',
@@ -471,7 +468,7 @@ const Technicians = () => {
             <div
               data-testid="technician-data"
               className="flex flex-col mt-[3px] table-container "
-              style={{ height: '548px' }}>
+              style={{ height: 'calc(100vh - 350px)' }}>
               <div className="flex-grow overflow-auto">
                 <DataTableComponent
                   columns={TechnicianTableColumn}
@@ -549,7 +546,6 @@ const Technicians = () => {
               backgroundColor: '#FFFFFF',
               marginRight: '50px',
               width: '700px',
-              height: '700px',
             }}>
             <div className="flex justify-between mt-6  mb-3 ">
               <div className="font-bold ml-5">
@@ -575,7 +571,7 @@ const Technicians = () => {
             <div
               data-testid="workOrder"
               className="flex flex-col mt-[3px] table-container "
-              style={{ height: '600px' }}>
+              style={{ height: 'calc(100vh - 298px)' }}>
               <div className="flex-grow overflow-auto">
                 <DataTableComponent
                   columns={WorkOrdersColumn}
