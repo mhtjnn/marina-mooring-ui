@@ -25,7 +25,10 @@ const Header: React.FC<HeaderProps> = ({ header, customer }) => {
   const imageUrl = imageData ? `data:image/jpeg;base64,${imageData}` : '/assets/images/user12.png'
 
   const handleCustomerIdSelection = (customerId: any) => {
-    const firstLastName = customerId?.firstName + ' ' + customerId?.lastName
+    const firstName = customerId?.firstName || '-'
+    const lastName = customerId?.lastName || '-'
+    const firstLastName = `${firstName} ${lastName}`
+
     dispatch(setCustomerName(firstLastName))
     dispatch(setCustomerId(customerId?.id))
   }
@@ -36,10 +39,11 @@ const Header: React.FC<HeaderProps> = ({ header, customer }) => {
       const { status, message, content } = response as GetUserResponse
       if (status === 200 && Array.isArray(content)) {
         if (content.length > 0) {
-          const firstLastName = content?.map((item) => ({
-            label: item.firstName + ' ' + item.lastName,
+          const firstLastName = content.map((item) => ({
+            label: `${item.firstName || '-'} ${item.lastName || '-'}`,
             value: item,
           }))
+
           setgetCustomerOwnerData(firstLastName)
           if (!selectedCustomerName) {
             dispatch(setCustomerName(firstLastName[0]?.label))
@@ -115,7 +119,7 @@ const Header: React.FC<HeaderProps> = ({ header, customer }) => {
         {role === 1 && (
           <>
             <Dropdown
-              value={selectedCustomerName}
+              value={selectedCustomerName || '-'}
               onChange={(e) => {
                 handleCustomerIdSelection(e.value)
               }}
