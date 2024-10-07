@@ -299,165 +299,162 @@ const Forms = () => {
   return (
     <>
       <Toast ref={toastRef} />
-<Toast ref={toast} />
-<div style={{ height: '100vh', overflow: 'hidden' }} className={isModalOpen ? 'backdrop-blur-lg' : ''}>
-  <Header header="MOORSERVE/Forms Library" />
-  <div className="flex justify-end gap-4 mt-6 mr-12">
-    <div className="items-center">
-      <CustomModal
-        buttonText={'Upload New'}
-        buttonStyle={{
-          width: '121px',
-          height: '44px',
-          minHeight: '44px',
-          backgroundColor: '#0098FF',
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: 600,
-          color: 'white',
-          borderRadius: '0.50rem',
-          marginLeft: '8px',
-          boxShadow: 'none',
-        }}
-        children={
-          <AddForm
-            closeModal={handleModalClose}
-            getFormsData={getFormsData}
-            toastRef={toast}
-          />
-        }
-        headerText={<h1 className="text-xl font-extrabold text-black ml-4">Form Details</h1>}
-        visible={isModalOpen}
-        onClick={handleButtonClick}
-        onHide={handleModalClose}
-        dialogStyle={{
-          width: '851px',
-          minWidth: '851px',
-          height: '496px',
-          minHeight: '496px',
-          borderRadius: '1rem',
-          maxHeight: '95% !important',
-        }}
-      />
-    </div>
-  </div>
-
-  <div
-    style={{
-      height: 'calc(100vh - 170px)',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: '#FFFFFF',
-      border: '1px solid #D5E1EA',
-      borderRadius: '10px',
-      marginTop: '7px',
-      width: 'screen',
-      marginLeft: '45px',
-      marginRight: '35px',
-    }}
-  >
-    <div className="flex items-center justify-between bg-[#00426F] p-2 rounded-tl-[10px] rounded-tr-[10px]">
-      <span className="p-2 text-xl font-extrabold text-white">Forms</span>
-
-      <div className="relative inline-block">
-        <div className="relative mt-1">
-          <img
-            src="/assets/images/Search.png"
-            alt="search icon"
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
-            data-testid="search-icon"
-          />
-          <InputText
-            placeholder="Search"
-            onChange={handleSearch}
-            id="placeholderText"
-            className="pl-10 w-[237px] bg-[#00426F] h-[35px] rounded-lg border text-[white] 
-            border-[#D5E1EA] placeholder:text-[#FFFFFF] focus:outline-none overflow-hidden"
-          />
+      <div
+        style={{ height: '100vh', overflow: 'hidden' }}
+        className={isModalOpen ? 'backdrop-blur-lg' : ''}>
+        <Header header="MOORSERVE/Forms Library" />
+        <div className="flex justify-end gap-4 mt-6 mr-12">
+          <div className="items-center">
+            <CustomModal
+              buttonText={'Upload New'}
+              buttonStyle={{
+                width: '121px',
+                height: '44px',
+                minHeight: '44px',
+                backgroundColor: '#0098FF',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: 'white',
+                borderRadius: '0.50rem',
+                marginLeft: '8px',
+                boxShadow: 'none',
+              }}
+              children={
+                <AddForm
+                  closeModal={handleModalClose}
+                  getFormsData={getFormsData}
+                  toastRef={toast}
+                />
+              }
+              headerText={<h1 className="text-xl font-extrabold text-black ml-4">Form Details</h1>}
+              visible={isModalOpen}
+              onClick={handleButtonClick}
+              onHide={handleModalClose}
+              dialogStyle={{
+                width: '851px',
+                minWidth: '851px',
+                height: '496px',
+                minHeight: '496px',
+                borderRadius: '1rem',
+                maxHeight: '95% !important',
+              }}
+            />
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div
-      data-testid="customer-admin-data"
-      className="flex flex-col"
-      style={{ height: 'calc(100vh - 250px)' }} 
-    >
-      <div className="flex-grow overflow-auto">
-        <DataTableComponent
-          tableStyle={{
-            fontSize: '12px',
-            color: '#000000',
-            fontWeight: 600,
-            backgroundColor: '#F9FAFB',
-            cursor: 'pointer',
-          }}
-          data={formsData}
-          columns={FormsColumns}
-          actionButtons={ActionButtonColumn}
-          style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400'}} 
-          emptyMessage={
-            <div className="text-center mt-40">
-              <img
-                src="/assets/images/empty.png"
-                alt="Empty Data"
-                className="w-28 mx-auto mb-4"
-              />
+        <div
+          style={{
+            height: 'calc(100vh - 170px)',
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #D5E1EA',
+            borderRadius: '10px',
+            marginTop: '7px',
+            width: 'screen',
+            marginLeft: '45px',
+            marginRight: '35px',
+          }}>
+          <div className="flex items-center justify-between bg-[#00426F] p-2 rounded-tl-[10px] rounded-tr-[10px]">
+            <span className="p-2 text-xl font-extrabold text-white">Forms</span>
 
-              <p className="text-gray-500 font-[600] text-lg">{properties.noDataMessage}</p>
+            <div className="relative inline-block">
+              <div className="relative mt-1">
+                <img
+                  src="/assets/images/Search.png"
+                  alt="search icon"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                  data-testid="search-icon"
+                />
+                <InputText
+                  placeholder="Search"
+                  onChange={handleSearch}
+                  id="placeholderText"
+                  className="pl-10 w-[237px] bg-[#00426F] h-[35px] rounded-lg border text-[white] 
+            border-[#D5E1EA] placeholder:text-[#FFFFFF] focus:outline-none overflow-hidden"
+                />
+              </div>
             </div>
-          }
-        />
-        {isLoading && (
-          <ProgressSpinner
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '50px',
-              height: '50px',
-            }}
-            strokeWidth="4"
+          </div>
+
+          <div
+            data-testid="customer-admin-data"
+            className="flex flex-col"
+            style={{ height: 'calc(100vh - 250px)' }}>
+            <div className="flex-grow overflow-auto">
+              <DataTableComponent
+                tableStyle={{
+                  fontSize: '12px',
+                  color: '#000000',
+                  fontWeight: 600,
+                  backgroundColor: '#F9FAFB',
+                  cursor: 'pointer',
+                }}
+                data={formsData}
+                columns={FormsColumns}
+                actionButtons={ActionButtonColumn}
+                style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
+                emptyMessage={
+                  <div className="text-center mt-40">
+                    <img
+                      src="/assets/images/empty.png"
+                      alt="Empty Data"
+                      className="w-28 mx-auto mb-4"
+                    />
+
+                    <p className="text-gray-500 font-[600] text-lg">{properties.noDataMessage}</p>
+                  </div>
+                }
+              />
+              {isLoading && (
+                <ProgressSpinner
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '50px',
+                    height: '50px',
+                  }}
+                  strokeWidth="4"
+                />
+              )}
+            </div>
+
+            <div>
+              <Paginator
+                first={pageNumber1}
+                rows={pageSize}
+                totalRecords={totalRecords}
+                rowsPerPageOptions={[5, 10, 20, 30]}
+                onPageChange={onPageChange}
+                style={{
+                  position: 'sticky',
+                  bottom: 0,
+                  zIndex: 1,
+                  backgroundColor: 'white',
+                  borderTop: '1px solid #D5E1EA',
+                  padding: '0.5rem 1rem',
+                  width: '100%',
+                  marginBottom: '-10px',
+                  fontSize: '14px',
+                  height: '50px',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {viewPdf && (
+          <Preview
+            fileData={viewPdf?.encodedData}
+            fileName={viewPdf?.formName}
+            onClose={() => setViewPdf(null)}
           />
         )}
       </div>
-
-      <div>
-        <Paginator
-          first={pageNumber1}
-          rows={pageSize}
-          totalRecords={totalRecords}
-          rowsPerPageOptions={[5, 10, 20, 30]}
-          onPageChange={onPageChange}
-          style={{
-            position: 'sticky',
-            bottom: 0,
-            zIndex: 1,
-            backgroundColor: 'white',
-            borderTop: '1px solid #D5E1EA',
-            padding: '0.5rem 1rem',
-            width: '100%',
-            marginBottom: '-10px',
-            fontSize: '14px',
-            height: '50px',
-          }}
-        />
-      </div>
-    </div>
-  </div>
-
-  {viewPdf && (
-    <Preview
-      fileData={viewPdf?.encodedData}
-      fileName={viewPdf?.formName}
-      onClose={() => setViewPdf(null)}
-    />
-  )}
-</div>
-
-
-  </>
+    </>
   )
 }
 

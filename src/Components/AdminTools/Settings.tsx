@@ -300,88 +300,91 @@ const Settings = () => {
   }, [selectedCustomerId, pageSize, pageNumber])
 
   return (
-    <div className='overflow-hidden'>
-      <Header header="MOORMANAGE/Permission" />
+    <>
       <Toast ref={toast} />
-      <div
-        className={`flex gap-10 ml-6 mt-6`}
-        style={{
-          paddingRight: '40px',
-          paddingLeft: '25px',
-        }}>
+
+      <div style={{ height: '100vh', overflow: 'hidden' }}>
+        <Header header="MOORMANAGE/Permission" />
         <div
-          className="bg-[#FFFFFF] border-[1px] border-gray-300  rounded-lg"
+          className={`flex gap-10 ml-6 mt-6`}
           style={{
-            flexGrow: 1,
-            borderRadius: '10px',
+            paddingRight: '40px',
+            paddingLeft: '25px',
           }}>
-          <div className="text-md font-semibold rounded-t-lg bg-[#00426F]">
-            <h1 className="p-4 text-xl font-extrabold  text-white">{properties.Settings}</h1>
-          </div>
           <div
-            data-testid="customer-admin-data"
-            className="flex flex-col"
-            style={{ height: '75vh' }}>
-            <div className="flex-grow overflow-auto">
-              <DataTableComponent
-                tableStyle={{
-                  fontSize: '12px',
-                  color: '#000000',
-                  fontWeight: 600,
-                  backgroundColor: '#D9D9D9',
-                  borderRadius: '0 0 10px 10px',
-                  overflow: 'auto',
-                }}
-                scrollable={true}
-                data={customerData}
-                columns={tableColumnsPermission}
-                style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '500' }}
-                emptyMessage={
-                  <div className="text-center mt-14">
-                    <img
-                      src="/assets/images/empty.png"
-                      alt="Empty Data"
-                      className="w-20 mx-auto mb-4"
-                    />
-                    <p className="text-gray-500">{properties.noDataMessage}</p>
-                    {isLoading && (
-                      <ProgressSpinner
-                        style={{
-                          position: 'absolute',
-                          top: '80%',
-                          left: '50%',
-                          transform: 'translate(-50%, -50%)',
-                          width: '50px',
-                          height: '50px',
-                        }}
-                        strokeWidth="4"
-                      />
-                    )}
-                  </div>
-                }
-              />
+            className="bg-[#FFFFFF] border-[1px] border-gray-300  rounded-lg"
+            style={{
+              flexGrow: 1,
+              borderRadius: '10px',
+            }}>
+            <div className="text-md font-semibold rounded-t-lg bg-[#00426F]">
+              <h1 className="p-4 text-xl font-extrabold  text-white">{properties.Settings}</h1>
             </div>
-            <div className="mt-auto">
-              <Paginator
-                first={pageNumber1}
-                rows={pageSize}
-                totalRecords={totalRecords}
-                rowsPerPageOptions={[5, 10, 20, 30]}
-                onPageChange={onPageChange}
-                style={{
-                  position: 'sticky',
-                  bottom: 0,
-                  zIndex: 1,
-                  backgroundColor: 'white',
-                  borderTop: '1px solid #D5E1EA',
-                  padding: '0.5rem',
-                }}
-              />
+            <div
+              data-testid="customer-admin-data"
+              className="flex flex-col"
+              style={{ height: 'calc(100vh - 200px)' }}>
+              <div className="flex-grow overflow-auto">
+                <DataTableComponent
+                  tableStyle={{
+                    fontSize: '12px',
+                    color: '#000000',
+                    fontWeight: 600,
+                    backgroundColor: '#D9D9D9',
+                    borderRadius: '0 0 10px 10px',
+                    overflow: 'auto',
+                  }}
+                  scrollable={true}
+                  data={customerData}
+                  columns={tableColumnsPermission}
+                  style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '500' }}
+                  emptyMessage={
+                    <div className="text-center mt-14">
+                      <img
+                        src="/assets/images/empty.png"
+                        alt="Empty Data"
+                        className="w-20 mx-auto mb-4"
+                      />
+                      <p className="text-gray-500">{properties.noDataMessage}</p>
+                      {isLoading && (
+                        <ProgressSpinner
+                          style={{
+                            position: 'absolute',
+                            top: '80%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '50px',
+                            height: '50px',
+                          }}
+                          strokeWidth="4"
+                        />
+                      )}
+                    </div>
+                  }
+                />
+              </div>
+              <div className="mt-auto">
+                <Paginator
+                  first={pageNumber1}
+                  rows={pageSize}
+                  totalRecords={totalRecords}
+                  rowsPerPageOptions={[5, 10, 20, 30]}
+                  onPageChange={onPageChange}
+                  style={{
+                    position: 'sticky',
+                    bottom: 0,
+                    zIndex: 1,
+                    backgroundColor: 'white',
+                    borderTop: '1px solid #D5E1EA',
+                    padding: '0.5rem',
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
