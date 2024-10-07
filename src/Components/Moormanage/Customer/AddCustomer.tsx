@@ -191,7 +191,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     if (files.length === 0) return
     const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
       min: 5120,
-      max: 1048576,
+      max: 5242880,
     })
     if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
       fileInput.value = ''
