@@ -33,7 +33,7 @@ import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
-import { formatGpsCoordinates, validateFiles } from '../../Helper/Helper'
+import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
 
 const AddMoorings: React.FC<AddMooringProps> = ({
   moorings,
@@ -611,7 +611,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     console.log('Formatted longitude:', formattedLng)
 
     const concatenatedValue = `${formattedLat} ${formattedLng}`
-    setGpsCoordinatesValue(concatenatedValue)
+    if (mapPositionChanged) setGpsCoordinatesValue(concatenatedValue)
   }
 
   const handleClick = () => {
@@ -885,7 +885,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                   onBlur={() => setMapPositionChanged(true)}
                   defaultValue={mooringRowData?.gpsCoordinates}
                   onChange={debounce((e) => {
-                    const inputValue = e.target.value
+                    let inputValue = e.target.value
+                    inputValue = normalizeGpsCoordinates(inputValue)
                     setGpsCoordinatesValue(inputValue)
                     const coordinates = inputValue.trim().split(' ')
                     let latDecimalCount = 0
