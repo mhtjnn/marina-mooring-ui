@@ -472,8 +472,9 @@ const Customer = () => {
     return (
       <div
         style={{
-          height: '700px',
-          minHeight: '700px',
+          height: 'calc(100vh - 300px)',
+          minHeight: 'calc(100vh - 250px)',
+          // minHeight: '700px',
           width: '500px',
           minWidth: '500px',
           backgroundColor: '#FFFFFF',
@@ -746,7 +747,7 @@ const Customer = () => {
     <>
       <Toast ref={toast} />
       <div
-        style={{ height: '150vh' }}
+        style={{ height: '100vh', overflow: 'hidden' }}
         className={
           modalVisible ||
           imageVisible ||
@@ -863,12 +864,15 @@ const Customer = () => {
 
           {/* middle container */}
           <div
-            className={` min-h-[600] rounded-md border-[1px] ml-5 ${modalVisible || imageVisible || isUploadImageDialogVisible || imageEditVisible || dialogVisible || dialogVisible || isMapModalOpen.editMode || IsdialogVisible ? 'blur-screen' : ''}`}
-            style={{ flexGrow: '1' }}>
+            className={` rounded-md border-[1px] ml-5 ${modalVisible || imageVisible || isUploadImageDialogVisible || imageEditVisible || dialogVisible || dialogVisible || isMapModalOpen.editMode || IsdialogVisible ? 'blur-screen' : ''}`}
+            style={{ flexGrow: '1', height: 'calc(100vh - 250px)' }}>
             <CustomMooringPositionMap
               position={initialPosition}
               zoomLevel={15}
-              style={{ height: '700px', width: 'auto' }}
+              style={{
+                height: 'calc(100vh - 250px)',
+                width: 'auto',
+              }}
               iconsByStatus={iconsByStatus}
               moorings={mooringData}
               customerPage={true}
@@ -1011,7 +1015,8 @@ const Customer = () => {
                             fontSize: '15px',
                           }}>
                           <div
-                            className={`bg-#00426F overflow-x-hidden h-[320px] table-container flex flex-col`}>
+                            className={`bg-#00426F overflow-x-hidden table-container flex flex-col`}
+                            style={{ height: 'calc(100vh - 650px)' }}>
                             <div className="flex-grow" style={{ overflow: 'auto' }}>
                               <DataTableComponent
                                 style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
@@ -1116,7 +1121,8 @@ const Customer = () => {
                   <div
                     className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div
-                      className={`bg-#00426F overflow-x-hidden h-[330px] table-container flex flex-col`}>
+                      className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
+                      style={{ height: 'calc(100vh - 618px)' }}>
                       <div className="flex-grow" style={{ overflow: 'auto' }}>
                         <DataTableComponent
                           style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}

@@ -214,7 +214,9 @@ const Permission = () => {
 
   return (
     <>
-      <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
+      <div
+        style={{ height: '150vh', overflow: 'hidden' }}
+        className={modalVisible ? 'backdrop-blur-lg' : ''}>
         <Header header="MOORMANAGE/Permission" />
         <div className="flex mr-12 justify-end">
           <Toast ref={toast} />
@@ -306,7 +308,7 @@ const Permission = () => {
             <div
               data-testid="customer-admin-data"
               className="flex flex-col  "
-              style={{ height: '550px' }}>
+              style={{ height: 'calc(100vh - 250px)' }}>
               <div className="flex-grow overflow-auto">
                 <DataTableComponent
                   tableStyle={{
