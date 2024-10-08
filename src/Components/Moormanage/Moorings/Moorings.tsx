@@ -416,6 +416,7 @@ const Moorings = () => {
           setCustomerId('')
           setTotalRecords(totalSize)
           setMooringResponseData([])
+          setMooringGPSResponseData([])
         }
       } else {
         setIsLoading(false)

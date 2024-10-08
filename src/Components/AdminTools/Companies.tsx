@@ -38,8 +38,6 @@ const CustomerOwner = () => {
   const [editCustomer, setEditCustomer] = useState(false)
   const [passWordDisplay, setPassWordDisplay] = useState(false)
   const [selectedRow, setSelectedRow] = useState<any>()
-  const [rolesData, setRolesData] = useState<Role[]>()
-  const [selectRole, setSelectRole] = useState()
   const [customerUpdated, setCustomerUpdated] = useState(false)
   const [customerAdminId, setCustomerAdminId] = useState('')
   const [searchText, setSearchText] = useState('')
@@ -48,9 +46,7 @@ const CustomerOwner = () => {
   const [isLoader, setIsLoader] = useState(true)
   const [getCustomerOwnerData, setgetCustomerOwnerData] = useState<CustomerPayload[]>([])
   const [getCustomerOwnerUserData, setgetCustomerOwnerUserData] = useState<CustomerPayload[]>([])
-  const [selectedId, setSelectedId] = useState<any>('')
   const [selectedProduct, setSelectedProduct] = useState()
-  const id = getCustomerOwnerData?.map((items) => items.id)
   const [getUser] = useGetUsersMutation()
   const [deleteCustomerOwner] = useDeleteUserMutation()
 
@@ -112,8 +108,8 @@ const CustomerOwner = () => {
     setPassWordDisplay(true)
     setEditCustomer(true)
     setModalVisible(true)
-    // setEditMode(true)
   }
+
   const handleResetModalClose = () => {
     setIsPasswordModalOpen(false)
     setIsResetModalOpen(false)
@@ -325,10 +321,10 @@ const CustomerOwner = () => {
         } else {
           dispatch(setCustomerId(content[0]?.id))
           dispatch(setCustomerName(content[0]?.name))
-          setSelectedProduct(content[0])
         }
         if (content.length > 0) {
           setgetCustomerOwnerData(content)
+          setSelectedProduct(content[0])
           setTotalRecords(totalSize)
         } else {
           setgetCustomerOwnerData([])
@@ -577,7 +573,6 @@ const CustomerOwner = () => {
                   rowStyle={(rowData) => rowData}
                   columns={customerOwnerTableColumn}
                   onRowClick={(e) => {
-                    setSelectedId(e.data.id)
                     dispatch(setCustomerName(e.data.firstName + ' ' + e.data.lastName))
                     dispatch(setCustomerId(e.data.id))
                   }}
