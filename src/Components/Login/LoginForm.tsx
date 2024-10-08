@@ -193,8 +193,7 @@ export default function LoginForm() {
                 fontSize: '14px',
                 color: '#00426F',
                 borderRadius: '10px',
-               
-              }}
+               }}
             />
             <img
               src="/assets/images/envelope.png"

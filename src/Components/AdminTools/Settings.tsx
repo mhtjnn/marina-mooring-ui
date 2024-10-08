@@ -324,7 +324,7 @@ const Settings = () => {
               data-testid="customer-admin-data"
               className="flex flex-col"
               style={{ height: 'calc(100vh - 200px)' }}>
-              <div className="flex-grow overflow-auto">
+              <div className="flex-grow relative overflow-auto">
                 <DataTableComponent
                   tableStyle={{
                     fontSize: '12px',

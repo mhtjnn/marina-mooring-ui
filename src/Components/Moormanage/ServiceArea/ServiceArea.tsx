@@ -490,8 +490,8 @@ const ServiceArea = () => {
             <ProgressSpinner
               style={{
                 position: 'absolute',
-                top: '80%',
-                left: '66%',
+                top: '65%',
+                left: '72%',
                 transform: 'translate(-50%, -50%)',
                 width: '50px',
                 height: '50px',
@@ -729,7 +729,7 @@ const ServiceArea = () => {
             style={{
               position: 'absolute',
               top: '65%',
-              left: '28%',
+              left: '25%',
               transform: 'translate(-50%, -50%)',
               width: '50px',
               height: '50px',

@@ -555,7 +555,7 @@ const CustomerOwner = () => {
               data-testid="customerData"
               className="flex flex-col overflow-hidden p-4"
               style={{ height: 'calc(100vh - 350px)' }}>
-              <div className="flex-grow overflow-auto">
+              <div className="flex-grow relative overflow-auto">
                 <DataTableComponent
                   data={getCustomerOwnerData}
                   tableStyle={{
@@ -592,7 +592,7 @@ const CustomerOwner = () => {
                     style={{
                       position: 'absolute',
                       top: '50%',
-                      left: '43%',
+                      left: '40%',
                       transform: 'translate(-50%, -50%)',
                       width: '50px',
                       height: '50px',
@@ -659,7 +659,7 @@ const CustomerOwner = () => {
               data-testid="customerDataAdmin"
               className="flex flex-col overflow-hidden p-4"
               style={{ height: 'calc(100vh - 350px)' }}>
-              <div className="flex-grow overflow-auto">
+              <div className="flex-grow relative overflow-auto">
                 <DataTableComponent
                   tableStyle={{
                     fontSize: '12px',

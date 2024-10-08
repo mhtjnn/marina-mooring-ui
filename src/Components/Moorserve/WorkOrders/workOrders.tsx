@@ -454,7 +454,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
             </div>
           </div>
 
-          <div className="flex-grow overflow-auto">
+          <div className="flex-grow relative overflow-auto">
             <DataTableComponent
               tableStyle={{
                 fontSize: '10px',
