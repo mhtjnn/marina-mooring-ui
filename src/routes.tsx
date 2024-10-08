@@ -7,9 +7,7 @@ import Moormanage from './Components/Moormanage/MoorManage'
 import Moorpay from './Components/Moorpay/MoorPay'
 import Technicians from './Components/Moormanage/Technicians/Technicians'
 import Boatyards from './Components/Moormanage/Boatyards/Boatyards'
-import AccountPayable from './Components/Moorpay/AccountPayable/AccountPayable'
 import AccountRecievable from './Components/Moorpay/AccountReceivable/AccountRecievable'
-import ReportsMoorpay from './Components/Moorpay/Reports/Reports'
 import MoorServe from './Components/Moorserve/MoorServe'
 import WorkOrders from './Components/Moorserve/WorkOrders/workOrders'
 import Estimates from './Components/Moorserve/Estimates/Estimates'
@@ -21,7 +19,6 @@ import CustomerAdmin from './Components/AdminTools/Companies'
 import InventoryDetails from './Components/Moormanage/Vendors/InventoryDetails'
 import Settings from './Components/AdminTools/Settings'
 import ServiceArea from './Components/Moormanage/ServiceArea/ServiceArea'
-import Reports from './Components/Reports/Reports'
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 
 const routes = [
@@ -92,14 +89,6 @@ const routes = [
             path: 'accountReceivable',
             element: <AccountRecievable />,
           },
-          {
-            path: 'accountPayable',
-            element: <AccountPayable />,
-          },
-          {
-            path: 'reports',
-            element: <ReportsMoorpay />,
-          },
         ],
       },
       {
@@ -119,10 +108,6 @@ const routes = [
             element: <Forms />,
           },
         ],
-      },
-      {
-        path: 'reports',
-        element: <Reports />,
       },
       {
         path: 'customerAdmin',
