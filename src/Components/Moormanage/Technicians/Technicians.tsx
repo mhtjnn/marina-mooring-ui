@@ -469,7 +469,7 @@ const Technicians = () => {
               data-testid="technician-data"
               className="flex flex-col mt-[3px] table-container "
               style={{ height: 'calc(100vh - 350px)' }}>
-              <div className="flex-grow overflow-auto">
+              <div className="flex-grow relative overflow-auto">
                 <DataTableComponent
                   columns={TechnicianTableColumn}
                   scrollable={true}
@@ -506,7 +506,7 @@ const Technicians = () => {
                   <ProgressSpinner
                     style={{
                       position: 'absolute',
-                      top: '55%',
+                      top: '60%',
                       left: '25%',
                       transform: 'translate(-50%, -50%)',
                       width: '50px',
@@ -538,7 +538,7 @@ const Technicians = () => {
           </div>
 
           <div
-            className={`md:ml-12 md:mt-3 lg:mt-0`}
+            className={`md:ml-12 md:mt-3 lg:mt-0  `}
             style={{
               flexGrow: 1,
               borderRadius: '5px',
@@ -546,6 +546,7 @@ const Technicians = () => {
               backgroundColor: '#FFFFFF',
               marginRight: '50px',
               width: '700px',
+              
             }}>
             <div className="flex justify-between mt-6  mb-3 ">
               <div className="font-bold ml-5">
@@ -570,9 +571,9 @@ const Technicians = () => {
 
             <div
               data-testid="workOrder"
-              className="flex flex-col mt-[3px] table-container "
+              className="flex flex-col mt-[3px] table-container"
               style={{ height: 'calc(100vh - 298px)' }}>
-              <div className="flex-grow overflow-auto">
+              <div className="flex-grow relative overflow-auto">
                 <DataTableComponent
                   columns={WorkOrdersColumn}
                   actionButtons={WorkOrderActionColumn}
@@ -606,7 +607,7 @@ const Technicians = () => {
                       style={{
                         position: 'absolute',
                         top: '50%',
-                        left: '70%',
+                        left: '50%',
                         transform: 'translate(-50%, -50%)',
                         width: '50px',
                         height: '50px',

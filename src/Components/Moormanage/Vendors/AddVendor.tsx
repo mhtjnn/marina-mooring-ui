@@ -604,7 +604,7 @@ const AddVendor: React.FC<AddVendorProps> = ({ vendors, editMode, closeModal, ge
           <ProgressSpinner
             style={{
               position: 'absolute',
-              top: '50%',
+              top: '35%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '50px',

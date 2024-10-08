@@ -832,7 +832,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
               <ProgressSpinner
                 style={{
                   position: 'absolute',
-                  top: '50%',
+                  top: '25%',
                   left: '45%',
                   transform: 'translate(-50%, -50%)',
                   width: '50px',
