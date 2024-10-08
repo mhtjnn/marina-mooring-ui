@@ -151,171 +151,171 @@ export default function LoginForm() {
   }
 
   return (
-    <>
-      <Toast ref={toast} />
-      <div
-        className="w-full h-screen flex justify-center items-center]"
-        id="header"
-        style={{
-          backgroundImage: "url('/assets/images/loginBackgroundImage.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}>
-        <div
-          className={`bg-white rounded-xl p-8 top-227 left-420 gap-8 h-auto ${isLoading ? 'blur-screen' : ''}`}
-          style={{ width: '600px' }}>
-          <div className="text-center mt-[1rem]">
+<>
+  <Toast ref={toast} />
+  <div
+    className="w-full h-screen flex justify-center items-center"
+    id="header"
+    style={{
+      backgroundImage: "url('/assets/images/loginBackgroundImage.png')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      overflow: 'auto', 
+    }}>
+    <div
+      className={`bg-white rounded-xl p-8 top-227 left-420 gap-8 h-auto ${isLoading ? 'blur-screen' : ''}`}
+      style={{ width: '600px', position: 'relative', overflow: 'auto', maxHeight: '100vh' }}>
+      <div className="text-center mt-[1rem]">
+        <img
+          src="/assets/images/moorfindLogo.png"
+          alt="Logo"
+          className="mx-auto w-60 h-14 mb-5"
+          id="logo"
+        />
+      </div>
+      <div className="flex flex-col justify-center text-center mt-[5rem] min-[320px]:w[270px]">
+        <div className="text-red-500 mb-2 text-sm">{errors.email && <p>{errors.email}</p>}</div>
+        <div className="flex flex-col items-center">
+          <div className="p-input-icon-left" id="input-field">
+            <InputText
+              name="username"
+              value={username}
+              onChange={handleChange}
+              onKeyUp={handleKeyUp}
+              disabled={isLoading}
+              placeholder={isLoading ? 'Loading...' : 'Enter Your Email'}
+              id="input-field"
+              style={{
+                width: '500px', 
+                height: '60px', 
+                padding: '0 4rem 0 3rem',
+                border: '1px solid #C5D9E0',
+                fontSize: '14px',
+                color: '#00426F',
+                borderRadius: '10px',
+               
+              }}
+            />
             <img
-              src="/assets/images/moorfindLogo.png"
-              alt="Logo"
-              className="mx-auto w-60 h-14 mb-5"
-              id="logo"
+              src="/assets/images/envelope.png"
+              alt="Envelope Icon"
+              className="p-clickable"
+              style={{
+                position: 'absolute',
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '20px',
+                height: '15px',
+              }}
             />
           </div>
-          <div className="flex flex-col justify-center text-center mt-[5rem] min-[320px]:w[270px]">
-            <div className="text-red-500 mb-2 text-sm">{errors.email && <p>{errors.email}</p>}</div>
-            <div className="flex flex-col items-center">
-              <div className="p-input-icon-left" id="input-field">
-                <InputText
-                  name="username"
-                  value={username}
-                  onChange={handleChange}
-                  onKeyUp={handleKeyUp}
-                  disabled={isLoading}
-                  placeholder={isLoading ? 'Loading...' : 'Enter Your Email'}
-                  id="input-field"
-                  style={{
-                    width: '500px',
-                    height: '60px',
-                    padding: '0 4rem 0 3rem',
-                    border: '1px solid #C5D9E0',
-                    fontSize: '14px',
-                    color: '#00426F',
-                    borderRadius: '10px',
-                    minHeight: '6vh',
-                  }}
-                />
-                <img
-                  src="/assets/images/envelope.png"
-                  alt="Envelope Icon"
-                  className="p-clickable"
-                  style={{
-                    position: 'absolute',
-                    left: '10px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    width: '20px',
-                    height: '15px',
-                  }}
-                />
-              </div>
-              <div className="text-red-500 mb-5 mt-3 text-sm">{<p>{errors.password}</p>}</div>
-              <div className="p-input-icon-left">
-                <div
-                  className="card flex justify-content-center"
-                  style={{ position: 'relative', width: '100%' }}>
-                  <Password
-                    type={'text'}
-                    name="password"
-                    value={password}
-                    onChange={handleChange}
-                    onKeyUp={handleKeyUp}
-                    feedback={false}
-                    toggleMask
-                    disabled={isLoading}
-                    placeholder={isLoading ? 'Loading...' : 'Enter Your Password'}
-                    style={{
-                      padding: '0 2rem 0 3rem',
-                      border: '1px solid #C5D9E0',
-                      fontSize: '18px',
-                      color: '#00426F',
-                      borderRadius: '10px',
-                      width: '500px',
-                      height: '60px',
-                    }}
-                  />
-                  <img
-                    src="/assets/images/key.png"
-                    alt="Key Icon"
-                    className="p-clickable"
-                    style={{
-                      position: 'absolute',
-                      left: '13px',
-                      top: '55%',
-                      transform: 'translateY(-50%)',
-                      width: '22px',
-                      height: '20px',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {isLoading && (
-                <ProgressSpinner
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '50px',
-                    height: '50px',
-                  }}
-                  strokeWidth="4"
-                />
-              )}
-              <div className="flex justify-end mb-8 mt-5 w-[500px] cursor-pointer underline">
-                <span
-                  className="font-normal"
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: 400,
-                    lineHeight: '18.75px',
-                    textAlign: 'right',
-                    color: '#00426F',
-                  }}>
-                  <Link to={'/forgotPassword'}>Forgot password?</Link>
-                </span>
-              </div>
-
-              <Button
+          <div className="text-red-500 mb-5 mt-3 text-sm">{<p>{errors.password}</p>}</div>
+          <div className="p-input-icon-left">
+            <div
+              className="card flex justify-content-center"
+              style={{ position: 'relative', width: '100%' }}>
+              <Password
+                type={'text'}
+                name="password"
+                value={password}
+                onChange={handleChange}
+                onKeyUp={handleKeyUp}
+                feedback={false}
+                toggleMask
+                disabled={isLoading}
+                placeholder={isLoading ? 'Loading...' : 'Enter Your Password'}
                 style={{
-                  width: '500px',
-                  height: '60px',
-                  minHeight: '60px',
-                  padding: '0 4rem 0 3rem',
+                  padding: '0 2rem 0 3rem',
                   border: '1px solid #C5D9E0',
-                  fontSize: '22px',
-                  lineHeight: '25.78px',
-                  color: '#FFFFFF',
+                  fontSize: '18px',
+                  color: '#00426F',
                   borderRadius: '10px',
-                  backgroundColor: '#0098FF',
-                  textAlign: 'center',
-                  display: 'flex',
-                  fontWeight: '500',
-                  justifyContent: 'center',
+                  width: '500px', 
+                  height: '60px', 
                 }}
-                onClick={signInHandler}
-                disabled={isLoading}>
-                <p>Login</p>
-              </Button>
+              />
+              <img
+                src="/assets/images/key.png"
+                alt="Key Icon"
+                className="p-clickable"
+                style={{
+                  position: 'absolute',
+                  left: '13px',
+                  top: '55%',
+                  transform: 'translateY(-50%)',
+                  width: '22px',
+                  height: '20px',
+                  pointerEvents: 'none',
+                }}
+              />
             </div>
           </div>
-          <div
-            style={{ width: '500px', fontSize: '14px', textAlign: 'center', lineHeight: '22px' }}>
-            <p className="text-center mt-8 text-[#00426F] leading-6 font-[400]">
-              Just testing the waters? If you do not have an account&nbsp;
-              <a
-                href="https://www.moorfind.com/"
-                className="underline font-bolder font-[700] text-sm">
-                CLICK HERE
-              </a>
-              &nbsp;to let us <br /> know If you would like to connect and see if MOORFIND can work
-              for you and your business.
-            </p>
+
+          {isLoading && (
+            <ProgressSpinner
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '50px',
+                height: '50px',
+              }}
+            />
+          )}
+          <div className="flex justify-end mb-8 mt-5 w-[500px] cursor-pointer underline">
+            <span
+              className="font-normal"
+              style={{
+                fontSize: '16px',
+                fontWeight: 400,
+                lineHeight: '18.75px',
+                textAlign: 'right',
+                color: '#00426F',
+              }}>
+              <Link to={'/forgotPassword'}>Forgot password?</Link>
+            </span>
           </div>
+
+          <Button
+            style={{
+              width: '500px',
+              height: '60px', 
+              minHeight: '60px',
+              padding: '0 4rem 0 3rem',
+              border: '1px solid #C5D9E0',
+              fontSize: '22px',
+              lineHeight: '25.78px',
+              color: '#FFFFFF',
+              borderRadius: '10px',
+              backgroundColor: '#0098FF',
+              textAlign: 'center',
+              display: 'flex',
+              fontWeight: '500',
+              justifyContent: 'center',
+            }}
+            onClick={signInHandler}
+            disabled={isLoading}>
+            <p>Login</p>
+          </Button>
         </div>
       </div>
-    </>
+      <div
+        style={{ width: '500px', fontSize: '14px', textAlign: 'center', lineHeight: '22px' }}>
+        <p className="text-center mt-8 text-[#00426F] leading-6 font-[400]">
+          Just testing the waters? If you do not have an account&nbsp;
+          <a
+            href="https://www.moorfind.com/"
+            className="underline font-bolder font-[700] text-sm">
+            CLICK HERE
+          </a>
+          &nbsp;to let us <br /> know If you would like to connect and see if MOORFIND can work for you and your business.
+        </p>
+      </div>
+    </div>
+  </div>
+</>
+
   )
 }
