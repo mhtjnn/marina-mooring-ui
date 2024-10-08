@@ -402,7 +402,7 @@ const Boatyards = () => {
         </div>
 
         <div
-          className={`h-[150px] mt-[30px] mb-6 sticky`}
+          className={` mt-[30px] mb-6 sticky`}
           style={{
             flexGrow: 1,
             border: '1px solid #D5E1EA',
@@ -578,7 +578,7 @@ const Boatyards = () => {
         <div
           data-testid="customer-admin-users-table"
           className="flex-grow bg-[#FFFFFF] rounded-xl border-[1px] border-gray-300 w-[515px]  mr-[50px] ml-[30px] mb-0 ">
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col">
             <div className="text-sm font-extrabold rounded-sm w-full bg-[#D9D9D9]">
               <div
                 className="flex items-center justify-between bg-[#00426F] rounded-tl-[10px] rounded-tr-[10px]"
@@ -624,7 +624,7 @@ const Boatyards = () => {
                   {BoatyardMoorings}{' '}
                   <div
                     className={`bg-#00426F overflow-x-hidden mt-[3px] table-container flex flex-col`}
-                    style={{ height: 'calc(100vh - 575px)' }}>
+                    style={{ height: 'calc(100vh - 620px)' }}>
                     <div className="flex-grow overflow-y-auto">
                       <DataTableComponent
                         tableStyle={{
@@ -681,11 +681,11 @@ const Boatyards = () => {
                         onPageChange={onPageChangeTwo}
                         style={{
                           position: 'sticky',
-                          bottom: 0,
                           zIndex: 1,
                           backgroundColor: 'white',
                           borderTop: '1px solid #D5E1EA',
                           padding: '0.5rem',
+                          marginBottom: '-10px',
                         }}
                       />
                     </div>

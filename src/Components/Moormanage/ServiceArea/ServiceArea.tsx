@@ -423,7 +423,7 @@ const ServiceArea = () => {
         </div>
 
         <div
-          className={`h-[300px] mt-[10px] mb-2 sticky`}
+          className={`mt-[10px] mb-2 sticky`}
           style={{
             flexGrow: 1,
             border: '1px solid #D5E1EA',
@@ -449,7 +449,7 @@ const ServiceArea = () => {
 
         <div
           className={`bg-#00426F overflow-x-hidden mt-[3px] table-container flex flex-col`}
-          style={{ height: 'calc(100vh - 640px)' }}>
+          style={{ height: 'calc(100vh - 650px)' }}>
           <div className="flex-grow overflow-y-auto">
             <DataTableComponent
               tableStyle={{
@@ -508,11 +508,11 @@ const ServiceArea = () => {
               onPageChange={onPageChangeTwo}
               style={{
                 position: 'sticky',
-                bottom: 0,
                 zIndex: 1,
                 backgroundColor: 'white',
                 borderTop: '1px solid #D5E1EA',
                 padding: '0.5rem',
+                marginBottom: '-10px',
               }}
             />
           </div>
@@ -817,9 +817,6 @@ const ServiceArea = () => {
             header={
               <div className="flex gap-4">
                 <div className="font-bolder text-[black]">Mooring Information</div>
-                {/* <div className="font-bold mt-1">
-                    <FaEdit onClick={handleEdit} color="#0098FF" />
-                  </div> */}
               </div>
             }>
             <MooringInformations mooringRowData={mooringRowData} />
