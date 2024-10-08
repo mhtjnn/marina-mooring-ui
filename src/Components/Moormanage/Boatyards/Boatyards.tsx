@@ -624,7 +624,7 @@ const Boatyards = () => {
                   {BoatyardMoorings}{' '}
                   <div
                     className={`bg-#00426F overflow-x-hidden mt-[3px] table-container flex flex-col`}
-                    style={{ height: 'calc(100vh - 620px)' }}>
+                    style={{ height: 'calc(100vh - 575px)' }}>
                     <div className="flex-grow overflow-y-auto">
                       <DataTableComponent
                         tableStyle={{
@@ -685,7 +685,6 @@ const Boatyards = () => {
                           backgroundColor: 'white',
                           borderTop: '1px solid #D5E1EA',
                           padding: '0.5rem',
-                          marginBottom: '-10px',
                         }}
                       />
                     </div>
