@@ -1,5 +1,3 @@
-import React from 'react'
-import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 import Dashboard from './Components/Dashboard/Dashboard'
 import ResetPassword from './Components/ResetPassword/ResetPassword'
 import AdminLayout from './Components/Layout/Admin/AdminLayout'
@@ -24,6 +22,7 @@ import InventoryDetails from './Components/Moormanage/Vendors/InventoryDetails'
 import Settings from './Components/AdminTools/Settings'
 import ServiceArea from './Components/Moormanage/ServiceArea/ServiceArea'
 import Reports from './Components/Reports/Reports'
+import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 
 const routes = [
   {

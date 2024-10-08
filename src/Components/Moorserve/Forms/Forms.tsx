@@ -299,9 +299,7 @@ const Forms = () => {
   return (
     <>
       <Toast ref={toastRef} />
-      <div
-        style={{ height: '100vh', overflow: 'hidden' }}
-        className={isModalOpen ? 'backdrop-blur-lg' : ''}>
+      <div style={{ height: '100vh' }} className={isModalOpen ? 'backdrop-blur-lg' : ''}>
         <Header header="MOORSERVE/Forms Library" />
         <div className="flex justify-end gap-4 mt-6 mr-12">
           <div className="items-center">

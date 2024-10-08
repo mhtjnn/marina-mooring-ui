@@ -214,9 +214,7 @@ const Permission = () => {
 
   return (
     <>
-      <div
-        style={{ height: '150vh', overflow: 'hidden' }}
-        className={modalVisible ? 'backdrop-blur-lg' : ''}>
+      <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
         <Header header="MOORMANAGE/Permission" />
         <div className="flex mr-12 justify-end">
           <Toast ref={toast} />

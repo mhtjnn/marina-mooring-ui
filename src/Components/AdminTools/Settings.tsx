@@ -303,7 +303,7 @@ const Settings = () => {
     <>
       <Toast ref={toast} />
 
-      <div style={{ height: '100vh', overflow: 'hidden' }}>
+      <div style={{ height: '100vh' }}>
         <Header header="MOORMANAGE/Permission" />
         <div
           className={`flex gap-10 ml-6 mt-6`}

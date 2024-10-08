@@ -606,7 +606,7 @@ const Moorings = () => {
     <>
       <Toast ref={toast} />
       <div
-        style={{ height: '100vh', overflow: 'hidden' }}
+        style={{ height: '100vh' }}
         className={
           modalVisible ||
           dialogVisible ||
@@ -697,8 +697,8 @@ const Moorings = () => {
             <>
               <div
                 style={{
-                  height: 'calc(100vh - 250px)',
-                  minHeight: 'calc(100vh - 250px)',
+                  height: 'calc(100vh - 200px)',
+                  minHeight: 'calc(100vh - 200px)',
                   width: '500px',
                   minWidth: '500px',
                   backgroundColor: '#FFFFFF',
@@ -838,12 +838,12 @@ const Moorings = () => {
 
           <div
             className={`rounded-md border-[1px] ml-5 ${modalVisible || customerModalVisible || isUploadImageDialogVisible || imageVisible || imageEditVisible || dialogVisible || IsdialogVisible || isUploadImageDialogVisible || isMapModalOpen.editMode ? 'blur-screen' : ''}`}
-            style={{ flexGrow: '1', height: 'calc(100vh - 250px)' }}>
+            style={{ flexGrow: '1', height: 'calc(100vh - 200px)' }}>
             <CustomMooringPositionMap
               position={coordinatesArray ? coordinatesArray : initialPosition}
               zoomLevel={10}
               style={{
-                height: 'calc(100vh - 250px)',
+                height: 'calc(100vh - 200px)',
                 width: 'auto',
                 maxWidth: 'auto',
                 flexGrow: 1,
@@ -1035,7 +1035,7 @@ const Moorings = () => {
                           }}>
                           <div
                             className={`bg-#00426F overflow-x-hidden table-container flex flex-col`}
-                            style={{ height: 'calc(100vh - 650px)' }}>
+                            style={{ height: 'calc(100vh - 600px)' }}>
                             <div className="flex-grow" style={{ overflow: 'auto' }}>
                               <DataTableComponent
                                 style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
@@ -1139,7 +1139,7 @@ const Moorings = () => {
                     className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div
                       className={`bg-#00426F overflow-x-hidden table-container flex flex-col`}
-                      style={{ height: 'calc(100vh - 618px)' }}>
+                      style={{ height: 'calc(100vh - 580px)' }}>
                       <div className="flex-grow" style={{ overflow: 'auto' }}>
                         <DataTableComponent
                           style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}

@@ -348,7 +348,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   }, [selectedCustomerId])
 
   return (
-    <div style={{ height: '100vh', overflow: 'hidden' }} className={visible ? 'backdrop-blur-lg' : ''}>
+    <div style={{ height: '100vh' }} className={visible ? 'backdrop-blur-lg' : ''}>
       <Toast ref={toast} />
       {!report && <Header header="MOORSERVE/Work Orders" />}
       <div className="">
@@ -357,7 +357,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
             <Button
               onClick={handleExportPdf}
               style={{
-                marginTop: "-16px",
+                marginTop: '-16px',
                 width: '125px',
                 height: '44px',
                 minHeight: '44px',
@@ -369,15 +369,15 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
                 borderRadius: '0.50rem',
                 marginLeft: '8px',
                 boxShadow: 'none',
-
               }}>
               Export To PDF
             </Button>
             <div className="items-center">
               <CustomModal
                 buttonText={'ADD NEW'}
-                icon={<img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />}
-
+                icon={
+                  <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />
+                }
                 children={
                   <AddWorkOrders
                     workOrderData={selectedCustomer}
@@ -394,12 +394,11 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
                 visible={visible}
                 onClick={handleButtonClick}
                 onHide={handleModalClose}
-                buttonStyle={{ ...AddNewButtonStyle, marginTop: "-16px" }}
+                buttonStyle={{ ...AddNewButtonStyle, marginTop: '-16px' }}
                 dialogStyle={{
                   width: '800px',
                   height: '526px',
                   borderRadius: '1rem',
-
                 }}
               />
             </div>
@@ -414,11 +413,10 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
             backgroundColor: '#FFFFFF',
             border: '1px solid #D5E1EA',
             borderRadius: '10px',
-            marginTop: "7px",
-            width: "screen",
-            marginLeft: "45px",
-            marginRight: "35px"
-
+            marginTop: '7px',
+            width: 'screen',
+            marginLeft: '45px',
+            marginRight: '35px',
           }}>
           <div className="flex items-center justify-between bg-[#00426F] p-2 rounded-tl-[10px] rounded-tr-[10px] ">
             <h1 className="p-2 text-xl font-extrabold text-white">Work Orders</h1>

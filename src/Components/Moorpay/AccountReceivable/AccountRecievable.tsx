@@ -482,8 +482,7 @@ const AccountRecievable = () => {
           border: '1px solid #D5E1EA',
           opacity: '0px',
           backgroundColor: '#FFFFFF',
-          marginBottom: "20px",
-          
+          marginBottom: '20px',
         }}
         className="bg-[F2F2F2]  ml-12  mt-6 mr-14">
         <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2   rounded-tl-[10px] rounded-tr-[10px]">
@@ -573,9 +572,8 @@ const AccountRecievable = () => {
               padding: '0.5rem',
               borderBottomRightRadius: '10px',
               borderBottomLeftRadius: '10px',
-              height: "50px",
-              marginBottom: ""
-
+              height: '50px',
+              marginBottom: '10px',
             }}
           />
         </div>

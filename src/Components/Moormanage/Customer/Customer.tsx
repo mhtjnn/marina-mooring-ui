@@ -472,8 +472,8 @@ const Customer = () => {
     return (
       <div
         style={{
-          height: 'calc(100vh - 250px)',
-          minHeight: 'calc(100vh - 250px)',
+          height: 'calc(100vh - 200px)',
+          minHeight: 'calc(100vh - 200px)',
           // minHeight: '700px',
           width: '500px',
           minWidth: '500px',
@@ -747,7 +747,7 @@ const Customer = () => {
     <>
       <Toast ref={toast} />
       <div
-        style={{ height: '100vh', overflow: 'hidden' }}
+        style={{ height: '100vh' }}
         className={
           modalVisible ||
           imageVisible ||
@@ -865,12 +865,12 @@ const Customer = () => {
           {/* middle container */}
           <div
             className={` rounded-md border-[1px] ml-5 ${modalVisible || imageVisible || isUploadImageDialogVisible || imageEditVisible || dialogVisible || dialogVisible || isMapModalOpen.editMode || IsdialogVisible ? 'blur-screen' : ''}`}
-            style={{ flexGrow: '1', height: 'calc(100vh - 250px)' }}>
+            style={{ flexGrow: '1', height: 'calc(100vh - 200px)' }}>
             <CustomMooringPositionMap
               position={initialPosition}
               zoomLevel={15}
               style={{
-                height: 'calc(100vh - 250px)',
+                height: 'calc(100vh - 200px)',
                 width: 'auto',
               }}
               iconsByStatus={iconsByStatus}
@@ -1016,7 +1016,7 @@ const Customer = () => {
                           }}>
                           <div
                             className={`bg-#00426F overflow-x-hidden table-container flex flex-col`}
-                            style={{ height: 'calc(100vh - 650px)' }}>
+                            style={{ height: 'calc(100vh - 600px)' }}>
                             <div className="flex-grow" style={{ overflow: 'auto' }}>
                               <DataTableComponent
                                 style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
@@ -1122,7 +1122,7 @@ const Customer = () => {
                     className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div
                       className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
-                      style={{ height: 'calc(100vh - 618px)' }}>
+                      style={{ height: 'calc(100vh - 580px)' }}>
                       <div className="flex-grow" style={{ overflow: 'auto' }}>
                         <DataTableComponent
                           style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
