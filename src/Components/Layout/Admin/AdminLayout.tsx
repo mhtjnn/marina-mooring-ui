@@ -89,6 +89,10 @@ const AdminLayout = () => {
           },
         }),
       )
+
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('refreshToken')
+      sessionStorage.removeItem('role')
       const response = await getLogout({}).unwrap()
     } catch (error) {
       const { message } = error as ErrorResponse

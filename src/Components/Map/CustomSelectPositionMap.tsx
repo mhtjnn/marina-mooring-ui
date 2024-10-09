@@ -49,7 +49,7 @@ const CustomSelectPositionMap: React.FC<CustomSelectPositionMapProps> = ({
   return (
     <div>
       <Toast ref={toast} />
-      {map && <DisplayPosition map={map} onPositionChange={onPositionChange} />}
+      {map && <DisplayPosition map={map} onPositionChange={onPositionChange}/>}
       <MapContainer
         center={center}
         zoom={zoomLevel}

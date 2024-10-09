@@ -8,7 +8,7 @@ export interface MarkerData {
 }
 
 export interface CustomSelectPositionMapProps {
-  onPositionChange: (lat: number, lng: number) => void
+  onPositionChange:any
   center: LatLngExpression | undefined
   zoomLevel: number
   defaultIcon?: boolean
