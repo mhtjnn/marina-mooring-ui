@@ -35,9 +35,6 @@ export default function LoginForm() {
 
   const toast = useRef<Toast>(null)
 
-  const token = useSelector((state: any) => state.user.token)
-  const userRole = sessionStorage.getItem('role')
-
   const handleChange = (e: any) => {
     const { name, value } = e.target
 
@@ -154,21 +151,25 @@ export default function LoginForm() {
   }
 
   useEffect(() => {
-    if (token) {
-      const redirectPath = (() => {
-        switch (userRole) {
-          case 'TECHNICIAN':
-            return '/moorserve/workOrders'
-          case 'FINANCE':
-            return '/moorpay/accountReceivable'
-          default:
-            return '/dashboard'
-        }
-      })()
-
-      navigate(redirectPath)
+    const token = sessionStorage.getItem('token')
+    const userRole = sessionStorage.getItem('role')
+    if (!token) {
+      navigate('/login')
+      return
     }
-  }, [token, userRole, navigate])
+    const redirectPath = (() => {
+      switch (userRole) {
+        case 'TECHNICIAN':
+          return '/moorserve/workOrders'
+        case 'FINANCE':
+          return '/moorpay/accountReceivable'
+        default:
+          return '/dashboard'
+      }
+    })()
+
+    navigate(redirectPath)
+  }, [navigate])
 
   return (
     <>
