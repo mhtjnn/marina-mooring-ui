@@ -77,7 +77,7 @@ const StatCard: React.FC<StatCardProps> = ({ items }) => {
           )}
         </div>
       </div>
-      <div className="flex justify-between mt-12">
+      {/* <div className="flex justify-between mt-12">
         <div className="font-extrabold text-[3rem]" style={{ color: '##10293A' }}>
           {items[0].count}
         </div>
@@ -98,6 +98,41 @@ const StatCard: React.FC<StatCardProps> = ({ items }) => {
                 activeDot={{ r: 8 }}
                 fill="url(#abc)"
                 min={400000}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div> */}
+      <div className="flex justify-between mt-12">
+        <div className="font-extrabold text-[3rem]" style={{ color: '##10293A' }}>
+          {items[0].count}
+        </div>
+        <div style={{ width: '50%', height: 100 }}>
+          <ResponsiveContainer>
+            <AreaChart
+              data={
+                items[0].percentage < 0
+                  ? [{ value: 0 }, { value: -100 }]
+                  : [{ value: 1 }, { value: 100 }]
+              }
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <defs>
+                <linearGradient id={'abc'} x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="0%"
+                    stopColor={items[0].percentage < 0 ? 'red' : '#01BF2E'}
+                    stopOpacity={0.4}
+                  />
+                  <stop offset="75%" stopColor="rgba(255, 255, 255, 0)" stopOpacity={0.05} />
+                </linearGradient>
+              </defs>
+              <Tooltip />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={items[0].percentage < 0 ? 'red' : '#01BF2E'}
+                activeDot={{ r: 8 }}
+                fill="url(#abc)"
               />
             </AreaChart>
           </ResponsiveContainer>
