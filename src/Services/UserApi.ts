@@ -9,7 +9,7 @@ const baseQuery = fetchBaseQuery({
     const state = getState() as RootState
     const selectedCustomerId = selectCustomerId(state)
     const userRole = selectUserRole(state)
-    const refreshToken = sessionStorage.getItem('getRefreshToken')
+    const refreshToken = localStorage.getItem('getRefreshToken')
     const noAuthEndpoints = ['login', 'resetPassword', 'forgotPassword']
 
     if (refreshToken && !noAuthEndpoints.includes(endpoint)) {
@@ -19,7 +19,7 @@ const baseQuery = fetchBaseQuery({
         headers.set('CUSTOMER_OWNER_ID', selectedCustomerId)
       }
     } else {
-      const token = state.user.token || sessionStorage.getItem('token')
+      const token = state.user.token || localStorage.getItem('token')
       if (token && !noAuthEndpoints.includes(endpoint)) {
         headers.set('Authorization', `Bearer ${token}`)
         const noAuthEndpointsForCustomer = ['getCustomersOwners']
@@ -46,7 +46,7 @@ const baseQueryWithInterceptor = async (
   try {
     let result = await baseQuery(args, api, extraOptions)
     if (result.error && result.error.status === 500) {
-      const token = sessionStorage.getItem('getRefreshToken')
+      const token = localStorage.getItem('getRefreshToken')
       if (token) {
         const newToken = await refreshToken(token)
         if (newToken) {
@@ -85,7 +85,7 @@ const refreshToken = async (refreshToken: string) => {
     }
     const data = await response.json()
     if (data?.status === 200) {
-      sessionStorage.setItem('getRefreshToken', data.token)
+      localStorage.setItem('getRefreshToken', data.token)
       return data.token
     }
   } catch (error) {

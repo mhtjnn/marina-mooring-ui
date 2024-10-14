@@ -118,9 +118,9 @@ export default function LoginForm() {
       const response = await login(loginPayload).unwrap()
       const { status, user, token, message, refreshToken } = response as LoginResponse
       if (status === 200) {
-        sessionStorage.setItem('token', token)
-        sessionStorage.setItem('refreshToken', refreshToken)
-        sessionStorage.setItem('role', user?.role?.name)
+        localStorage.setItem('token', token)
+        localStorage.setItem('refreshToken', refreshToken)
+        localStorage.setItem('role', user?.role?.name)
         dispatch(setUserData(user))
         dispatch(setToken(token))
         dispatch(setCustomerId(''))
@@ -129,9 +129,9 @@ export default function LoginForm() {
         setPassword('')
         setIsLoading(false)
 
-        if (sessionStorage.getItem('role') === 'TECHNICIAN') {
+        if (localStorage.getItem('role') === 'TECHNICIAN') {
           navigate('/moorserve/workOrders')
-        } else if (sessionStorage.getItem('role') === 'FINANCE') {
+        } else if (localStorage.getItem('role') === 'FINANCE') {
           navigate('/moorpay/accountReceivable')
         } else {
           navigate('/dashboard')
@@ -151,8 +151,8 @@ export default function LoginForm() {
   }
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token')
-    const userRole = sessionStorage.getItem('role')
+    const token = localStorage.getItem('token')
+    const userRole = localStorage.getItem('role')
     if (!token) {
       navigate('/login')
       return

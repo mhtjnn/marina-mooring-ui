@@ -21,7 +21,7 @@ const ResetPassword: React.FC<ResetModalProps> = ({
   const [firstErrorField, setFirstErrorField] = useState('')
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
   const toastRef = useRef<Toast>(null)
-  const tokenFromUrl = sessionStorage.getItem('token')
+  const tokenFromUrl = localStorage.getItem('token')
   const [resetPassword] = useResetPasswordMutation()
   const [passwordCriteria, setPasswordCriteria] = useState({
     uppercase: false,
