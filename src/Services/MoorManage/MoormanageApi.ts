@@ -90,6 +90,32 @@ const moormanageApi = userApi.injectEndpoints({
       }),
     }),
 
+   
+
+    getMooringsPercentage: builder.mutation({
+      query: ({
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDir,
+        searchText,
+        customerOwnerId,
+      }: {
+        pageNumber?: number
+        pageSize?: number
+        sortBy?: string
+        sortDir?: string
+        searchText?: string
+        customerOwnerId?: number
+      }) => ({
+        url: 'api/v1/mooring/percentageIncrease',
+        method: 'GET',
+        params: { pageNumber, pageSize, sortBy, sortDir, searchText, customerOwnerId },
+      }),
+    }),
+
+
+
     deleteMoorings: builder.mutation({
       query: ({ id }: { id?: number }) => ({
         url: `api/v1/mooring/${id}`,
