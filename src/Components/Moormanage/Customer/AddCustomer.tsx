@@ -1242,16 +1242,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             </div>
 
             <div
-              className={`mt-3 ${
-                selectedCustomerType?.id === 5 || selectedCustomerType === 'Dock'
-                  ? 'mb-2'
-                  : editCustomerMode
-                    ? 'mb-20'
-                    : 'blur'
-              } `}
-
-              // className={`mt-3 ${selectedCustomerType?.id === 5 || selectedCustomerType === 'Dock' ? 'mb-2' : editCustomerMode ? 'mb-20' || 'blur' : ''} `}
-            >
+              className={`mt-3 ${selectedCustomerType?.id === 5 || selectedCustomerType === 'Dock' ? 'mb-2' : editCustomerMode ? 'mb-20' || 'blur' : ''} `}>
               <div className="">
                 <span style={{ fontWeight: '400', fontSize: '14px', color: '#000000' }}>
                   <div className="flex gap-1 font-medium text-sm text-[#000000]">Notes</div>
