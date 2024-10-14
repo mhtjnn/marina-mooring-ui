@@ -6,6 +6,7 @@ import { ErrorResponse, MooringAndWorkOrderResponse, MooringResponse } from '../
 import {
   useGetAllOpenWorkOrdersAndMooringDueForServiceMutation,
   useGetMooringsMutation,
+  useGetMooringsPercentageMutation,
 } from '../../Services/MoorManage/MoormanageApi'
 import { useSelector } from 'react-redux'
 import { selectCustomerId } from '../../Store/Slice/userSlice'
@@ -32,6 +33,7 @@ const Dashboard = () => {
   const [editMode, setEditMode] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [totalMoorings, setTotalMoorings] = useState<any>()
+  const [mooringPercentage, setMooringPercentage] = useState<any>()
   const [pageNumber, setPageNumber] = useState(0)
   const [pageNumber1, setPageNumber1] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -69,6 +71,7 @@ const Dashboard = () => {
   }
 
   const [getOpenWorkOrderAndMoorings] = useGetAllOpenWorkOrdersAndMooringDueForServiceMutation()
+  const [getMooringCount] = useGetMooringsPercentageMutation()
   const toast = useRef<Toast>(null)
 
   const position: PositionType = [39.4926173, -117.5714859]
@@ -102,12 +105,8 @@ const Dashboard = () => {
 
   const statCardsData = [
     [
-      { title: 'Total Moorings', percentage: 17, count: totalMoorings },
-      { title: 'Total Moorings', percentage: 17, count: totalMoorings },
-      { title: 'Total Moorings', percentage: 17, count: 44324 },
-      { title: 'Total Moorings', percentage: 17, count: 58765 },
-      { title: 'Total Moorings', percentage: 17, count: 42324 },
-      { title: 'Total Moorings', percentage: 17, count: 46789 },
+      { title: 'Total Moorings', percentage: mooringPercentage, count: totalMoorings },
+      { title: 'Total Moorings', percentage: mooringPercentage, count: totalMoorings },
     ],
   ]
 
@@ -356,6 +355,23 @@ const Dashboard = () => {
     }
   }, [selectedCustomerId])
 
+  const getMooringsCount = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const response = await getMooringCount({}).unwrap()
+      const { status, totalSize, content } = response as MooringResponse
+      if (status === 200) {
+        setMooringPercentage(content)
+      } else {
+        setMooringPercentage('')
+      }
+    } catch (error) {
+      setIsLoading(false)
+      const { message } = error as ErrorResponse
+      console.error('Error fetching moorings data:', error)
+    }
+  }, [selectedCustomerId])
+
   useEffect(() => {
     if (startDate && endDate) {
       setFilterDateFrom(formatDate(startDate))
@@ -372,6 +388,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getMooringsData()
+    getMooringsCount()
   }, [selectedCustomerId, totalMoorings])
 
   return (

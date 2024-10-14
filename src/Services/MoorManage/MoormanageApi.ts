@@ -90,8 +90,6 @@ const moormanageApi = userApi.injectEndpoints({
       }),
     }),
 
-   
-
     getMooringsPercentage: builder.mutation({
       query: ({
         pageNumber,
@@ -113,8 +111,6 @@ const moormanageApi = userApi.injectEndpoints({
         params: { pageNumber, pageSize, sortBy, sortDir, searchText, customerOwnerId },
       }),
     }),
-
-
 
     deleteMoorings: builder.mutation({
       query: ({ id }: { id?: number }) => ({
@@ -674,4 +670,5 @@ export const {
   useGetCustomerWithMooringWithCustomerImagesMutation,
   useGetCustomerWithMooringWithMooringImagesMutation,
   useGetMooringByIdMutation,
+  useGetMooringsPercentageMutation,
 } = moormanageApi
