@@ -471,7 +471,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             boatyardId: formData?.boatYardName?.id,
             boatName: formData?.boatName,
             boatSize: formData?.boatSize,
-            boatTypeId: formData?.type,
+            boatTypeId: formData?.type?.id,
             boatWeight: formData?.boatWeight,
             sizeOfWeight: formData?.sizeOfWeight,
             typeOfWeightId: formData?.typeOfWeight?.id,
@@ -483,6 +483,8 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             depthAtMeanHighWater: formData?.depthAtMeanHighWater,
             imageRequestDtoList: mooringImageRequestDtoList,
             statusId: formData?.mooringStatus?.id,
+            inspectionDate: formData?.inspectionDate,
+            serviceAreaId: formData?.serviceAreaId?.id,
           },
         ],
       }
@@ -1240,8 +1242,16 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
             </div>
 
             <div
-              className={`mt-3 
-    ${selectedCustomerType?.id === 5 || selectedCustomerType === 'Dock' ? 'mb-2' : editCustomerMode ? 'mb-20' || 'blur' : ''} `}>
+              className={`mt-3 ${
+                selectedCustomerType?.id === 5 || selectedCustomerType === 'Dock'
+                  ? 'mb-2'
+                  : editCustomerMode
+                    ? 'mb-20'
+                    : 'blur'
+              } `}
+
+              // className={`mt-3 ${selectedCustomerType?.id === 5 || selectedCustomerType === 'Dock' ? 'mb-2' : editCustomerMode ? 'mb-20' || 'blur' : ''} `}
+            >
               <div className="">
                 <span style={{ fontWeight: '400', fontSize: '14px', color: '#000000' }}>
                   <div className="flex gap-1 font-medium text-sm text-[#000000]">Notes</div>

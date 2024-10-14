@@ -150,26 +150,7 @@ export default function LoginForm() {
     }
   }
 
-  useEffect(() => {
-    const token = sessionStorage.getItem('token')
-    const userRole = sessionStorage.getItem('role')
-    if (!token) {
-      navigate('/login')
-      return
-    }
-    const redirectPath = (() => {
-      switch (userRole) {
-        case 'TECHNICIAN':
-          return '/moorserve/workOrders'
-        case 'FINANCE':
-          return '/moorpay/accountReceivable'
-        default:
-          return '/dashboard'
-      }
-    })()
-
-    navigate(redirectPath)
-  }, [navigate])
+ 
 
   return (
     <>

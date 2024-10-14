@@ -21,7 +21,6 @@ import Settings from './Components/AdminTools/Settings'
 import ServiceArea from './Components/Moormanage/ServiceArea/ServiceArea'
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 
-import AuthGuard from './ AuthGuard'
 const routes = [
   {
     path: '',
@@ -41,11 +40,8 @@ const routes = [
     element: <ForgotPassword />,
   },
   {
-    element: (
-      <AuthGuard>
-        <AdminLayout />
-      </AuthGuard>
-    ),
+    path: '',
+    element: <AdminLayout />,
     children: [
       {
         path: 'dashboard',
