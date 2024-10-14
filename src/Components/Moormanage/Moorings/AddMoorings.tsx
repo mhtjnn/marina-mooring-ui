@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { InputText } from 'primereact/inputtext'
 import { Dropdown } from 'primereact/dropdown'
 import InputComponent from '../../CommonComponent/InputComponent'
@@ -82,7 +82,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     { imageName: string; imageData: string; note: string }[]
   >([])
   const firstErrorRef = useRef<HTMLDivElement>(null)
-  console.log('gpsCoordinatesValue', gpsCoordinatesValue)
 
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
@@ -573,16 +572,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       })
     }
   }
-
-  // const handlePositionChange = (lat: number, lng: number) => {
-  //   setCenter([lat, lng])
-  //   console.log('lat.lng', lat, lng)
-
-  //   const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
-  //   const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
-  //   const concatenatedValue = `${formattedLat} ${formattedLng}`
-  //   setGpsCoordinatesValue(concatenatedValue)
-  // }
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
