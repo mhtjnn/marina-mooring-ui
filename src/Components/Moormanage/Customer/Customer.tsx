@@ -85,21 +85,34 @@ const Customer = () => {
   const [pageNumber2, setPageNumber2] = useState(0)
   const [pageSizeTwo, setPageSizeTwo] = useState(10)
   const [totalRecordsTwo, setTotalRecordsTwo] = useState<number>()
-  const [accordion, setAccordion] = useState('faq1')
+  // const [accordion, setAccordion] = useState('faq1')
+  const [accordion, setAccordion] = useState('')
   const [showImage, setShowImage] = useState({ id: '', imageData: '' })
   const { isMapModalOpen, IsdialogVisible, isUploadImageDialogVisible } = useContext(AppContext)
   const [mooringModalVisible, setMooringModalVisible] = useState(false)
   const position: PositionType = [39.4926173, -117.5714859]
 
-  const handleToggle = (faq: SetStateAction<string>) => {
-    if (faq === 'faq1' && accordion === 'faq1') {
-      setAccordion('faq2')
-    } else if (faq === 'faq2' && accordion === 'faq2') {
-      setAccordion('faq1')
+  // const handleToggle = (faq: SetStateAction<string>) => {
+  //   if (faq === 'faq1' && accordion === 'faq1') {
+  //     setAccordion('faq2')
+  //   } else if (faq === 'faq2' && accordion === 'faq2') {
+  //     setAccordion('faq1')
+
+  //   } else if (faq === 'faq2' && accordion === 'faq2') {
+  //     setAccordion('faq1')
+  //   } else {
+  //     setAccordion(faq)
+  //   }
+  // }
+
+  const handleToggle = (faq: string) => {
+    if (accordion === faq) {
+      setAccordion('')
     } else {
       setAccordion(faq)
     }
   }
+
   const onPageChange = (event: any) => {
     setPageNumber(event.page)
     setPageNumber1(event.first)
@@ -1155,7 +1168,11 @@ const Customer = () => {
                     </div>
                   </div>
                 </div>
+
                 {/* WorkOrder Section */}
+
+                {/* WorkOrder Section */}
+
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
                   style={{
@@ -1164,10 +1181,10 @@ const Customer = () => {
                     marginTop: '0px',
                   }}>
                   <label
-                    htmlFor="faq2"
+                    htmlFor="faq3"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
-                    onClick={() => handleToggle('faq2')}>
+                    onClick={() => handleToggle('faq3')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
@@ -1177,7 +1194,7 @@ const Customer = () => {
                     </div>
                     <div>
                       <div className="p-2">
-                        {accordion === 'faq2' ? (
+                        {accordion === 'faq3' ? (
                           <svg
                             width="24"
                             height="4"
@@ -1201,7 +1218,7 @@ const Customer = () => {
                     </div>
                   </label>
                   <div
-                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
+                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq3' ? '' : 'hidden'}`}>
                     <div
                       className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
                       style={{ height: 'calc(100vh - 580px)' }}>
@@ -1237,7 +1254,9 @@ const Customer = () => {
                     </div>
                   </div>
                 </div>
+
                 {/* Estimates Section */}
+
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
                   style={{
@@ -1246,10 +1265,10 @@ const Customer = () => {
                     marginTop: '0px',
                   }}>
                   <label
-                    htmlFor="faq2"
+                    htmlFor="faq4"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
-                    onClick={() => handleToggle('faq2')}>
+                    onClick={() => handleToggle('faq4')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
@@ -1259,7 +1278,7 @@ const Customer = () => {
                     </div>
                     <div>
                       <div className="p-2">
-                        {accordion === 'faq2' ? (
+                        {accordion === 'faq4' ? (
                           <svg
                             width="24"
                             height="4"
@@ -1283,7 +1302,7 @@ const Customer = () => {
                     </div>
                   </label>
                   <div
-                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
+                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq4' ? '' : 'hidden'}`}>
                     <div
                       className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
                       style={{ height: 'calc(100vh - 580px)' }}>
@@ -1319,7 +1338,9 @@ const Customer = () => {
                     </div>
                   </div>
                 </div>
+
                 {/* Billing Section */}
+
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
                   style={{
@@ -1328,10 +1349,10 @@ const Customer = () => {
                     marginTop: '0px',
                   }}>
                   <label
-                    htmlFor="faq2"
+                    htmlFor="faq5"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
-                    onClick={() => handleToggle('faq2')}>
+                    onClick={() => handleToggle('faq5')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
@@ -1365,7 +1386,7 @@ const Customer = () => {
                     </div>
                   </label>
                   <div
-                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
+                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq5' ? '' : 'hidden'}`}>
                     <div
                       className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
                       style={{ height: 'calc(100vh - 580px)' }}>
@@ -1401,7 +1422,9 @@ const Customer = () => {
                     </div>
                   </div>
                 </div>
+
                 {/* Notes Section */}
+
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
                   style={{
@@ -1410,10 +1433,10 @@ const Customer = () => {
                     marginTop: '0px',
                   }}>
                   <label
-                    htmlFor="faq2"
+                    htmlFor="faq6"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
-                    onClick={() => handleToggle('faq2')}>
+                    onClick={() => handleToggle('faq6')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
@@ -1423,7 +1446,7 @@ const Customer = () => {
                     </div>
                     <div>
                       <div className="p-2">
-                        {accordion === 'faq2' ? (
+                        {accordion === 'faq6' ? (
                           <svg
                             width="24"
                             height="4"
@@ -1447,7 +1470,7 @@ const Customer = () => {
                     </div>
                   </label>
                   <div
-                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
+                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq6' ? '' : 'hidden'}`}>
                     <div
                       className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
                       style={{ height: 'calc(100vh - 580px)' }}>
