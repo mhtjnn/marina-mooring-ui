@@ -1,0 +1,9 @@
+/* .table-container {
+  scrollbar-width:thin;
+  scrollbar-color: #00426f white;
+} */
+
+.p-datatable .p-datatable-tbody > tr :first-child {
+  padding-top: 0;
+  text-align: center;
+}

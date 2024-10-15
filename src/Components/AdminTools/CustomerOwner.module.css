@@ -1,0 +1,27 @@
+::placeholder {
+  color: #537891 !important;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 14.06px;
+  margin-right: 12px;
+}
+.hello {
+  background-color: red;
+  height: '50vh';
+}
+
+/* .custom-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: #011030; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #011030; 
+} */
+
+.p-datatable .p-datatable-tbody > tr :first-child {
+  padding-top: 0;
+}

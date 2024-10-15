@@ -1,0 +1,330 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+button {
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-size: 100%;
+  font-weight: bold;
+}
+
+.p-dialog {
+  border-radius: 10px;
+  border: 2px solid #f5efef;
+  overflow: hidden;
+}
+
+.p-button.p-component {
+  border: none;
+}
+
+.p-customHighlight {
+  background-color: #ffffff !important;
+  color: black !important;
+  border: none;
+}
+.p-highlight.under30 {
+  color: black !important;
+}
+.under30 {
+  background-color: #a32f2f !important;
+  color: rgb(247, 245, 245) !important;
+  border: 2px solid #f5efef;
+}
+.selectButton .p-customHighlight {
+  background-color: #0098ff !important;
+  box-shadow: none;
+  color: white !important;
+}
+.selectButtons .p-customHighlight {
+  background-color: #00426f !important;
+  box-shadow: none;
+  color: white !important;
+}
+
+* input {
+  box-shadow: none !important;
+  padding-left: 0.2em;
+  color: black !important;
+  width: 300px;
+}
+
+.headerClass {
+  background-color: black;
+}
+
+/* searchDataTable */
+
+.p-datatable .p-datatable-tbody > tr {
+  background: #ffffff;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  border: none;
+  border-width: none;
+}
+
+.p-datatable-thead > th {
+  background: #f2f2f2;
+}
+
+.p-datatable-emptymessage {
+  background: #ffffff;
+}
+/* 
+.p-inputswitch-slider{
+  background-color: green;
+} */
+
+.p-inputtext::placeholder {
+  color: #a4a4a4 !important;
+}
+
+#placeholderText::placeholder {
+  color: #ffffff !important;
+}
+
+#placeholderText {
+  color: #ffffff !important;
+}
+
+#calender::placeholder {
+  color: black;
+}
+#stateDropdown span {
+  font-size: 13px !important;
+}
+
+/* .p-datatable .p-datatable-tbody > tr :first-child{
+  padding-top: 0;
+} */
+
+.p-component,
+.p-component * {
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+
+.custom-dropdown-disabled {
+  cursor: not-allowed !important;
+}
+
+.p-datatable .p-datatable-header {
+  background-color: white;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background-color: #10293a !important;
+  /* width: 18rem !important; */
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  text-align: center;
+  width: 40px !important;
+  height: 24px;
+  font:
+    20px/24px Tahoma,
+    Verdana,
+    sans-serif !important;
+  color: white !important;
+  text-decoration: none;
+  background: transparent;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.p-dropdown-label.p-inputtext {
+  color: #000000 !important;
+}
+
+.p-calendar .p-inputtext {
+  border: none;
+}
+
+.p-datepicker {
+  background-color: #f7fafc;
+  border-radius: 11px;
+  .p-customHighlight {
+    background-color: #0098ff !important;
+    color: white !important;
+  }
+}
+
+.p-datepicker .p-datepicker-header {
+  padding: 0.5rem;
+  color: #495057;
+  background: #f7fafc;
+  font-weight: 800;
+  margin: 0;
+  border-bottom: 0px solid #dee2e6;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.p-datepicker:not(.p-datepicker-inline) {
+  background: #f7fafc;
+}
+.p-datepicker .p-datepicker-header:not(.p-datepicker-inline) {
+  background: #f7fafc;
+}
+
+/* .p-customHighlight {
+  color: #FFFFFF !important;
+} */
+/* .p-datepicker {
+  padding: 0.5rem;
+  background: #ffffff;
+  color: #495057;
+  border: 1px solid #ced4da;
+  border-radius: 11px;
+  background-color: #f7fafc; */
+
+.custom-checkbox-container {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  font-size: 22px;
+  user-select: none;
+}
+
+.custom-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 22px;
+  width: 22px;
+  background-color: #fff;
+  border: 1px solid #d5e1ea;
+  border-radius: 5px;
+}
+
+.custom-checkbox-container input:checked ~ .custom-checkbox {
+  background-color: #2196f3; /* Change to the color you prefer */
+}
+
+.custom-checkbox:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+
+.custom-checkbox-container input:checked ~ .custom-checkbox:after {
+  display: block;
+}
+
+.custom-checkbox-container .custom-checkbox:after {
+  left: 8px;
+  top: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.p-password-input.p-inputtext.p-component {
+  border: none !important;
+  height: 57px;
+  width: 380px;
+  margin-right: 60px;
+  margin-left: -8px;
+  font-size: 14px;
+}
+
+.p-inputtext {
+  font-size: 0.8rem;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.h-full {
+  height: 100%;
+}
+
+/* .items-center {
+  align-items: baseline;
+} */
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.blur-screen {
+  filter: blur(5px);
+}
+
+/* ::-webkit-scrollbar {
+  width: 30px;
+  height: 4px;
+  margin-top: 20rem;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00426f;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00426f;
+} */
+
+.p-component.p-component * {
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+
+input:hover {
+  border-color: #d5e1ea !important;
+}
+
+input:focus {
+  border-color: #d5e1ea !important; /* Replace with your desired border color */
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Default height */
+  resize: both; /* Allow both horizontal and vertical resizing */
+  overflow: auto;
+}
+
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* CustomModal.css */
+.custom-modal {
+  z-index: 1000001 !important;
+}
