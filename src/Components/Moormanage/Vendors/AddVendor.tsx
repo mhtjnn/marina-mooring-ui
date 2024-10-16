@@ -13,6 +13,7 @@ import { ErrorResponse, VendorResponse } from '../../../Type/ApiTypes'
 import { CountriesData, StatesData } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import { Toast } from 'primereact/toast'
+import { formatPhoneNumber } from '../../Utils/RegexUtils'
 
 const AddVendor: React.FC<AddVendorProps> = ({ vendors, editMode, closeModal, getVendor }) => {
   const [countriesData, setCountriesData] = useState<Country[]>()
@@ -62,10 +63,11 @@ const AddVendor: React.FC<AddVendorProps> = ({ vendors, editMode, closeModal, ge
 
   const handleInputChange = (field: string, value: any) => {
     if (field === 'phone') {
-      value = value.replace(/[^0-9+]/g, '')
+      value = formatPhoneNumber(value)
+      
     }
     if (field === 'phoneForRepresentative') {
-      value = value.replace(/[^0-9+]/g, '')
+      value = formatPhoneNumber(value)
     }
     const numberRegex = /^\d+$/
     if (field === 'accountNumber') {

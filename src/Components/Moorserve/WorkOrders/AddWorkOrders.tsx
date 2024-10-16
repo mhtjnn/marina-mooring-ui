@@ -210,9 +210,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const handleInputChange = (field: string, value: any) => {
-    const numberRegex = /^\d+$/
+    const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
-      if (value !== '' && !numberRegex.test(value)) {
+      if (value !== '' && !costRegex.test(value)) {
         return
       }
     }
