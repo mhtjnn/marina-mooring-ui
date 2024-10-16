@@ -33,6 +33,7 @@ import { properties } from '../../Utils/MeassageProperties'
 const AccountRecievable = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
   const [modalVisible, setModalVisible] = useState(false)
+  const [amount, setamount] = useState()
   const [pageNumber, setPageNumber] = useState(0)
   const [pageNumber1, setPageNumber1] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -224,6 +225,7 @@ const AccountRecievable = () => {
 
   const handleActionTopSectionClick = (action: string, row: any) => {
     if (action === 'Approve') {
+      setamount(row.cost)
       setModalVisible(true)
       setWorkOrderId(row?.id)
       setApproveModalOpen(true)
@@ -669,6 +671,7 @@ const AccountRecievable = () => {
         <ApproveModal
           id={workOrderId}
           toast={toast}
+          amountValue={amount}
           setVisible={() => {
             setApproveModalOpen(false)
             setModalVisible(false)

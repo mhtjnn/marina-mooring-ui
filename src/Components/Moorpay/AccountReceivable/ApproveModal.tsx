@@ -12,10 +12,11 @@ const ApproveModal: React.FC<ApproveModalProps> = ({
   toast,
   setVisible,
   closeModal,
+  amountValue,
   getWorkOrderWithPendingPayApproval,
   getOutStandingInvoice,
 }) => {
-  const [invoiceAmount, setInvoiceAmount] = useState<any>()
+  const [invoiceAmount, setInvoiceAmount] = useState<any>(amountValue)
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [approveWorkOrder] = useApproveWorkOrderMutation()
 

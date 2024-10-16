@@ -247,6 +247,7 @@ export interface ContactModalProps {
 export interface ApproveModalProps {
   id: number
   toast?: any
+  amountValue: any
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
   closeModal: () => void
   getWorkOrderWithPendingPayApproval: () => void

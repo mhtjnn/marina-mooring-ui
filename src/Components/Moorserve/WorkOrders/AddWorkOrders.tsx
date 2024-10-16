@@ -1628,6 +1628,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         <ApproveModal
           id={workOrderData?.id}
           toast={toastRef}
+          amountValue={workOrderData?.cost}
           setVisible={() => {
             setApproveModalOpen(false)
           }}
