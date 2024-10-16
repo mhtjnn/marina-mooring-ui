@@ -148,9 +148,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (!workOrder.inventory && vendorId) {
       errors.inventory = 'Item Name is required'
     }
-    if (!workOrder.mooringId) {
-      errors.mooringId = 'Mooring Number is required'
-    }
     setErrorMessage(errors)
     return errors
   }
@@ -698,9 +695,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           {/* Mooring Number */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Mooring Number <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Mooring Number</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -713,17 +708,12 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.mooringId ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.mooringId && (
-                <small className="p-error">{errorMessage.mooringId}</small>
-              )}
-            </p>
           </div>
           {/* Boatyards */}
           <div>
