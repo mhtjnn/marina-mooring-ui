@@ -25,7 +25,7 @@ import {
   setCustomerName,
 } from '../../Store/Slice/userSlice'
 import { Toast } from 'primereact/toast'
-import { EMAIL_REGEX, formatPhoneNumber, NAME_REGEX, PHONE_REGEX } from '../Utils/RegexUtils'
+import { EMAIL_REGEX, formatPhoneNumber, NAME_REGEX } from '../Utils/RegexUtils'
 
 const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
   customerData,

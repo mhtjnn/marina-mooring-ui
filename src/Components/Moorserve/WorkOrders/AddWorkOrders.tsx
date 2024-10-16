@@ -3,7 +3,7 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Dropdown } from 'primereact/dropdown'
 import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
-import { FaFileUpload, FaLessThanEqual } from 'react-icons/fa'
+import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 
 import {
@@ -17,11 +17,6 @@ import {
   useGetViewFormMutation,
   useUpdateWorkOrderMutation,
 } from '../../../Services/MoorServe/MoorserveApi'
-import {
-  useAddEstimateMutation,
-  useUpdateEstimateMutation,
-} from '../../../Services/MoorServe/MoorserveApi'
-
 import { Button } from 'primereact/button'
 import { WorkOrderProps } from '../../../Type/ComponentBasedType'
 import {
@@ -54,7 +49,6 @@ import PDFEditor from '../Forms/PdfEditor'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
-import { MultiSelect } from 'primereact/multiselect'
 import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
 import { validateFiles } from '../../Helper/Helper'
 
@@ -62,7 +56,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
   editModeEstimate,
   editModeWorkOrder,
-  estimate,
   setVisible,
   closeModal,
   isAccountRecievable,
