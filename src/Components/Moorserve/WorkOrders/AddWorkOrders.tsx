@@ -727,6 +727,51 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
 
+  const fetchDataAndUpdateBasedOnCustomerId = useCallback(async () => {
+    const { mooringsBasedOnCustomerId } = await getMooringsBasedOnCustomerIdData()
+
+    if (mooringsBasedOnCustomerId !== null) {
+      setIsLoading(false)
+      setMooringBasedOnCustomerId(mooringsBasedOnCustomerId)
+    }
+  }, [workOrder?.customerName?.id])
+
+  const fetchDataAndUpdateBasedOnMooringId = useCallback(async () => {
+    const { boatyardBasedOnMooringId } = await getBoatyardBasedOnMooringIdData()
+    const { customerBasedOnMooringId } = await getCustomerBasedOnMooringIdData()
+
+    if (boatyardBasedOnMooringId !== null) {
+      setIsLoading(false)
+      setBoatyardBasedOnMooringId(boatyardBasedOnMooringId)
+    }
+
+    if (customerBasedOnMooringId !== null) {
+      const firstLastName = customerBasedOnMooringId.map((item: any) => ({
+        firstName: item.firstName + ' ' + item.lastName,
+        id: item.id,
+      }))
+      setIsLoading(false)
+      setCustomerBasedOnMooringId(firstLastName)
+    }
+  }, [workOrder?.mooringId?.id])
+
+  const fetchDataAndUpdateBasedOnBoatyardId = useCallback(async () => {
+    const { mooringBasedOnBoatyardId } = await getMooringsBasedOnBoatyardIdData()
+
+    if (mooringBasedOnBoatyardId !== null) {
+      setMooringsBasedOnBoatyardIdData(mooringBasedOnBoatyardId)
+    }
+  }, [workOrder?.boatyards?.id])
+
+  const fetchDataAndUpdateBasedOnCuatomerIdAndBoatyardId = useCallback(async () => {
+    const { mooringbasedOnCustomerIdAndBoatyardId } =
+      await getMooringBasedOnCustomerIdAndBoatyardIdData()
+
+    if (mooringbasedOnCustomerIdAndBoatyardId !== null) {
+      setbasedOnCustomerIdAndBoatyardId(mooringbasedOnCustomerIdAndBoatyardId)
+    }
+  }, [workOrder?.boatyards?.id, workOrder?.customerName?.id])
+
   const viewFormsData = async (id: any) => {
     setIsLoading(true)
     try {
@@ -816,6 +861,30 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       }
     }
   }, [vendorId])
+
+  useEffect(() => {
+    if (workOrder?.boatyards?.id) {
+      fetchDataAndUpdateBasedOnBoatyardId()
+    }
+  }, [workOrder?.boatyards?.id])
+
+  useEffect(() => {
+    if (workOrder?.mooringId?.id) {
+      fetchDataAndUpdateBasedOnMooringId()
+    }
+  }, [workOrder?.mooringId?.id])
+
+  useEffect(() => {
+    if (workOrder?.customerName?.id) {
+      fetchDataAndUpdateBasedOnCustomerId()
+    }
+  }, [workOrder?.customerName?.id])
+
+  useEffect(() => {
+    if (workOrder?.customerName?.id && workOrder?.boatyards?.id) {
+      fetchDataAndUpdateBasedOnCuatomerIdAndBoatyardId()
+    }
+  }, [workOrder?.customerName?.id, workOrder?.boatyards?.id])
 
   useEffect(() => {
     if (editModeWorkOrder) {
