@@ -168,13 +168,13 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }
 
   const handleInputChange = (field: string, value: any) => {
-    const numberRegex = /^\d+$/
-
+    const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
-      if (value !== '' && !numberRegex.test(value)) {
+      if (value !== '' && !costRegex.test(value)) {
         return
       }
     }
+
     if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) {
       return
     }
@@ -980,6 +980,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   border: '1px solid #D5E1EA',
                   fontSize: '0.8rem',
                   padding: '0.5rem',
+                  borderRadius: '0.50rem',
                 }}
               />
             </div>
