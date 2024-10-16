@@ -190,9 +190,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (!workOrder.scheduleDate) {
       errors.scheduleDate = 'Schedule Date is required'
     }
-    if (!workOrder.boatyards) {
-      errors.boatyards = 'Boatyard is required'
-    }
     if (!workOrder.mooringId) {
       errors.mooringId = 'Mooring Number is required'
     }
@@ -1076,10 +1073,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         <div className="flex gap-6 mt-3">
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Boatyard
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Boatyard</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -1092,18 +1086,13 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.boatyards ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                   paddingLeft: '0.5rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.boatyards && (
-                <small className="p-error">{errorMessage.boatyards}</small>
-              )}
-            </p>
           </div>
 
           {/* Assigned to */}
