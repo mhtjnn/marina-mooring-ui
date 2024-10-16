@@ -426,6 +426,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
       imageRequestDtoList: imageRequestDtoList,
+      cost: workOrder?.cost,
     }
     if (workOrder?.attachForm) {
       payload.formRequestDtoList = [
@@ -507,6 +508,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       }
       if (workOrder?.dueDate !== workOrderData?.dueDate) {
         editPayload.dueDate = workOrder?.dueDate
+      }
+      if (workOrder?.cost !== workOrderData?.cost) {
+        editPayload.cost = workOrder?.cost
       }
       if (workOrder?.scheduleDate !== workOrderData?.scheduledDate) {
         editPayload.scheduledDate = workOrder?.scheduleDate
@@ -1342,6 +1346,28 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               />
             </div>
           </div>
+          {/* Cost */}
+          <div className="mt-3">
+            <span className="font-medium text-sm text-[#000000]">
+              <div className="flex gap-1">Cost</div>
+            </span>
+            <div className="mt-1">
+              <InputText
+                type="text"
+                value={workOrder.cost}
+                onChange={(e: any) => handleInputChange('cost', e.target.value)}
+                disabled={isLoading || isAccountRecievable || isTechnician}
+                style={{
+                  width: '230px',
+                  height: '32px',
+                  border: '1px solid #D5E1EA',
+                  fontSize: '0.8rem',
+                  padding: '0.5rem',
+                  borderRadius: '0.50rem',
+                }}
+              />
+            </div>
+          </div>
           {/* Vendor */}
           {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
             <div className="mt-3">
@@ -1389,6 +1415,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </p>
             </div>
           ) : null}
+        </div>
+        <div className="flex gap-6 mt-3">
           {/* Item Name */}
           {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
@@ -1436,8 +1464,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </p>
             </div>
           ) : null}
-        </div>
-        <div className="flex gap-6 mt-3">
           {/* Quantity */}
           {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
           statusChanged ? (
@@ -1601,6 +1627,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         header="Approve">
         <ApproveModal
           id={workOrderData?.id}
+          toast={toastRef}
           setVisible={() => {
             setApproveModalOpen(false)
           }}
@@ -1643,6 +1670,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               getWorkOrderWithPendingPayApproval()
             }
           }}
+          toast={toastRef}
           getOutStandingInvoice={() => {
             if (getOutStandingInvoice) {
               getOutStandingInvoice()

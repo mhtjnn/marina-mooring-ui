@@ -663,6 +663,7 @@ const AccountRecievable = () => {
         header="Approve">
         <ApproveModal
           id={workOrderId}
+          toast={toast}
           setVisible={() => {
             setApproveModalOpen(false)
             setModalVisible(false)
@@ -694,6 +695,7 @@ const AccountRecievable = () => {
         header="Deny">
         <ReasonModal
           selectedRowData={selectedRowData}
+          toast={toast}
           setVisible={() => {
             setDenyModalOpen(false)
             setModalVisible(false)

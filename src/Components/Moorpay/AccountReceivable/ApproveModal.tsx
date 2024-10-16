@@ -9,6 +9,7 @@ import { ErrorResponse, WorkOrderResponse } from '../../../Type/ApiTypes'
 
 const ApproveModal: React.FC<ApproveModalProps> = ({
   id,
+  toast,
   setVisible,
   closeModal,
   getWorkOrderWithPendingPayApproval,
@@ -17,7 +18,6 @@ const ApproveModal: React.FC<ApproveModalProps> = ({
   const [invoiceAmount, setInvoiceAmount] = useState<any>()
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [approveWorkOrder] = useApproveWorkOrderMutation()
-  const toast = useRef<Toast>(null)
 
   const validateFields = () => {
     const errors: { [key: string]: string } = {}
