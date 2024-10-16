@@ -349,61 +349,59 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
 
   return (
     <div style={{ height: '100vh' }} className={visible ? 'backdrop-blur-lg' : ''}>
+      <Header header="MOORSERVE/Work Orders" />
       <Toast ref={toast} />
-      {!report && <Header header="MOORSERVE/Work Orders" />}
       <div className="">
-        {!report && (
-          <div className="flex justify-end gap-4 mt-6 mr-12">
-            <Button
-              onClick={handleExportPdf}
-              style={{
-                marginTop: '-16px',
-                width: '125px',
-                height: '44px',
-                minHeight: '44px',
-                backgroundColor: '#0098FF',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: 'white',
-                borderRadius: '0.50rem',
-                marginLeft: '8px',
-                boxShadow: 'none',
-              }}>
-              Export To PDF
-            </Button>
-            <div className="items-center">
-              <CustomModal
-                buttonText={'ADD NEW'}
-                icon={
-                  <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />
-                }
-                children={
-                  <AddWorkOrders
-                    workOrderData={selectedCustomer}
-                    setWorkOrderData={setSelectedCustomer}
-                    editModeWorkOrder={editMode}
-                    setVisible={setVisible}
-                    visible={visible}
-                    toastRef={toast}
-                    closeModal={handleModalClose}
-                    isAccountRecievable={false}
-                  />
-                }
-                headerText={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}
-                visible={visible}
-                onClick={handleButtonClick}
-                onHide={handleModalClose}
-                buttonStyle={{ ...AddNewButtonStyle, marginTop: '-16px' }}
-                dialogStyle={{
-                  width: '800px',
-                  height: '526px',
-                  borderRadius: '1rem',
-                }}
-              />
-            </div>
+        <div className="flex justify-end gap-4 mt-8 mr-12">
+          <Button
+            onClick={handleExportPdf}
+            style={{
+              marginTop: '-16px',
+              width: '125px',
+              height: '44px',
+              minHeight: '44px',
+              backgroundColor: '#0098FF',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 600,
+              color: 'white',
+              borderRadius: '0.50rem',
+              marginLeft: '8px',
+              boxShadow: 'none',
+            }}>
+            Export To PDF
+          </Button>
+          <div className="items-center">
+            <CustomModal
+              buttonText={'ADD NEW'}
+              icon={
+                <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />
+              }
+              children={
+                <AddWorkOrders
+                  workOrderData={selectedCustomer}
+                  setWorkOrderData={setSelectedCustomer}
+                  editModeWorkOrder={editMode}
+                  setVisible={setVisible}
+                  visible={visible}
+                  toastRef={toast}
+                  closeModal={handleModalClose}
+                  isAccountRecievable={false}
+                />
+              }
+              headerText={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}
+              visible={visible}
+              onClick={handleButtonClick}
+              onHide={handleModalClose}
+              buttonStyle={{ ...AddNewButtonStyle, marginTop: '-16px' }}
+              dialogStyle={{
+                width: '800px',
+                height: '526px',
+                borderRadius: '1rem',
+              }}
+            />
           </div>
-        )}
+        </div>
 
         <div
           style={{

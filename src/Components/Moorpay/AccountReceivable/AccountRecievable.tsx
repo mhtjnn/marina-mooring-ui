@@ -383,10 +383,15 @@ const AccountRecievable = () => {
   }, [searchInvoice, pageNumberTwo, pageSizeTwo, selectedCustomerId, getOutStandingInvoice])
 
   return (
-    <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
+    <div
+      style={{ height: '100vh' }}
+      className={
+        isPaymentModalOpen || approveModalOpen || denyModalOpen || addWorkOrderModal
+          ? 'backdrop-blur-lg'
+          : ''
+      }>
       <Header header="MOORPAY/Account Receivable" />
       <Toast ref={toast} />
-
       <div
         style={{
           height: 'auto',

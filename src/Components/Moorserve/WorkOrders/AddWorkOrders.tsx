@@ -1416,7 +1416,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             </div>
           ) : null}
         </div>
-        <div className="flex gap-6 mt-3">
+        <div className="flex gap-6">
           {/* Item Name */}
           {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
@@ -1467,7 +1467,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {/* Quantity */}
           {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
           statusChanged ? (
-            <div>
+            <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Quantity (Available)</div>
               </span>
