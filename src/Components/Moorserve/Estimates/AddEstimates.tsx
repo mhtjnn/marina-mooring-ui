@@ -313,7 +313,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       workOrderStatusId: workOrder?.workOrderStatus?.id,
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
-      cost: workOrder?.cost,
+      cost: Number(workOrder?.cost),
     }
     if (workOrder?.inventory) {
       payload.inventoryRequestDtoList = [
@@ -390,7 +390,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         editPayload.problem = workOrder?.value
       }
       if (workOrder?.cost !== workOrderData?.cost) {
-        editPayload.cost = workOrder?.cost
+        editPayload.cost = Number(workOrder?.cost)
       }
       const formattedTime = '00:' + formatTime(time.minutes, time.seconds)
       if (formattedTime !== workOrderData?.time) {

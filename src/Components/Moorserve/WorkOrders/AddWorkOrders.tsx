@@ -193,7 +193,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (!workOrder.mooringId) {
       errors.mooringId = 'Mooring Number is required'
     }
-    if (!workOrder.vendor && workOrder.workOrderStatus.id === 10) {
+    if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
       errors.vendor = 'Vendor is required'
     }
     if (!workOrder.inventory && vendorId) {
@@ -426,7 +426,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
       imageRequestDtoList: imageRequestDtoList,
-      cost: workOrder?.cost,
+      cost: Number(workOrder?.cost),
     }
     if (workOrder?.attachForm) {
       payload.formRequestDtoList = [
@@ -510,7 +510,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         editPayload.dueDate = workOrder?.dueDate
       }
       if (workOrder?.cost !== workOrderData?.cost) {
-        editPayload.cost = workOrder?.cost
+        editPayload.cost = Number(workOrder?.cost)
       }
       if (workOrder?.scheduleDate !== workOrderData?.scheduledDate) {
         editPayload.scheduledDate = workOrder?.scheduleDate
