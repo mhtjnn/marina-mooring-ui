@@ -85,25 +85,11 @@ const Customer = () => {
   const [pageNumber2, setPageNumber2] = useState(0)
   const [pageSizeTwo, setPageSizeTwo] = useState(10)
   const [totalRecordsTwo, setTotalRecordsTwo] = useState<number>()
-  // const [accordion, setAccordion] = useState('faq1')
-  const [accordion, setAccordion] = useState('')
+  const [accordion, setAccordion] = useState('faq1')
   const [showImage, setShowImage] = useState({ id: '', imageData: '' })
   const { isMapModalOpen, IsdialogVisible, isUploadImageDialogVisible } = useContext(AppContext)
   const [mooringModalVisible, setMooringModalVisible] = useState(false)
   const position: PositionType = [39.4926173, -117.5714859]
-
-  // const handleToggle = (faq: SetStateAction<string>) => {
-  //   if (faq === 'faq1' && accordion === 'faq1') {
-  //     setAccordion('faq2')
-  //   } else if (faq === 'faq2' && accordion === 'faq2') {
-  //     setAccordion('faq1')
-
-  //   } else if (faq === 'faq2' && accordion === 'faq2') {
-  //     setAccordion('faq1')
-  //   } else {
-  //     setAccordion(faq)
-  //   }
-  // }
 
   const handleToggle = (faq: string) => {
     if (accordion === faq) {
@@ -645,7 +631,7 @@ const Customer = () => {
 
   const CustomerDetails = useMemo(() => {
     return (
-      <div className="">
+      <div>
         <div className="flex gap-10 p-4">
           <div
             style={{
@@ -908,7 +894,10 @@ const Customer = () => {
               className="rounded-md ml-[20px] mr-[20px]">
               <div
                 className="p-3"
-                onClick={() => setRightContainerWidth(false)}
+                onClick={() => {
+                  setRightContainerWidth(false)
+                  setAccordion('faq1')
+                }}
                 style={{ cursor: 'pointer' }}>
                 <img src="/assets/images/plus.png" alt="Key Icon" className="p-clickable" />
               </div>
@@ -938,7 +927,9 @@ const Customer = () => {
                 }}
                 className="flex-grow border bg-white">
                 {CustomerRecordHeader}
-                <div style={{ border: '1px solid white', height: '180px', overflowY: 'scroll' }}>
+                <div
+                  className={`${accordion === 'faq1' ? '' : 'hidden'}`}
+                  style={{ border: '1px solid white', height: '180px', overflowY: 'scroll' }}>
                   {customerRecordData ? (
                     CustomerDetails
                   ) : (
@@ -983,7 +974,7 @@ const Customer = () => {
                     style={{ backgroundColor: '#10293A' }}
                     htmlFor="faq1"
                     className="cursor-pointer flex items-center justify-between h-14"
-                    onClick={() => handleToggle('faq1')}>
+                    onClick={() => handleToggle('faq2')}>
                     <div className="flex items-center gap-4 ">
                       <div>
                         <h1 className="p-4 text-white text-xl font-extrabold">
@@ -993,7 +984,7 @@ const Customer = () => {
                     </div>
                     <div>
                       <div className="mr-2">
-                        {accordion === 'faq1' ? (
+                        {accordion === 'faq2' ? (
                           <svg
                             width="24"
                             height="4"
@@ -1016,7 +1007,7 @@ const Customer = () => {
                     </div>
                   </label>
                   <div
-                    className={`content transition-all ease-in-out duration-500 ${accordion === 'faq1' ? '' : 'hidden'}`}>
+                    className={`content transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div style={{ justifyContent: 'center', alignItems: 'center' }}>
                       <div className="flex-grow bg-white rounded-md border">
                         <div
@@ -1098,97 +1089,11 @@ const Customer = () => {
                     htmlFor="faq2"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
-                    onClick={() => handleToggle('faq2')}>
-                    <div className="flex items-center">
-                      <div style={{ flexShrink: 1 }}>
-                        <h1 className="p-3 text-white text-lg font-extrabold">
-                          {properties.imageHeader}
-                        </h1>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="p-2">
-                        {accordion === 'faq2' ? (
-                          <svg
-                            width="24"
-                            height="4"
-                            viewBox="0 0 11 3"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                              d="M10.125 1.5C10.125 1.92188 9.77344 2.25 9.375 2.25H1.125C0.703125 2.25 0.375 1.92188 0.375 1.5C0.375 1.10156 0.703125 0.75 1.125 0.75H9.375C9.77344 0.75 10.125 1.10156 10.125 1.5Z"
-                              fill="white"
-                            />
-                          </svg>
-                        ) : (
-                          <img
-                            src="/assets/images/plus.png"
-                            alt="Key Icon"
-                            className="p-clickable"
-                            style={{}}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </label>
-                  <div
-                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
-                    <div
-                      className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
-                      style={{ height: 'calc(100vh - 580px)' }}>
-                      <div className="flex-grow" style={{ overflow: 'auto' }}>
-                        <DataTableComponent
-                          style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
-                          scrollable
-                          tableStyle={{
-                            fontSize: '12px',
-                            color: '#000000',
-                            fontWeight: 600,
-                            backgroundColor: '#D9D9D9',
-                          }}
-                          data={customerImage}
-                          columns={customerImagesColumns}
-                          selectionMode="single"
-                          actionButtons={ActionButtonColumn}
-                          selection={selectedMooring}
-                          dataKey="id"
-                          rowStyle={(rowData: any) => rowData}
-                          emptyMessage={
-                            <div className="text-center mt-10">
-                              <img
-                                src="/assets/images/empty.png"
-                                alt="Empty Data"
-                                className="w-20 mx-auto mb-2"
-                              />
-                              <p className="text-gray-500 text-lg">{properties.noDataMessage}</p>
-                            </div>
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* WorkOrder Section */}
-
-                {/* WorkOrder Section */}
-
-                <div
-                  className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
-                  style={{
-                    width: '450px',
-                    maxWidth: '450px',
-                    marginTop: '0px',
-                  }}>
-                  <label
-                    htmlFor="faq3"
-                    style={{ backgroundColor: '#10293A' }}
-                    className="cursor-pointer flex items-center justify-between h-14"
                     onClick={() => handleToggle('faq3')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
-                          {properties.workOrderHeader}
+                          {properties.imageHeader}
                         </h1>
                       </div>
                     </div>
@@ -1255,7 +1160,9 @@ const Customer = () => {
                   </div>
                 </div>
 
-                {/* Estimates Section */}
+                {/* WorkOrder Section */}
+
+                {/* WorkOrder Section */}
 
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
@@ -1265,14 +1172,14 @@ const Customer = () => {
                     marginTop: '0px',
                   }}>
                   <label
-                    htmlFor="faq4"
+                    htmlFor="faq3"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
                     onClick={() => handleToggle('faq4')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
-                          {properties.estimateHeader}
+                          {properties.workOrderHeader}
                         </h1>
                       </div>
                     </div>
@@ -1339,7 +1246,7 @@ const Customer = () => {
                   </div>
                 </div>
 
-                {/* Billing Section */}
+                {/* Estimates Section */}
 
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
@@ -1349,20 +1256,20 @@ const Customer = () => {
                     marginTop: '0px',
                   }}>
                   <label
-                    htmlFor="faq5"
+                    htmlFor="faq4"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
                     onClick={() => handleToggle('faq5')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
-                          {properties.billingHeader}
+                          {properties.estimateHeader}
                         </h1>
                       </div>
                     </div>
                     <div>
                       <div className="p-2">
-                        {accordion === 'faq2' ? (
+                        {accordion === 'faq5' ? (
                           <svg
                             width="24"
                             height="4"
@@ -1423,7 +1330,7 @@ const Customer = () => {
                   </div>
                 </div>
 
-                {/* Notes Section */}
+                {/* Billing Section */}
 
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
@@ -1433,14 +1340,14 @@ const Customer = () => {
                     marginTop: '0px',
                   }}>
                   <label
-                    htmlFor="faq6"
+                    htmlFor="faq5"
                     style={{ backgroundColor: '#10293A' }}
                     className="cursor-pointer flex items-center justify-between h-14"
                     onClick={() => handleToggle('faq6')}>
                     <div className="flex items-center">
                       <div style={{ flexShrink: 1 }}>
                         <h1 className="p-3 text-white text-lg font-extrabold">
-                          {properties.notesHeader}
+                          {properties.billingHeader}
                         </h1>
                       </div>
                     </div>
@@ -1471,6 +1378,90 @@ const Customer = () => {
                   </label>
                   <div
                     className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq6' ? '' : 'hidden'}`}>
+                    <div
+                      className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
+                      style={{ height: 'calc(100vh - 580px)' }}>
+                      <div className="flex-grow" style={{ overflow: 'auto' }}>
+                        <DataTableComponent
+                          style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
+                          scrollable
+                          tableStyle={{
+                            fontSize: '12px',
+                            color: '#000000',
+                            fontWeight: 600,
+                            backgroundColor: '#D9D9D9',
+                          }}
+                          data={customerImage}
+                          columns={customerImagesColumns}
+                          selectionMode="single"
+                          actionButtons={ActionButtonColumn}
+                          selection={selectedMooring}
+                          dataKey="id"
+                          rowStyle={(rowData: any) => rowData}
+                          emptyMessage={
+                            <div className="text-center mt-10">
+                              <img
+                                src="/assets/images/empty.png"
+                                alt="Empty Data"
+                                className="w-20 mx-auto mb-2"
+                              />
+                              <p className="text-gray-500 text-lg">{properties.noDataMessage}</p>
+                            </div>
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notes Section */}
+
+                <div
+                  className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
+                  style={{
+                    width: '450px',
+                    maxWidth: '450px',
+                    marginTop: '0px',
+                  }}>
+                  <label
+                    htmlFor="faq6"
+                    style={{ backgroundColor: '#10293A' }}
+                    className="cursor-pointer flex items-center justify-between h-14"
+                    onClick={() => handleToggle('faq7')}>
+                    <div className="flex items-center">
+                      <div style={{ flexShrink: 1 }}>
+                        <h1 className="p-3 text-white text-lg font-extrabold">
+                          {properties.notesHeader}
+                        </h1>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="p-2">
+                        {accordion === 'faq7' ? (
+                          <svg
+                            width="24"
+                            height="4"
+                            viewBox="0 0 11 3"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M10.125 1.5C10.125 1.92188 9.77344 2.25 9.375 2.25H1.125C0.703125 2.25 0.375 1.92188 0.375 1.5C0.375 1.10156 0.703125 0.75 1.125 0.75H9.375C9.77344 0.75 10.125 1.10156 10.125 1.5Z"
+                              fill="white"
+                            />
+                          </svg>
+                        ) : (
+                          <img
+                            src="/assets/images/plus.png"
+                            alt="Key Icon"
+                            className="p-clickable"
+                            style={{}}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </label>
+                  <div
+                    className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq7' ? '' : 'hidden'}`}>
                     <div
                       className={`bg-#00426F overflow-x-hidden  table-container flex flex-col`}
                       style={{ height: 'calc(100vh - 580px)' }}>
