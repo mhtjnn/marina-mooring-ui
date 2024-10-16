@@ -35,7 +35,7 @@ import { Toast } from 'primereact/toast'
 import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 import { AiOutlineDelete } from 'react-icons/ai'
-import { NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUtils'
+import { formatPhoneNumber, NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUtils'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
@@ -355,7 +355,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   const handleInputChangeCustomer = (fieldName: string, value: any) => {
     if (fieldName === 'phone') {
-      value = value.replace(/[^0-9+]/g, '')
+      value = formatPhoneNumber(value)
     }
     switch (fieldName) {
       case 'firstName':

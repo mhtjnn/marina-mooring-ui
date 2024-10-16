@@ -25,7 +25,7 @@ import {
   setCustomerName,
 } from '../../Store/Slice/userSlice'
 import { Toast } from 'primereact/toast'
-import { EMAIL_REGEX, NAME_REGEX, PHONE_REGEX } from '../Utils/RegexUtils'
+import { EMAIL_REGEX, formatPhoneNumber, NAME_REGEX, PHONE_REGEX } from '../Utils/RegexUtils'
 
 const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
   customerData,
@@ -190,7 +190,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
 
   const handleInputChange = (fieldName: string, value: any) => {
     if (fieldName === 'phone') {
-      value = value.replace(/[^0-9+]/g, '')
+      value = formatPhoneNumber(value)
     }
     switch (fieldName) {
       case 'firstName':
