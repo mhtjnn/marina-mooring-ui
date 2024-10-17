@@ -631,6 +631,13 @@ const Customer = () => {
     )
   }, [selectedCustomer, customerRecordData])
 
+  const getAddress = (customerRecordData: any) => {
+    const { address, city, stateResponseDto, countryResponseDto } = customerRecordData || {}
+    const components = [address, city, stateResponseDto?.name, countryResponseDto?.name]
+    const filteredComponents = components.filter(Boolean)
+    return filteredComponents.length > 0 ? filteredComponents.join(', ') : '-'
+  }
+
   const CustomerDetails = useMemo(() => {
     return (
       <div className="">
@@ -681,13 +688,7 @@ const Customer = () => {
           }}>
           <p className="ml-4">
             <span className="address-label">Address: </span>
-            {(customerRecordData?.address || '-') +
-              ', ' +
-              (customerRecordData?.city || '-') +
-              ', ' +
-              (customerRecordData?.stateResponseDto?.name || '-') +
-              ', ' +
-              (customerRecordData?.countryResponseDto?.name || '-')}
+            {getAddress(customerRecordData)}
           </p>
           <p className="ml-4 mt-3">
             <span className="address-label">Notes: </span>
