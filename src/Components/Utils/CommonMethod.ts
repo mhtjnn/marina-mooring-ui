@@ -32,3 +32,8 @@ export const parseTime = (timeString: any) => {
   const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
   return { minutes: hours * 60 + minutes, seconds }
 }
+
+export const firstLastName = (data: any) => {
+  if (data.firstName === null) return '-'
+  else return data.firstName + ' ' + data.lastName
+}
