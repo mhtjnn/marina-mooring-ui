@@ -13,7 +13,6 @@ const CustomModal: React.FC<CustomModalProps> = ({
   onHide,
   buttonStyle,
   dialogStyle,
-  footerContent,
   icon,
   button,
 }) => {

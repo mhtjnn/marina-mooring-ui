@@ -34,7 +34,7 @@ import { RiDeleteBin5Fill } from 'react-icons/ri'
 import { Paginator } from 'primereact/paginator'
 import React from 'react'
 import MooringInformations from '../../CommonComponent/MooringInformations'
-import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle } from '../../Utils/Style'
 import { AppContext } from '../../../Services/ContextApi/AppContext'
 
 const Boatyards = () => {

@@ -20,7 +20,7 @@ import { Params } from '../../Type/CommonType'
 import { properties } from '../Utils/MeassageProperties'
 import { Dialog } from 'primereact/dialog'
 import ResetPassword from './ResetPassword'
-import { AddNewButtonStyle, DialogStyle } from '../Style'
+import { AddNewButtonStyle, DialogStyle } from '../Utils/Style'
 
 const Permission = () => {
   const [modalVisible, setModalVisible] = useState(false)

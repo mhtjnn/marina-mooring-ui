@@ -33,7 +33,7 @@ import { Paginator } from 'primereact/paginator'
 import React from 'react'
 import AddServiceModal from './AddServiceModal'
 import MooringInformations from '../../CommonComponent/MooringInformations'
-import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle } from '../../Utils/Style'
 import CustomServiceAreaMoorinMap from '../../Map/CustomServiceAreaMoorinMap'
 import { PositionType } from '../../../Type/Components/MapTypes'
 

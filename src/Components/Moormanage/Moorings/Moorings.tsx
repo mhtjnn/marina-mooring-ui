@@ -44,7 +44,7 @@ import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
 import AddImage from '../Customer/AddImage'
 import ViewImageDialog from '../../CommonComponent/ViewImageDialog'
 import MooringInformations from '../../CommonComponent/MooringInformations'
-import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle } from '../../Utils/Style'
 import { AppContext } from '../../../Services/ContextApi/AppContext'
 
 const Moorings = () => {

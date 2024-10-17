@@ -23,7 +23,7 @@ import { Paginator } from 'primereact/paginator'
 import { VirtualScroller } from 'primereact/virtualscroller'
 import { Dialog } from 'primereact/dialog'
 import ResetPassword from './ResetPassword'
-import { AddNewButtonStyle, DialogStyle } from '../Style'
+import { AddNewButtonStyle, DialogStyle } from '../Utils/Style'
 
 const CustomerOwner = () => {
   const dispatch = useDispatch()

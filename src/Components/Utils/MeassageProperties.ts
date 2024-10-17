@@ -32,4 +32,8 @@ export const properties = {
   imageInformation: 'Image Information',
   noDataMessage: 'No data available',
   Address: 'Address',
+  WorkOrdersPendingApprovalHeaders: 'Work Orders Pending Approval',
+  OutstandingInvoicesHeader: 'Outstanding Invoices',
+  exportToPdfText: 'Export To PDF',
+  buttonText: 'ADD NEW',
 }
