@@ -146,10 +146,12 @@ export interface AuthenticationData {
 export interface ErrorResponse {
   status: number
   message: string
+  error: any
   data: {
     content: string
     message: string
     status: number
+    error: any
   }
 }
 
@@ -996,6 +998,7 @@ export interface WorkOrderResponse {
   currentSize: number
   totalSize: number
   errorList: []
+  error: any
   time: string
   content: {
     id: number

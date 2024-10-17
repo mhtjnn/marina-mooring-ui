@@ -34,6 +34,7 @@ import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { InputText } from 'primereact/inputtext'
+import { workOrderValidateFields } from '../../Utils/RegexUtils'
 
 const AddEstimates: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -298,7 +299,10 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }
 
   const SaveEstimate = async () => {
-    const errors = validateFields()
+    const errors = workOrderValidateFields({
+      workOrder,
+      setErrorMessage,
+    })
     if (Object.keys(errors).length > 0) {
       setErrorMessage(errors)
       return
@@ -358,7 +362,10 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }
 
   const UpdateEstimate = async () => {
-    const errors = validateFields()
+    const errors = workOrderValidateFields({
+      workOrder,
+      setErrorMessage,
+    })
     if (Object.keys(errors).length > 0) {
       return
     }
@@ -934,9 +941,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Vendor <p className="text-red-600">*</p>
-                </div>
+                <div className="flex gap-1">Vendor</div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -953,7 +958,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: errorMessage.vendor ? '1px solid red' : '1px solid #D5E1EA',
+                    border: '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -972,18 +977,13 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   )}
                 />
               </div>
-              <p>
-                {errorMessage.vendor && <small className="p-error">{errorMessage.vendor}</small>}
-              </p>
             </div>
           ) : null}
           {/* Item Name */}
           {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Item <p className="text-red-600">*</p>
-                </div>
+                <div className="flex gap-1">Item</div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -998,7 +998,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
+                    border: '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -1017,11 +1017,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   )}
                 />
               </div>
-              <p>
-                {errorMessage.inventory && (
-                  <small className="p-error">{errorMessage.inventory}</small>
-                )}
-              </p>
             </div>
           ) : null}
           {/* Quantity */}

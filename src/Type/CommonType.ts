@@ -235,3 +235,12 @@ export interface ImageChangeProps {
   setCustomerImages: React.Dispatch<React.SetStateAction<any>>
   setimageRequestDtoList: React.Dispatch<React.SetStateAction<any>>
 }
+export interface FormData {
+  customerName?: string
+  mooringNumber?: string
+  mooringStatus?: string
+}
+
+export interface FieldErrors {
+  [key: string]: string
+}

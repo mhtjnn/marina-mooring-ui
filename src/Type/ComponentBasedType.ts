@@ -196,7 +196,6 @@ export interface ValidationProps {
 }
 export interface WorkOrderValidationProps {
   workOrder: any
-  vendorId: any
   setErrorMessage: (errors: { [key: string]: string }) => void
 }
 export interface CustomModalProps {

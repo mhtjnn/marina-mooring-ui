@@ -41,7 +41,7 @@ export const validateFiles = (
     })
   }
   if (invalidSizeFiles.length > 0) {
-    const detailMessage = `Invalid file size. Images must be between ${sizeLimits.min / 1024} KB and ${sizeLimits.max / 1024} KB.`
+    const detailMessage = `Invalid file size. Images must be between 5 KB and 5 MB.`
     toastRef?.current?.show({
       severity: 'error',
       summary: 'Error',

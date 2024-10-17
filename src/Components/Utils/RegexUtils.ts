@@ -1,17 +1,13 @@
-import { ValidationProps } from '../../Type/CommonType'
+import { FieldErrors, FormData, ValidationProps } from '../../Type/CommonType'
+import { WorkOrderValidationProps } from '../../Type/ComponentBasedType'
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/
-
 export const NAME_REGEX = /^[a-zA-Z ]+$/
-
 export const NUMBER_REGEX = /^\d+$/
-
 export const PHONE_REGEX = /^.{10}$|^.{12}$/
-
 export const formatPhoneNumber = (value: string) => {
   value = value.replace(/\D/g, '')
-
   if (value.length <= 3) {
     return value
   } else if (value.length <= 6) {
@@ -20,7 +16,6 @@ export const formatPhoneNumber = (value: string) => {
     return `${value.slice(0, 3)}-${value.slice(3, 6)}-${value.slice(6, 10)}`
   }
 }
-
 export const validateFields = ({
   firstName,
   lastName,
@@ -68,16 +63,6 @@ export const validateFields = ({
   return errors
 }
 
-interface FormData {
-  customerName?: string
-  mooringNumber?: string
-  mooringStatus?: string
-}
-
-interface FieldErrors {
-  [key: string]: string
-}
-
 export const validateFieldsForMoorings = (
   formData: FormData,
   setFirstErrorField: (field: string) => void,
@@ -108,5 +93,20 @@ export const validateFieldsForMoorings = (
   setFirstErrorField(firstError)
   setFieldErrors(errors)
 
+  return errors
+}
+
+export const workOrderValidateFields = ({
+  workOrder,
+  setErrorMessage,
+}: WorkOrderValidationProps) => {
+  const errors: { [key: string]: string } = {}
+  if (!workOrder.customerName) {
+    errors.customerName = 'Customer Name is required'
+  }
+  if (!workOrder.workOrderStatus) {
+    errors.workOrderStatus = 'Status is required'
+  }
+  setErrorMessage(errors)
   return errors
 }

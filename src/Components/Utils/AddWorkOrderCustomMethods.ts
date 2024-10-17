@@ -1,38 +1,9 @@
-import { useGetMooringByIdMutation } from '../../Services/MoorManage/MoormanageApi'
-import {
-  useAddWorkOrderMutation,
-  useGetViewFormMutation,
-  useUpdateWorkOrderMutation,
-} from '../../Services/MoorServe/MoorserveApi'
 import {
   IncrementProps,
   WorkOrderEditModeProps,
   WorkOrderInputChangeProps,
-  WorkOrderValidationProps,
 } from '../../Type/ComponentBasedType'
 import { parseTime } from './CommonMethod'
-
-export const workOrderValidateFields = ({
-  workOrder,
-  vendorId,
-  setErrorMessage,
-}: WorkOrderValidationProps) => {
-  const errors: { [key: string]: string } = {}
-  if (!workOrder.customerName) {
-    errors.customerName = 'Customer Name is required'
-  }
-  if (!workOrder.workOrderStatus) {
-    errors.workOrderStatus = 'Status is required'
-  }
-  if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
-    errors.vendor = 'Vendor is required'
-  }
-  if (!workOrder.inventory && vendorId) {
-    errors.inventory = 'Item Name is required'
-  }
-  setErrorMessage(errors)
-  return errors
-}
 
 export const handleIncrement = ({ time, setTime, setErrorMessage }: IncrementProps) => {
   let { minutes, seconds } = time
