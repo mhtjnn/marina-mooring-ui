@@ -39,7 +39,7 @@ import { formatPhoneNumber, NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUt
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
-import { formatDate, validateFields } from '../../Utils/AddCustomerCustommethod'
+import { formatDate, validateFields } from '../../Utils/AddCustomerCustomMethods'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -316,15 +316,11 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   //   return errors
   // }
 
-
-
   const parseDate = (dateString: any) => {
     if (!dateString) return null
     const [month, day, year] = dateString?.split('/')
     return new Date(year, month - 1, day)
   }
-
-  
 
   const handleInputChange = (field: string, value: any) => {
     if (
@@ -439,7 +435,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     //   return
     // }
 
-
     const errors = validateFields({
       firstName,
       lastName,
@@ -447,19 +442,17 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       mooringNumber: formData.mooringNumber,
       mooringStatus: formData.mooringStatus,
       validationRules: {
-        NAME_REGEX: /^[A-Za-z]+$/
+        NAME_REGEX: /^[A-Za-z]+$/,
       },
       setFieldErrors,
       setFirstErrorField,
-    });
+    })
 
     if (Object.keys(errors).length > 0) {
-      setCheckedMooring(false);
+      setCheckedMooring(false)
       return
     }
 
-
-    
     let payload
     setIsLoading(true)
     if (checkedMooring) {
@@ -570,14 +563,14 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       mooringNumber: formData.mooringNumber,
       mooringStatus: formData.mooringStatus,
       validationRules: {
-        NAME_REGEX: /^[A-Za-z]+$/
+        NAME_REGEX: /^[A-Za-z]+$/,
       },
       setFieldErrors,
       setFirstErrorField,
-    });
+    })
 
     if (Object.keys(errors).length > 0) {
-      setCheckedMooring(false);
+      setCheckedMooring(false)
     }
 
     try {
@@ -642,7 +635,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     //   return
     // }
 
-
     const errors = validateFields({
       firstName,
       lastName,
@@ -650,16 +642,15 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       mooringNumber: formData.mooringNumber,
       mooringStatus: formData.mooringStatus,
       validationRules: {
-        NAME_REGEX: /^[A-Za-z]+$/
+        NAME_REGEX: /^[A-Za-z]+$/,
       },
       setFieldErrors,
       setFirstErrorField,
-    });
+    })
 
     if (Object.keys(errors).length > 0) {
-      setCheckedMooring(false);
+      setCheckedMooring(false)
     }
-
 
     try {
       setIsLoading(true)
