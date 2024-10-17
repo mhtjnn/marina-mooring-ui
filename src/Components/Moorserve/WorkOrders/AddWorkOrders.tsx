@@ -53,7 +53,7 @@ import {
   updateWorkOrder,
   workOrderValidateFields,
 } from '../../Utils/AddWorkOrderCustomMethods'
-import { validateFiles } from '../../Helper/Helper'
+import { handleImageChange, validateFiles } from '../../Helper/Helper'
 import { handleDecrement, handleIncrement } from '../../Utils/AddWorkOrderCustomMethods'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
@@ -1482,7 +1482,14 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           hoveredIndex={hoveredIndex}
           handleRemoveImage={handleRemoveImage}
           setHoveredIndex={setHoveredIndex}
-          handleImageChange={handleImageChange}
+          handleImageChange={(event) =>
+            handleImageChange({
+              event,
+              toastRef,
+              setCustomerImages,
+              setimageRequestDtoList,
+            })
+          }
           setImageVisible={setImageVisible}
           imageRequestDtoList={imageRequestDtoList}
           isLoading={isLoading}
