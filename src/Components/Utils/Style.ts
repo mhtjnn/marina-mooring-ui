@@ -66,3 +66,31 @@ export const WorkOrderPendingApprovalDataTableHeaderStyle = {
   color: '#FFFFFF',
   padding: '8px',
 }
+
+export const WorkOrderActionButtonStyle = {
+  borderBottom: '1px solid #D5E1EA',
+  backgroundColor: '#FFFFFF',
+  fontWeight: '400',
+}
+
+export const WorkOrderButtonStyle = {
+  marginTop: '-16px',
+  width: '125px',
+  height: '44px',
+  minHeight: '44px',
+  backgroundColor: '#0098FF',
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: 600,
+  color: 'white',
+  borderRadius: '0.50rem',
+  marginLeft: '8px',
+  boxShadow: 'none',
+}
+
+export const WorkOrderDataTableStyle = {
+  fontSize: '10px',
+  color: '#000000',
+  fontWeight: 600,
+  backgroundColor: '#F9FAFB',
+}

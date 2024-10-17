@@ -18,10 +18,17 @@ import { Paginator } from 'primereact/paginator'
 import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton'
 import { properties } from '../../Utils/MeassageProperties'
 import { WorkOrderValue } from '../../../Type/ComponentBasedType'
-import { jsPDF } from 'jspdf'
-import { AddNewButtonStyle } from '../../Utils/Style'
+import {
+  AccountRecievableColumnStyle,
+  AddNewButtonStyle,
+  WorkOrderActionButtonStyle,
+  WorkOrderButtonStyle,
+  WorkOrderDataTableStyle,
+} from '../../Utils/Style'
+import { TechnicianfirstLastName, dataToPdf, firstLastName } from '../../Helper/Helper'
 
-const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
+const WorkOrders: React.FC<WorkOrderValue> = () => {
+  const toast = useRef<Toast>(null)
   const selectedCustomerId = useSelector(selectCustomerId)
   const [visible, setVisible] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -29,32 +36,28 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   const [workOrderData, setWorkOrderData] = useState<WorkOrderPayload[]>([])
   const [selectedCustomer, setSelectedCustomer] = useState<any>('')
   const [editMode, setEditMode] = useState(false)
-  const [getWorkOrder] = useGetWorkOrdersMutation()
-  const toast = useRef<Toast>(null)
   const [pageNumber, setPageNumber] = useState(0)
   const [pageNumber1, setPageNumber1] = useState(0)
   const [pageSize, setPageSize] = useState(10)
   const [totalRecords, setTotalRecords] = useState<number>()
   const [completedWorkOrder, setCompletedOrder] = useState<string>('No')
+  const [getWorkOrder] = useGetWorkOrdersMutation()
 
   const onPageChange = (event: any) => {
     setPageNumber(event.page)
     setPageNumber1(event.first)
     setPageSize(event.rows)
   }
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPageNumber(0)
     setPageNumber1(0)
     setSearchText(e.target.value)
   }
-
   const handleCompleted = (e: SelectButtonChangeEvent) => {
     if (e.value) {
       setCompletedOrder(e.value)
     }
   }
-
   const options = [
     { label: 'Pending', value: 'No' },
     { label: 'Completed', value: 'Yes' },
@@ -70,33 +73,8 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
         onClick: (row) => handleEdit(row),
       },
     ],
-    headerStyle: {
-      backgroundColor: '#FFFFFF',
-      color: '#000000',
-      fontWeight: '700',
-      fontSize: '12px',
-    },
-    style: { borderBottom: '1px solid #D5E1EA', backgroundColor: '#FFFFFF', fontWeight: '400' },
-  }
-
-  const columnStyle = {
-    backgroundColor: '#FFFFFF',
-    color: '#000000',
-    fontWeight: '700',
-    fontSize: '12px',
-  }
-
-  const firstLastName = (data: any) => {
-    const firstName = data?.customerResponseDto?.firstName
-    const lastName = data?.customerResponseDto?.lastName
-    return firstName !== null ? `${firstName} ${lastName}` : '-'
-  }
-
-  const TechnicianfirstLastName = (data: any) => {
-    const firstName = data?.technicianUserResponseDto?.firstName
-    const lastName = data?.technicianUserResponseDto?.lastName
-
-    return firstName !== null ? `${firstName} ${lastName}` : '-'
+    headerStyle: { ...AccountRecievableColumnStyle },
+    style: { ...WorkOrderActionButtonStyle },
   }
 
   const workOrderColumns = useMemo(
@@ -104,117 +82,25 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       {
         id: 'firstName',
         label: 'Customer Name',
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
         body: firstLastName,
       },
       {
         id: 'mooringResponseDto.mooringNumber',
         label: 'Mooring Number',
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
       },
       {
         id: 'technicianUserResponseDto.name',
         label: 'Assigned to',
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
         body: TechnicianfirstLastName,
       },
-      {
-        id: 'dueDate',
-        label: 'Due Date',
-        style: columnStyle,
-      },
-      {
-        id: 'workOrderStatusDto.status',
-        label: 'Status',
-        style: columnStyle,
-      },
+      { id: 'dueDate', label: 'Due Date', style: AccountRecievableColumnStyle },
+      { id: 'workOrderStatusDto.status', label: 'Status', style: AccountRecievableColumnStyle },
     ],
     [],
   )
-
-  const dataToPdf = (data: any[]) => {
-    if (!Array.isArray(data) || data.length === 0) {
-      const message = 'Invalid data provided. Expected an array of objects.'
-      toast?.current?.show({
-        severity: 'error',
-        summary: 'Error',
-        detail: message,
-        life: 3000,
-      })
-      return
-    }
-
-    const doc = new jsPDF()
-    doc.setFontSize(16)
-    doc.text('Work Orders', 14, 22)
-
-    const headers = [
-      'Customer Name',
-      'Mooring Number',
-      'Boatyard',
-      'Assigned To',
-      'Due Date',
-      'Status',
-    ]
-
-    const columnWidths = [40, 40, 30, 30, 30, 50]
-    const xStart = 5
-    const yStart = 30
-    const recordsPerPage = 20
-    let yPosition = yStart
-    let pageCount = 1
-
-    const addHeaders = () => {
-      let xPosition = xStart
-      doc.setFontSize(12)
-      headers.forEach((header, index) => {
-        doc.text(header, xPosition, yPosition)
-        xPosition += columnWidths[index]
-      })
-      yPosition += 5 // Space below headers
-    }
-
-    addHeaders()
-    yPosition += 5 // Additional space between headers and values
-    doc.setFontSize(10)
-
-    data.forEach((item, rowIndex) => {
-      let xPosition = xStart
-      const row = [
-        item?.customerResponseDto?.firstName && item?.customerResponseDto?.lastName
-          ? `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`
-          : 'N/A',
-        item?.mooringResponseDto?.mooringNumber
-          ? item.mooringResponseDto.mooringNumber.toString()
-          : 'N/A',
-        item?.boatyardResponseDto?.boatyardId
-          ? item.boatyardResponseDto.boatyardId.toString()
-          : 'N/A',
-        item?.technicianUserResponseDto?.firstName && item?.technicianUserResponseDto?.lastName
-          ? `${item.technicianUserResponseDto.firstName} ${item.technicianUserResponseDto.lastName}`
-          : 'N/A',
-        item?.dueDate ? item.dueDate.toString() : 'N/A',
-        item?.workOrderStatusDto?.status ? item.workOrderStatusDto.status : 'N/A',
-      ]
-
-      row.forEach((cell, colIndex) => {
-        const textLines = doc.splitTextToSize(cell.toString(), columnWidths[colIndex])
-        doc.text(textLines, xPosition, yPosition)
-        xPosition += columnWidths[colIndex]
-      })
-
-      yPosition += 10
-      if ((rowIndex + 1) % recordsPerPage === 0 && rowIndex + 1 < data.length) {
-        doc.addPage()
-        yPosition = yStart
-        addHeaders()
-        yPosition += 5 // Space between headers and values for new page
-        pageCount += 1
-      }
-    })
-
-    doc.save('WorkOrders.pdf')
-  }
 
   const handleExportPdf = async () => {
     setIsLoading(true)
@@ -226,13 +112,11 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       pageSize: 999999,
       showCompletedWorkOrders: 'No',
     }
-
     try {
       const [response1, response2] = await Promise.all([
         getWorkOrder(params1).unwrap(),
         getWorkOrder(params2).unwrap(),
       ])
-
       const {
         status: status1,
         content: content1,
@@ -243,7 +127,6 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
         content: content2,
         message: message2,
       } = response2 as WorkOrderResponse
-
       if (
         status1 === 200 &&
         Array.isArray(content1) &&
@@ -251,7 +134,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
         Array.isArray(content2)
       ) {
         const combinedContent = [...content1, ...content2]
-        dataToPdf(combinedContent)
+        dataToPdf(combinedContent, toast)
       } else {
         if (status1 !== 200 || !Array.isArray(content1)) {
           toast?.current?.show({
@@ -296,7 +179,6 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       if (completedWorkOrder) {
         params.showCompletedWorkOrders = completedWorkOrder
       }
-
       const response = await getWorkOrder(params).unwrap()
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200 && Array.isArray(content)) {
@@ -324,23 +206,17 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
     setEditMode(true)
     setVisible(true)
   }
-
   const handleModalClose = () => {
     setVisible(false)
     setEditMode(false)
     getWorkOrderData()
   }
-  const handleButtonClick = () => {
-    setVisible(true)
-  }
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       getWorkOrderData()
     }, 600)
     return () => clearTimeout(timeoutId)
   }, [searchText, selectedCustomerId, pageSize, pageNumber, completedWorkOrder])
-
   useEffect(() => {
     if (selectedCustomerId) {
       handleModalClose()
@@ -353,27 +229,12 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
       <Toast ref={toast} />
       <div className="">
         <div className="flex justify-end gap-4 mt-8 mr-12">
-          <Button
-            onClick={handleExportPdf}
-            style={{
-              marginTop: '-16px',
-              width: '125px',
-              height: '44px',
-              minHeight: '44px',
-              backgroundColor: '#0098FF',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 600,
-              color: 'white',
-              borderRadius: '0.50rem',
-              marginLeft: '8px',
-              boxShadow: 'none',
-            }}>
-            Export To PDF
+          <Button onClick={handleExportPdf} style={{ ...WorkOrderButtonStyle }}>
+            {properties.exportToPdfText}{' '}
           </Button>
           <div className="items-center">
             <CustomModal
-              buttonText={'ADD NEW'}
+              buttonText={properties.buttonText}
               icon={
                 <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />
               }
@@ -391,7 +252,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
               }
               headerText={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}
               visible={visible}
-              onClick={handleButtonClick}
+              onClick={() => setVisible(true)}
               onHide={handleModalClose}
               buttonStyle={{ ...AddNewButtonStyle, marginTop: '-16px' }}
               dialogStyle={{
@@ -452,12 +313,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
 
           <div className="flex-grow relative overflow-auto">
             <DataTableComponent
-              tableStyle={{
-                fontSize: '10px',
-                color: '#000000',
-                fontWeight: 600,
-                backgroundColor: '#F9FAFB',
-              }}
+              tableStyle={{ ...WorkOrderDataTableStyle }}
               data={workOrderData}
               columns={workOrderColumns}
               actionButtons={ActionButtonColumn}

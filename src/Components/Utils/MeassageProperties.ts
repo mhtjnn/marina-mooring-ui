@@ -34,4 +34,6 @@ export const properties = {
   Address: 'Address',
   WorkOrdersPendingApprovalHeaders: 'Work Orders Pending Approval',
   OutstandingInvoicesHeader: 'Outstanding Invoices',
+  exportToPdfText: 'Export To PDF',
+  buttonText: 'ADD NEW',
 }

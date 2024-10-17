@@ -1,3 +1,5 @@
+import { jsPDF } from 'jspdf'
+
 export const convertBytetoUrl = (encryptedBase64: string) => {
   const mimeType = 'application/pdf'
 
@@ -90,4 +92,90 @@ export const formatGpsCoordinates = (gpsCoordinatesValue: any): [number, number]
 
   // Return default coordinates if there's an error or invalid input
   return [39.4926173, -117.5714859]
+}
+
+export const dataToPdf = (data: any[], toast: any) => {
+  if (!Array.isArray(data) || data.length === 0) {
+    const message = 'Invalid data provided. Expected an array of objects.'
+    toast?.current?.show({
+      severity: 'error',
+      summary: 'Error',
+      detail: message,
+      life: 3000,
+    })
+    return
+  }
+  const doc = new jsPDF()
+  doc.setFontSize(16)
+  doc.text('Work Orders', 14, 22)
+  const headers = [
+    'Customer Name',
+    'Mooring Number',
+    'Boatyard',
+    'Assigned To',
+    'Due Date',
+    'Status',
+  ]
+  const columnWidths = [40, 40, 30, 30, 30, 50]
+  const xStart = 5
+  const yStart = 30
+  const recordsPerPage = 20
+  let yPosition = yStart
+  let pageCount = 1
+  const addHeaders = () => {
+    let xPosition = xStart
+    doc.setFontSize(12)
+    headers.forEach((header, index) => {
+      doc.text(header, xPosition, yPosition)
+      xPosition += columnWidths[index]
+    })
+    yPosition += 5 // Space below headers
+  }
+  addHeaders()
+  yPosition += 5 // Additional space between headers and values
+  doc.setFontSize(10)
+  data.forEach((item, rowIndex) => {
+    let xPosition = xStart
+    const row = [
+      item?.customerResponseDto?.firstName && item?.customerResponseDto?.lastName
+        ? `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`
+        : 'N/A',
+      item?.mooringResponseDto?.mooringNumber
+        ? item.mooringResponseDto.mooringNumber.toString()
+        : 'N/A',
+      item?.boatyardResponseDto?.boatyardId
+        ? item.boatyardResponseDto.boatyardId.toString()
+        : 'N/A',
+      item?.technicianUserResponseDto?.firstName && item?.technicianUserResponseDto?.lastName
+        ? `${item.technicianUserResponseDto.firstName} ${item.technicianUserResponseDto.lastName}`
+        : 'N/A',
+      item?.dueDate ? item.dueDate.toString() : 'N/A',
+      item?.workOrderStatusDto?.status ? item.workOrderStatusDto.status : 'N/A',
+    ]
+    row.forEach((cell, colIndex) => {
+      const textLines = doc.splitTextToSize(cell.toString(), columnWidths[colIndex])
+      doc.text(textLines, xPosition, yPosition)
+      xPosition += columnWidths[colIndex]
+    })
+    yPosition += 10
+    if ((rowIndex + 1) % recordsPerPage === 0 && rowIndex + 1 < data.length) {
+      doc.addPage()
+      yPosition = yStart
+      addHeaders()
+      yPosition += 5 // Space between headers and values for new page
+      pageCount += 1
+    }
+  })
+  doc.save('WorkOrders.pdf')
+}
+
+export const firstLastName = (data: any) => {
+  const firstName = data?.customerResponseDto?.firstName
+  const lastName = data?.customerResponseDto?.lastName
+  return firstName !== null ? `${firstName} ${lastName}` : '-'
+}
+export const TechnicianfirstLastName = (data: any) => {
+  const firstName = data?.technicianUserResponseDto?.firstName
+  const lastName = data?.technicianUserResponseDto?.lastName
+  return firstName !== null ? `${firstName} ${lastName}` : '-'
 }
