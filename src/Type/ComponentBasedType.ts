@@ -302,3 +302,15 @@ export interface PreviewProps {
   onClose: () => void
   mooringResponse?: any
 }
+
+
+export interface AddDockProps {
+  checkedDock: boolean;
+  setCheckedDock: (checked: boolean) => void;
+  editCustomerMode: any;
+}
+
+export interface AddMooringPropss {
+  checkedMooring: boolean
+  setCheckedMooring: (checked: boolean) => void
+}
