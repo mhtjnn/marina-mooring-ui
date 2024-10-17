@@ -82,8 +82,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     { imageName: string; imageData: string; note: string }[]
   >([])
   const firstErrorRef = useRef<HTMLDivElement>(null)
-  console.log('gpsCoordinatesValue', gpsCoordinatesValue)
-
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
       ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
@@ -206,10 +204,11 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     if (!formData?.mooringNumber) {
       errors.mooringNumber = 'Mooring Number is required'
       if (!firstError) firstError = 'mooringNumber'
-    } else if (!alphanumericRegex.test(formData?.mooringNumber)) {
-      errors.mooringNumber = 'Mooring Number must be alphanumeric'
-      if (!firstError) firstError = 'mooringNumber'
     }
+    // else if (!alphanumericRegex.test(formData?.mooringNumber)) {
+    //   errors.mooringNumber = 'Mooring Number must be alphanumeric'
+    //   if (!firstError) firstError = 'mooringNumber'
+    // }
 
     if (!formData?.mooringStatus) {
       errors.mooringStatus = 'Mooring Status id required'
@@ -573,16 +572,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       })
     }
   }
-
-  // const handlePositionChange = (lat: number, lng: number) => {
-  //   setCenter([lat, lng])
-  //   console.log('lat.lng', lat, lng)
-
-  //   const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
-  //   const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
-  //   const concatenatedValue = `${formattedLat} ${formattedLng}`
-  //   setGpsCoordinatesValue(concatenatedValue)
-  // }
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])

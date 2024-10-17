@@ -13,20 +13,16 @@ const ReasonModal: React.FC<ReasonModalProps> = ({
   closeModal,
   getWorkOrderWithPendingPayApproval,
   getOutStandingInvoice,
+  toast,
 }) => {
   const [reasonDetails, setReasonDetails] = useState<any>()
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [denyWorkOrder] = useDenyWorkOrderMutation()
-
-  const toast = useRef<Toast>(null)
-
   const validateFields = () => {
     const errors: { [key: string]: string } = {}
-
     if (!reasonDetails) {
       errors.reasonDetails = 'Reason is required'
     }
-
     setErrorMessage(errors)
     return Object.keys(errors).length === 0
   }

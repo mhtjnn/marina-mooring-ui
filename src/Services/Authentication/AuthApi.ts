@@ -5,7 +5,6 @@ import {
   LoginPayload,
   ResetPasswordPayload,
   SignUpPayload,
-  UserProfile,
   imageDataPayload,
 } from '../../Type/ApiTypes'
 

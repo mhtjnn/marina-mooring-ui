@@ -142,22 +142,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (!workOrder.workOrderStatus) {
       errors.workOrderStatus = 'Status is required'
     }
-    if (!workOrder.assignedTo) {
-      errors.assignedTo = 'Assigned To is required'
-    }
-    if (!workOrder.dueDate) {
-      errors.dueDate = 'Due Date  is required'
-    }
-    if (!workOrder.scheduleDate) {
-      errors.scheduleDate = 'Schedule Date is required'
-    }
-    if (!workOrder.boatyards) {
-      errors.boatyards = 'Boatyard is required'
-    }
-    if (!workOrder.mooringId) {
-      errors.mooringId = 'Mooring Number is required'
-    }
-    if (!workOrder.vendor && workOrder.workOrderStatus.id === 10) {
+    if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
       errors.vendor = 'Vendor is required'
     }
     if (!workOrder.inventory && vendorId) {
@@ -168,13 +153,13 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }
 
   const handleInputChange = (field: string, value: any) => {
-    const numberRegex = /^\d+$/
-
+    const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
-      if (value !== '' && !numberRegex.test(value)) {
+      if (value !== '' && !costRegex.test(value)) {
         return
       }
     }
+
     if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) {
       return
     }
@@ -328,7 +313,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       workOrderStatusId: workOrder?.workOrderStatus?.id,
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
-      cost: workOrder?.cost,
+      cost: Number(workOrder?.cost),
     }
     if (workOrder?.inventory) {
       payload.inventoryRequestDtoList = [
@@ -405,7 +390,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         editPayload.problem = workOrder?.value
       }
       if (workOrder?.cost !== workOrderData?.cost) {
-        editPayload.cost = workOrder?.cost
+        editPayload.cost = Number(workOrder?.cost)
       }
       const formattedTime = '00:' + formatTime(time.minutes, time.seconds)
       if (formattedTime !== workOrderData?.time) {
@@ -546,14 +531,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (mooringsBasedOnCustomerId !== null) {
       setIsLoading(false)
       setMooringBasedOnCustomerId(mooringsBasedOnCustomerId)
-      if (mooringsBasedOnCustomerId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.customerName?.id])
 
@@ -563,39 +540,15 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (boatyardBasedOnMooringId !== null) {
       setIsLoading(false)
       setBoatyardBasedOnMooringId(boatyardBasedOnMooringId)
-      if (boatyardBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Boatyard Associated with Selected Mooring',
-          life: 3000,
-        })
-      }
     }
 
     if (customerBasedOnMooringId !== null) {
-      if (customerBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Customer Associated with Selected Mooring',
-          life: 3000,
-        })
-      } else {
-        const firstLastName = customerBasedOnMooringId.map((item: any) => ({
-          firstName: item.firstName + ' ' + item.lastName,
-          id: item.id,
-        }))
-        setIsLoading(false)
-        setCustomerBasedOnMooringId(firstLastName)
-      }
-    } else {
-      toastRef.current?.show({
-        severity: 'info',
-        summary: 'Info',
-        detail: 'No Customer Associated with Selected Mooring',
-        life: 3000,
-      })
+      const firstLastName = customerBasedOnMooringId.map((item: any) => ({
+        firstName: item.firstName + ' ' + item.lastName,
+        id: item.id,
+      }))
+      setIsLoading(false)
+      setCustomerBasedOnMooringId(firstLastName)
     }
   }, [workOrder?.mooringId?.id])
 
@@ -603,14 +556,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     const { mooringBasedOnBoatyardId } = await getMooringsBasedOnBoatyardIdData()
     if (mooringBasedOnBoatyardId !== null) {
       setMooringsBasedOnBoatyardIdData(mooringBasedOnBoatyardId)
-      if (mooringBasedOnBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id])
 
@@ -619,14 +564,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       await getMooringBasedOnCustomerIdAndBoatyardIdData()
     if (mooringbasedOnCustomerIdAndBoatyardId !== null) {
       setbasedOnCustomerIdAndBoatyardId(mooringbasedOnCustomerIdAndBoatyardId)
-      if (mooringbasedOnCustomerIdAndBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer and Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id, workOrder?.customerName?.id])
 
@@ -758,10 +695,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           {/* Mooring Number */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Mooring Number
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Mooring Number</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -774,25 +708,17 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.mooringId ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.mooringId && (
-                <small className="p-error">{errorMessage.mooringId}</small>
-              )}
-            </p>
           </div>
           {/* Boatyards */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Boatyard
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Boatyard</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -805,18 +731,13 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.boatyards ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                   paddingLeft: '0.5rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.boatyards && (
-                <small className="p-error">{errorMessage.boatyards}</small>
-              )}
-            </p>
           </div>
         </div>
 
@@ -824,10 +745,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           {/* Assigned to */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Assigned to
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Assigned to</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -840,17 +758,12 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.assignedTo ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.assignedTo && (
-                <small className="p-error">{errorMessage.assignedTo}</small>
-              )}
-            </p>
           </div>
 
           {isLoading && (
@@ -870,10 +783,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           {/* Due Date */}
           <div className="">
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Due Date
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Due Date</div>
             </span>
             <div className="mt-1">
               <Calendar
@@ -884,7 +794,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.dueDate ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                   paddingLeft: '0.5rem',
@@ -892,17 +802,11 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 }}
               />
             </div>
-            <p>
-              {errorMessage.dueDate && <small className="p-error">{errorMessage.dueDate}</small>}
-            </p>
           </div>
           {/* Schedule Date */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Schedule Date
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Schedule Date</div>
             </span>
             <div className="mt-1">
               <Calendar
@@ -913,7 +817,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.scheduleDate ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                   paddingLeft: '0.5rem',
@@ -921,11 +825,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                 }}
               />
             </div>
-            <p>
-              {errorMessage.scheduleDate && (
-                <small className="p-error">{errorMessage.scheduleDate}</small>
-              )}
-            </p>
           </div>
         </div>
 
@@ -980,6 +879,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   border: '1px solid #D5E1EA',
                   fontSize: '0.8rem',
                   padding: '0.5rem',
+                  borderRadius: '0.50rem',
                 }}
               />
             </div>

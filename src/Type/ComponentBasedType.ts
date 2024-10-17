@@ -156,6 +156,7 @@ export interface ReasonModalProps {
   closeModal: () => void
   getWorkOrderWithPendingPayApproval: () => void
   getOutStandingInvoice: () => void
+  toast: any
 }
 
 export interface PermissionData {
@@ -245,6 +246,8 @@ export interface ContactModalProps {
 
 export interface ApproveModalProps {
   id: number
+  toast?: any
+  amountValue: any
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
   closeModal: () => void
   getWorkOrderWithPendingPayApproval: () => void

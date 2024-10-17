@@ -33,6 +33,7 @@ import { properties } from '../../Utils/MeassageProperties'
 const AccountRecievable = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
   const [modalVisible, setModalVisible] = useState(false)
+  const [amount, setamount] = useState()
   const [pageNumber, setPageNumber] = useState(0)
   const [pageNumber1, setPageNumber1] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -224,6 +225,7 @@ const AccountRecievable = () => {
 
   const handleActionTopSectionClick = (action: string, row: any) => {
     if (action === 'Approve') {
+      setamount(row.cost)
       setModalVisible(true)
       setWorkOrderId(row?.id)
       setApproveModalOpen(true)
@@ -383,10 +385,15 @@ const AccountRecievable = () => {
   }, [searchInvoice, pageNumberTwo, pageSizeTwo, selectedCustomerId, getOutStandingInvoice])
 
   return (
-    <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
+    <div
+      style={{ height: '100vh' }}
+      className={
+        isPaymentModalOpen || approveModalOpen || denyModalOpen || addWorkOrderModal
+          ? 'backdrop-blur-lg'
+          : ''
+      }>
       <Header header="MOORPAY/Account Receivable" />
       <Toast ref={toast} />
-
       <div
         style={{
           height: 'auto',
@@ -663,6 +670,8 @@ const AccountRecievable = () => {
         header="Approve">
         <ApproveModal
           id={workOrderId}
+          toast={toast}
+          amountValue={amount}
           setVisible={() => {
             setApproveModalOpen(false)
             setModalVisible(false)
@@ -694,6 +703,7 @@ const AccountRecievable = () => {
         header="Deny">
         <ReasonModal
           selectedRowData={selectedRowData}
+          toast={toast}
           setVisible={() => {
             setDenyModalOpen(false)
             setModalVisible(false)

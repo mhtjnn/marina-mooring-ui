@@ -256,7 +256,7 @@ const Estimates = () => {
       <Header header="MOORSERVE/Estimate" />
       <Toast ref={toast} />
       <div className="">
-        <div className="flex justify-end gap-4 mt-6 mr-12">
+        <div className="flex justify-end gap-4 mt-8 mr-12">
           <div className="flex text-gray-600 font-extrabold">
             <div className="">
               <img

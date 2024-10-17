@@ -3,7 +3,7 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Dropdown } from 'primereact/dropdown'
 import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
-import { FaFileUpload, FaLessThanEqual } from 'react-icons/fa'
+import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
 
 import {
@@ -17,11 +17,6 @@ import {
   useGetViewFormMutation,
   useUpdateWorkOrderMutation,
 } from '../../../Services/MoorServe/MoorserveApi'
-import {
-  useAddEstimateMutation,
-  useUpdateEstimateMutation,
-} from '../../../Services/MoorServe/MoorserveApi'
-
 import { Button } from 'primereact/button'
 import { WorkOrderProps } from '../../../Type/ComponentBasedType'
 import {
@@ -54,7 +49,6 @@ import PDFEditor from '../Forms/PdfEditor'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
-import { MultiSelect } from 'primereact/multiselect'
 import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
 import { validateFiles } from '../../Helper/Helper'
 
@@ -62,7 +56,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
   editModeEstimate,
   editModeWorkOrder,
-  estimate,
   setVisible,
   closeModal,
   isAccountRecievable,
@@ -181,22 +174,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (!workOrder.workOrderStatus) {
       errors.workOrderStatus = 'Status is required'
     }
-    if (!workOrder.assignedTo) {
-      errors.assignedTo = 'Assigned To is required'
-    }
-    if (!workOrder.dueDate) {
-      errors.dueDate = 'Due Date  is required'
-    }
-    if (!workOrder.scheduleDate) {
-      errors.scheduleDate = 'Schedule Date is required'
-    }
-    if (!workOrder.boatyards) {
-      errors.boatyards = 'Boatyard is required'
-    }
-    if (!workOrder.mooringId) {
-      errors.mooringId = 'Mooring Number is required'
-    }
-    if (!workOrder.vendor && workOrder.workOrderStatus.id === 10) {
+    if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
       errors.vendor = 'Vendor is required'
     }
     if (!workOrder.inventory && vendorId) {
@@ -213,9 +191,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const handleInputChange = (field: string, value: any) => {
-    const numberRegex = /^\d+$/
+    const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
-      if (value !== '' && !numberRegex.test(value)) {
+      if (value !== '' && !costRegex.test(value)) {
         return
       }
     }
@@ -429,6 +407,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
       imageRequestDtoList: imageRequestDtoList,
+      cost: Number(workOrder?.cost),
     }
     if (workOrder?.attachForm) {
       payload.formRequestDtoList = [
@@ -510,6 +489,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       }
       if (workOrder?.dueDate !== workOrderData?.dueDate) {
         editPayload.dueDate = workOrder?.dueDate
+      }
+      if (workOrder?.cost !== workOrderData?.cost) {
+        editPayload.cost = Number(workOrder?.cost)
       }
       if (workOrder?.scheduleDate !== workOrderData?.scheduledDate) {
         editPayload.scheduledDate = workOrder?.scheduleDate
@@ -732,14 +714,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (mooringsBasedOnCustomerId !== null) {
       setIsLoading(false)
       setMooringBasedOnCustomerId(mooringsBasedOnCustomerId)
-      if (mooringsBasedOnCustomerId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.customerName?.id])
 
@@ -750,39 +724,15 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (boatyardBasedOnMooringId !== null) {
       setIsLoading(false)
       setBoatyardBasedOnMooringId(boatyardBasedOnMooringId)
-      if (boatyardBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Boatyard Associated with Selected Mooring',
-          life: 3000,
-        })
-      }
     }
 
     if (customerBasedOnMooringId !== null) {
-      if (customerBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Customer Associated with Selected Mooring',
-          life: 3000,
-        })
-      } else {
-        const firstLastName = customerBasedOnMooringId.map((item: any) => ({
-          firstName: item.firstName + ' ' + item.lastName,
-          id: item.id,
-        }))
-        setIsLoading(false)
-        setCustomerBasedOnMooringId(firstLastName)
-      }
-    } else {
-      toastRef.current?.show({
-        severity: 'info',
-        summary: 'Info',
-        detail: 'No Customer Associated with Selected Mooring',
-        life: 3000,
-      })
+      const firstLastName = customerBasedOnMooringId.map((item: any) => ({
+        firstName: item.firstName + ' ' + item.lastName,
+        id: item.id,
+      }))
+      setIsLoading(false)
+      setCustomerBasedOnMooringId(firstLastName)
     }
   }, [workOrder?.mooringId?.id])
 
@@ -791,14 +741,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
     if (mooringBasedOnBoatyardId !== null) {
       setMooringsBasedOnBoatyardIdData(mooringBasedOnBoatyardId)
-      if (mooringBasedOnBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id])
 
@@ -808,14 +750,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
     if (mooringbasedOnCustomerIdAndBoatyardId !== null) {
       setbasedOnCustomerIdAndBoatyardId(mooringbasedOnCustomerIdAndBoatyardId)
-      if (mooringbasedOnCustomerIdAndBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer and Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id, workOrder?.customerName?.id])
 
@@ -1012,10 +946,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {/* Mooring Number */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Mooring Number
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Mooring Number</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -1028,17 +959,12 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.mooringId ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.mooringId && (
-                <small className="p-error">{errorMessage.mooringId}</small>
-              )}
-            </p>
           </div>
 
           {/* Images */}
@@ -1076,10 +1002,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         <div className="flex gap-6 mt-3">
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Boatyard
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Boatyard</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -1092,27 +1015,19 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.boatyards ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                   paddingLeft: '0.5rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.boatyards && (
-                <small className="p-error">{errorMessage.boatyards}</small>
-              )}
-            </p>
           </div>
 
           {/* Assigned to */}
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Assigned to
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Assigned to</div>
             </span>
             <div className="mt-1">
               <Dropdown
@@ -1125,17 +1040,12 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.assignedTo ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                 }}
               />
             </div>
-            <p>
-              {errorMessage.assignedTo && (
-                <small className="p-error">{errorMessage.assignedTo}</small>
-              )}
-            </p>
           </div>
 
           {isLoading && (
@@ -1155,10 +1065,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {/* Due Date */}
           <div className="">
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Due Date
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Due Date</div>
             </span>
             <div className="mt-1">
               <Calendar
@@ -1169,7 +1076,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.dueDate ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                   paddingLeft: '0.5rem',
@@ -1177,9 +1084,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 }}
               />
             </div>
-            <p>
-              {errorMessage.dueDate && <small className="p-error">{errorMessage.dueDate}</small>}
-            </p>
           </div>
         </div>
 
@@ -1187,10 +1091,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         <div className="flex gap-6 mt-3">
           <div>
             <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Schedule Date
-                <p className="text-red-600">*</p>
-              </div>
+              <div className="flex gap-1">Schedule Date</div>
             </span>
             <div className="mt-1">
               <Calendar
@@ -1201,7 +1102,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 style={{
                   width: '230px',
                   height: '32px',
-                  border: errorMessage.scheduleDate ? '1px solid red' : '1px solid #D5E1EA',
+                  border: '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                   paddingLeft: '0.5rem',
@@ -1209,11 +1110,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 }}
               />
             </div>
-            <p>
-              {errorMessage.scheduleDate && (
-                <small className="p-error">{errorMessage.scheduleDate}</small>
-              )}
-            </p>
           </div>
 
           {/* Status */}
@@ -1353,6 +1249,28 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               />
             </div>
           </div>
+          {/* Cost */}
+          <div className="mt-3">
+            <span className="font-medium text-sm text-[#000000]">
+              <div className="flex gap-1">Cost</div>
+            </span>
+            <div className="mt-1">
+              <InputText
+                type="text"
+                value={workOrder.cost}
+                onChange={(e: any) => handleInputChange('cost', e.target.value)}
+                disabled={isLoading || isAccountRecievable || isTechnician}
+                style={{
+                  width: '230px',
+                  height: '32px',
+                  border: '1px solid #D5E1EA',
+                  fontSize: '0.8rem',
+                  padding: '0.5rem',
+                  borderRadius: '0.50rem',
+                }}
+              />
+            </div>
+          </div>
           {/* Vendor */}
           {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
             <div className="mt-3">
@@ -1400,6 +1318,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </p>
             </div>
           ) : null}
+        </div>
+        <div className="flex gap-6">
           {/* Item Name */}
           {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
@@ -1447,12 +1367,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               </p>
             </div>
           ) : null}
-        </div>
-        <div className="flex gap-6 mt-3">
           {/* Quantity */}
           {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
           statusChanged ? (
-            <div>
+            <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
                 <div className="flex gap-1">Quantity (Available)</div>
               </span>
@@ -1612,6 +1530,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         header="Approve">
         <ApproveModal
           id={workOrderData?.id}
+          toast={toastRef}
+          amountValue={workOrderData?.cost}
           setVisible={() => {
             setApproveModalOpen(false)
           }}
@@ -1654,6 +1574,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               getWorkOrderWithPendingPayApproval()
             }
           }}
+          toast={toastRef}
           getOutStandingInvoice={() => {
             if (getOutStandingInvoice) {
               getOutStandingInvoice()
