@@ -80,11 +80,7 @@ export const validateFieldsForMoorings = (
   if (!formData.mooringNumber) {
     errors.mooringNumber = 'Mooring Number is required'
     if (!firstError) firstError = 'mooringNumber'
-  } else if (!alphanumericRegex.test(formData.mooringNumber)) {
-    errors.mooringNumber = 'Mooring Number must be alphanumeric'
-    if (!firstError) firstError = 'mooringNumber'
   }
-
   if (!formData.mooringStatus) {
     errors.mooringStatus = 'Mooring Status is required'
     if (!firstError) firstError = 'mooringStatus'
