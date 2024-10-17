@@ -1,3 +1,5 @@
+import { ValidationProps } from '../../Type/CommonType'
+
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/
 
@@ -17,19 +19,6 @@ export const formatPhoneNumber = (value: string) => {
   } else {
     return `${value.slice(0, 3)}-${value.slice(3, 6)}-${value.slice(6, 10)}`
   }
-}
-
-interface ValidationProps {
-  firstName: string
-  lastName: string
-  checkedMooring: boolean
-  mooringNumber?: string
-  mooringStatus?: string
-  validationRules: {
-    NAME_REGEX: RegExp
-  }
-  setFieldErrors: (errors: { [key: string]: string }) => void
-  setFirstErrorField: (field: string) => void
 }
 
 export const validateFields = ({
@@ -73,6 +62,49 @@ export const validateFields = ({
       errors.mooringStatus = 'Mooring Status is required'
     }
   }
+  setFirstErrorField(firstError)
+  setFieldErrors(errors)
+
+  return errors
+}
+
+interface FormData {
+  customerName?: string
+  mooringNumber?: string
+  mooringStatus?: string
+}
+
+interface FieldErrors {
+  [key: string]: string
+}
+
+export const validateFieldsForMoorings = (
+  formData: FormData,
+  setFirstErrorField: (field: string) => void,
+  setFieldErrors: (errors: FieldErrors) => void,
+): FieldErrors => {
+  const alphanumericRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/
+  const errors: FieldErrors = {}
+  let firstError = ''
+
+  if (!formData.customerName) {
+    errors.customerName = 'Customer Name is required'
+    if (!firstError) firstError = 'customerName'
+  }
+
+  if (!formData.mooringNumber) {
+    errors.mooringNumber = 'Mooring Number is required'
+    if (!firstError) firstError = 'mooringNumber'
+  } else if (!alphanumericRegex.test(formData.mooringNumber)) {
+    errors.mooringNumber = 'Mooring Number must be alphanumeric'
+    if (!firstError) firstError = 'mooringNumber'
+  }
+
+  if (!formData.mooringStatus) {
+    errors.mooringStatus = 'Mooring Status is required'
+    if (!firstError) firstError = 'mooringStatus'
+  }
+
   setFirstErrorField(firstError)
   setFieldErrors(errors)
 
