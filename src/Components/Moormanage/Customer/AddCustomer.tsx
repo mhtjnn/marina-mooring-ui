@@ -38,10 +38,10 @@ import { formatPhoneNumber, NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUt
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
-import { formatDate, handleFocus, parseDate } from '../../Utils/CommonMethod'
 import { validateFields } from '../../Utils/RegexUtils'
 import AddDock from './AddDock'
 import AddMooringInCustomer from './AddMooringInCustomer'
+import { formatDate, handleFocus, parseDate } from '../../Utils/CommonMethod'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -145,6 +145,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   const [updateCustomer] = useUpdateCustomerMutation()
   const [updateMooring] = useUpdateMooringsMutation()
   const { getTypeOfMooringStatusData } = TypeOfMooringStatus()
+
   const toastRef = useRef<Toast>(null)
 
   const handlePositionChange = (lat: number, lng: number) => {
