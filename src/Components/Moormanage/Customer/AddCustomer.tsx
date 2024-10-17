@@ -34,11 +34,14 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Toast } from 'primereact/toast'
 import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
-import { AiOutlineDelete } from 'react-icons/ai'
 import { formatPhoneNumber, NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUtils'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
+import { formatDate, handleFocus, parseDate } from '../../Utils/CommanMethod'
+import { validateFields } from '../../Utils/RegexUtils'
+import AddDock from './AddDock'
+import AddMooringInCustomer from './AddMooringInCustomer'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -165,19 +168,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     if (mapPositionChanged) setGpsCoordinatesValue(concatenatedValue)
   }
 
-  const handleFocus = () => {
-    const errorFields = document.querySelectorAll('.error')
-    if (errorFields.length > 0) {
-      errorFields[0].scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } else {
-      const passwordMessage = document.getElementById('mooring')
-      if (passwordMessage) {
-        passwordMessage.style.display = 'block'
-        passwordMessage.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    }
-  }
-
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     setImages: React.Dispatch<React.SetStateAction<string[]>>,
@@ -276,58 +266,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     setMooringImageRequestDtoList((prevList: any[]) =>
       prevList.map((item, i) => (i === index ? { ...item, note } : item)),
     )
-  }
-
-  const validateFields = () => {
-    const errors: { [key: string]: string } = {}
-    let firstError = ''
-    if (!firstName) {
-      errors.firstName = 'First name is required'
-      firstError = 'firstName'
-    } else if (!NAME_REGEX.test(firstName)) {
-      errors.firstName = 'First name must only contain letters'
-      firstError = 'firstName'
-    } else if (firstName.length < 3) {
-      errors.firstName = 'First name must be at least 3 characters long'
-      firstError = 'firstName'
-    }
-    if (!lastName) {
-      errors.lastName = 'Last name is required'
-      if (!firstError) firstError = 'lastName'
-    } else if (!NAME_REGEX.test(lastName)) {
-      errors.lastName = 'Last name must only contain letters'
-      firstError = 'lastName'
-    } else if (lastName.length < 3) {
-      errors.lastName = 'Last name must be at least 3 characters long'
-      firstError = 'lastName'
-    }
-    if (checkedMooring) {
-      if (!formData?.mooringNumber) {
-        errors.mooringNumber = 'Mooring Number is required'
-      }
-      if (!formData?.mooringStatus) {
-        errors.mooringStatus = 'Mooring Status is required'
-      }
-    }
-
-    setFirstErrorField(firstError)
-    setFieldErrors(errors)
-    return errors
-  }
-
-  const parseDate = (dateString: any) => {
-    if (!dateString) return null
-    const [month, day, year] = dateString?.split('/')
-    return new Date(year, month - 1, day)
-  }
-
-  const formatDate = (date: any) => {
-    if (!date) return null
-    const d = new Date(date)
-    const month = ('0' + (d.getMonth() + 1)).slice(-2)
-    const day = ('0' + d.getDate()).slice(-2)
-    const year = d.getFullYear()
-    return `${month}/${day}/${year}`
   }
 
   const handleInputChange = (field: string, value: any) => {
@@ -437,7 +375,19 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }
 
   const SaveCustomer = async () => {
-    const errors = validateFields()
+    const errors = validateFields({
+      firstName,
+      lastName,
+      checkedMooring,
+      mooringNumber: formData.mooringNumber,
+      mooringStatus: formData.mooringStatus,
+      validationRules: {
+        NAME_REGEX: /^[A-Za-z]+$/,
+      },
+      setFieldErrors,
+      setFirstErrorField,
+    })
+
     if (Object.keys(errors).length > 0) {
       setCheckedMooring(false)
       return
@@ -540,9 +490,21 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }
 
   const UpdateCustomer = async () => {
-    const errors = validateFields()
+    const errors = validateFields({
+      firstName,
+      lastName,
+      checkedMooring,
+      mooringNumber: formData.mooringNumber,
+      mooringStatus: formData.mooringStatus,
+      validationRules: {
+        NAME_REGEX: /^[A-Za-z]+$/,
+      },
+      setFieldErrors,
+      setFirstErrorField,
+    })
+
     if (Object.keys(errors).length > 0) {
-      return
+      setCheckedMooring(false)
     }
     try {
       setIsLoading(true)
@@ -601,10 +563,23 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }
 
   const UpdateMooring = async () => {
-    const errors = validateFields()
+    const errors = validateFields({
+      firstName,
+      lastName,
+      checkedMooring,
+      mooringNumber: formData.mooringNumber,
+      mooringStatus: formData.mooringStatus,
+      validationRules: {
+        NAME_REGEX: /^[A-Za-z]+$/,
+      },
+      setFieldErrors,
+      setFirstErrorField,
+    })
+
     if (Object.keys(errors).length > 0) {
-      return
+      setCheckedMooring(false)
     }
+
     try {
       setIsLoading(true)
       const createPayload = (formData: any, mooringRowData: any) => {
@@ -803,65 +778,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       SaveCustomer()
     }
   }
-
-  const AddDock = () => {
-    return (
-      <>
-        <div className={`flex gap-4 mt-1 ${editCustomerMode && '!mb-14'}`}>
-          <span>
-            <label className="custom-checkbox-container">
-              <input
-                type="checkbox"
-                onChange={(e: any) => {
-                  setCheckedDock(e.target.checked ?? false)
-                }}
-                checked={checkedDock}
-                style={{
-                  border: '1px solid #D5E1EA',
-                  height: '22px',
-                  width: '22px',
-                  borderRadius: '5px',
-                }}
-                className="custom-checkbox-input"
-              />
-              <span className="custom-checkbox"></span>
-            </label>
-          </span>
-          <p className="font-medium text-lg text-[#000000] mt-5 ml-[14px]">Add Dock</p>
-        </div>
-      </>
-    )
-  }
-
-  const AddMooring = () => {
-    return (
-      <>
-        <div className="flex gap-4 mt-1">
-          <span>
-            <label className="custom-checkbox-container">
-              <input
-                type="checkbox"
-                onChange={(e: any) => {
-                  setCheckedMooring(e.target.checked ?? false)
-                }}
-                checked={checkedMooring}
-                style={{
-                  border: '1px solid #D5E1EA',
-                  height: '22px',
-                  width: '22px',
-                  borderRadius: '5px',
-                }}
-                className="custom-checkbox-input"
-              />
-              <span className="custom-checkbox"></span>
-            </label>
-          </span>
-          <p className="font-medium text-lg text-[#000000] mt-5 ml-4">Mooring Information</p>
-        </div>
-      </>
-    )
-  }
-
   const handleDropdownChange = (e: any) => {
     handleInputChange('mooringStatus', e.target.value)
     if (e.target.value?.id !== 2) {
@@ -1273,7 +1189,13 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
         {(editCustomerMode && selectedCustomerType === 'Dock') ||
         (editCustomerMode && selectedCustomerType?.id === 5) ? (
-          AddDock()
+          // AddDock()
+
+          <AddDock
+            checkedDock={checkedDock}
+            setCheckedDock={setCheckedDock}
+            editCustomerMode={editCustomerMode}
+          />
         ) : (
           <></>
         )}
@@ -1282,8 +1204,20 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
           <>
             {!editMooringMode && (
               <div className="flex gap-[7rem] text-xl text-black font-bold mb-12">
-                {AddMooring()}
-                {selectedCustomerType?.id === 5 && AddDock()}
+                {/* {AddMooring()} */}
+
+                <AddMooringInCustomer
+                  checkedMooring={checkedMooring}
+                  setCheckedMooring={setCheckedMooring}
+                />
+
+                {selectedCustomerType?.id === 5 && (
+                  <AddDock
+                    checkedDock={checkedDock}
+                    setCheckedDock={setCheckedDock}
+                    editCustomerMode={editCustomerMode}
+                  />
+                )}
               </div>
             )}
 
