@@ -42,7 +42,7 @@ import { PositionType } from '../../../Type/Components/MapTypes'
 import AddImage from './AddImage'
 import MooringInformations from '../../CommonComponent/MooringInformations'
 import ViewImageDialog from '../../CommonComponent/ViewImageDialog'
-import { AddNewButtonStyle, DialogStyle, MooringTableColumnStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle, MooringTableColumnStyle } from '../../Utils/Style'
 import { AppContext } from '../../../Services/ContextApi/AppContext'
 import AddMoorings from '../Moorings/AddMoorings'
 

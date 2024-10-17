@@ -39,7 +39,6 @@ import { formatPhoneNumber, NAME_REGEX, NUMBER_REGEX } from '../../Utils/RegexUt
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
-import { formatDate, validateFields } from '../../Utils/AddCustomerCustomMethods'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -279,47 +278,56 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
     )
   }
 
-  // const validateFields = () => {
-  //   const errors: { [key: string]: string } = {}
-  //   let firstError = ''
-  //   if (!firstName) {
-  //     errors.firstName = 'First name is required'
-  //     firstError = 'firstName'
-  //   } else if (!NAME_REGEX.test(firstName)) {
-  //     errors.firstName = 'First name must only contain letters'
-  //     firstError = 'firstName'
-  //   } else if (firstName.length < 3) {
-  //     errors.firstName = 'First name must be at least 3 characters long'
-  //     firstError = 'firstName'
-  //   }
-  //   if (!lastName) {
-  //     errors.lastName = 'Last name is required'
-  //     if (!firstError) firstError = 'lastName'
-  //   } else if (!NAME_REGEX.test(lastName)) {
-  //     errors.lastName = 'Last name must only contain letters'
-  //     firstError = 'lastName'
-  //   } else if (lastName.length < 3) {
-  //     errors.lastName = 'Last name must be at least 3 characters long'
-  //     firstError = 'lastName'
-  //   }
-  //   if (checkedMooring) {
-  //     if (!formData?.mooringNumber) {
-  //       errors.mooringNumber = 'Mooring Number is required'
-  //     }
-  //     if (!formData?.mooringStatus) {
-  //       errors.mooringStatus = 'Mooring Status is required'
-  //     }
-  //   }
+  const validateFields = () => {
+    const errors: { [key: string]: string } = {}
+    let firstError = ''
+    if (!firstName) {
+      errors.firstName = 'First name is required'
+      firstError = 'firstName'
+    } else if (!NAME_REGEX.test(firstName)) {
+      errors.firstName = 'First name must only contain letters'
+      firstError = 'firstName'
+    } else if (firstName.length < 3) {
+      errors.firstName = 'First name must be at least 3 characters long'
+      firstError = 'firstName'
+    }
+    if (!lastName) {
+      errors.lastName = 'Last name is required'
+      if (!firstError) firstError = 'lastName'
+    } else if (!NAME_REGEX.test(lastName)) {
+      errors.lastName = 'Last name must only contain letters'
+      firstError = 'lastName'
+    } else if (lastName.length < 3) {
+      errors.lastName = 'Last name must be at least 3 characters long'
+      firstError = 'lastName'
+    }
+    if (checkedMooring) {
+      if (!formData?.mooringNumber) {
+        errors.mooringNumber = 'Mooring Number is required'
+      }
+      if (!formData?.mooringStatus) {
+        errors.mooringStatus = 'Mooring Status is required'
+      }
+    }
 
-  //   setFirstErrorField(firstError)
-  //   setFieldErrors(errors)
-  //   return errors
-  // }
+    setFirstErrorField(firstError)
+    setFieldErrors(errors)
+    return errors
+  }
 
   const parseDate = (dateString: any) => {
     if (!dateString) return null
     const [month, day, year] = dateString?.split('/')
     return new Date(year, month - 1, day)
+  }
+
+  const formatDate = (date: any) => {
+    if (!date) return null
+    const d = new Date(date)
+    const month = ('0' + (d.getMonth() + 1)).slice(-2)
+    const day = ('0' + d.getDate()).slice(-2)
+    const year = d.getFullYear()
+    return `${month}/${day}/${year}`
   }
 
   const handleInputChange = (field: string, value: any) => {
@@ -429,30 +437,11 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }
 
   const SaveCustomer = async () => {
-    // const errors = validateFields()
-    // if (Object.keys(errors).length > 0) {
-    //   setCheckedMooring(false)
-    //   return
-    // }
-
-    const errors = validateFields({
-      firstName,
-      lastName,
-      checkedMooring,
-      mooringNumber: formData.mooringNumber,
-      mooringStatus: formData.mooringStatus,
-      validationRules: {
-        NAME_REGEX: /^[A-Za-z]+$/,
-      },
-      setFieldErrors,
-      setFirstErrorField,
-    })
-
+    const errors = validateFields()
     if (Object.keys(errors).length > 0) {
       setCheckedMooring(false)
       return
     }
-
     let payload
     setIsLoading(true)
     if (checkedMooring) {
@@ -551,28 +540,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }
 
   const UpdateCustomer = async () => {
-    // const errors = validateFields()
-    // if (Object.keys(errors).length > 0) {
-    //   return
-    // }
-
-    const errors = validateFields({
-      firstName,
-      lastName,
-      checkedMooring,
-      mooringNumber: formData.mooringNumber,
-      mooringStatus: formData.mooringStatus,
-      validationRules: {
-        NAME_REGEX: /^[A-Za-z]+$/,
-      },
-      setFieldErrors,
-      setFirstErrorField,
-    })
-
+    const errors = validateFields()
     if (Object.keys(errors).length > 0) {
-      setCheckedMooring(false)
+      return
     }
-
     try {
       setIsLoading(true)
       const editCustomerPayload = {
@@ -630,28 +601,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }
 
   const UpdateMooring = async () => {
-    // const errors = validateFields()
-    // if (Object.keys(errors).length > 0) {
-    //   return
-    // }
-
-    const errors = validateFields({
-      firstName,
-      lastName,
-      checkedMooring,
-      mooringNumber: formData.mooringNumber,
-      mooringStatus: formData.mooringStatus,
-      validationRules: {
-        NAME_REGEX: /^[A-Za-z]+$/,
-      },
-      setFieldErrors,
-      setFirstErrorField,
-    })
-
+    const errors = validateFields()
     if (Object.keys(errors).length > 0) {
-      setCheckedMooring(false)
+      return
     }
-
     try {
       setIsLoading(true)
       const createPayload = (formData: any, mooringRowData: any) => {

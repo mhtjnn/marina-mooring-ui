@@ -221,6 +221,13 @@ export interface CustomModalProps {
   footerContent?: React.ReactNode
 }
 
+export interface PopUpCustomModalProps {
+  visible: boolean
+  header: string | JSX.Element
+  onHide: () => void
+  children: React.ReactNode
+  style?: any
+}
 export interface inputHeader {
   header?: string
   iconStyle?: React.CSSProperties

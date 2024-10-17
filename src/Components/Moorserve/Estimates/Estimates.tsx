@@ -20,7 +20,7 @@ import { ProgressSpinner } from 'primereact/progressspinner'
 import { utils, writeFile } from 'xlsx'
 import React from 'react'
 import { properties } from '../../Utils/MeassageProperties'
-import { AddNewButtonStyle } from '../../Style'
+import { AddNewButtonStyle } from '../../Utils/Style'
 import AddEstimates from './AddEstimates'
 
 const Estimates = () => {

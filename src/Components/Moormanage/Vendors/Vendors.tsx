@@ -18,7 +18,7 @@ import { selectCustomerId } from '../../../Store/Slice/userSlice'
 import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
 import { Paginator } from 'primereact/paginator'
 import { properties } from '../../Utils/MeassageProperties'
-import { AddNewButtonStyle, DialogStyle, VendorcolumnStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle, VendorcolumnStyle } from '../../Utils/Style'
 
 const Vendors = () => {
   const selectedCustomerId = useSelector(selectCustomerId)

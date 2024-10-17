@@ -57,6 +57,7 @@ import InputComponent from '../../CommonComponent/InputComponent'
 import { MultiSelect } from 'primereact/multiselect'
 import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
 import { validateFiles } from '../../Helper/Helper'
+import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -299,7 +300,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
       return { minutes: hours * 60 + minutes, seconds }
     }
-    const parsedTime = parseTime(workOrderData.time)
+    const parsedTime = parseTime(workOrderData?.time)
     setTime(parsedTime)
   }
 
@@ -1609,83 +1610,73 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         )}
       </div>
 
-      <Dialog
-        position="center"
+      <PopUpCustomModal
         style={{
           width: '520px',
           minWidth: '520px',
           height: '260px',
           minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={approveModalOpen}
+        header="Approve"
         onHide={handleModalClose}
-        header="Approve">
-        <ApproveModal
-          id={workOrderData?.id}
-          toast={toastRef}
-          setVisible={() => {
-            setApproveModalOpen(false)
-          }}
-          getWorkOrderWithPendingPayApproval={() => {
-            if (getWorkOrderWithPendingPayApproval) {
-              getWorkOrderWithPendingPayApproval()
-            }
-          }}
-          getOutStandingInvoice={() => {
-            if (getOutStandingInvoice) {
-              getOutStandingInvoice()
-            }
-          }}
-          closeModal={() => {
-            closeModal()
-            handleModalClose()
-          }}
-        />
-      </Dialog>
+        children={
+          <ApproveModal
+            id={workOrderData?.id}
+            toast={toastRef}
+            setVisible={() => {
+              setApproveModalOpen(false)
+            }}
+            getWorkOrderWithPendingPayApproval={() => {
+              if (getWorkOrderWithPendingPayApproval) {
+                getWorkOrderWithPendingPayApproval()
+              }
+            }}
+            getOutStandingInvoice={() => {
+              if (getOutStandingInvoice) {
+                getOutStandingInvoice()
+              }
+            }}
+            closeModal={() => {
+              closeModal()
+              handleModalClose()
+            }}
+          />
+        }></PopUpCustomModal>
 
-      <Dialog
-        position="center"
+      <PopUpCustomModal
         style={{
           width: '520px',
           minWidth: '520px',
           height: '260px',
           minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={denyModalOpen}
+        header="Deny"
         onHide={handleModalClose}
-        header="Deny">
-        <ReasonModal
-          getWorkOrderWithPendingPayApproval={() => {
-            if (getWorkOrderWithPendingPayApproval) {
-              getWorkOrderWithPendingPayApproval()
-            }
-          }}
-          toast={toastRef}
-          getOutStandingInvoice={() => {
-            if (getOutStandingInvoice) {
-              getOutStandingInvoice()
-            }
-          }}
-          selectedRowData={workOrderData?.id}
-          setVisible={() => {
-            setDenyModalOpen(false)
-          }}
-          closeModal={() => {
-            closeModal()
-            handleModalClose()
-          }}
-        />
-      </Dialog>
+        children={
+          <ReasonModal
+            getWorkOrderWithPendingPayApproval={() => {
+              if (getWorkOrderWithPendingPayApproval) {
+                getWorkOrderWithPendingPayApproval()
+              }
+            }}
+            toast={toastRef}
+            getOutStandingInvoice={() => {
+              if (getOutStandingInvoice) {
+                getOutStandingInvoice()
+              }
+            }}
+            selectedRowData={workOrderData?.id}
+            setVisible={() => {
+              setDenyModalOpen(false)
+            }}
+            closeModal={() => {
+              closeModal()
+              handleModalClose()
+            }}
+          />
+        }></PopUpCustomModal>
 
       <Dialog
         position="center"

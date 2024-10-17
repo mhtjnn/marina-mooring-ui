@@ -19,7 +19,7 @@ import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton'
 import { properties } from '../../Utils/MeassageProperties'
 import { WorkOrderValue } from '../../../Type/ComponentBasedType'
 import { jsPDF } from 'jspdf'
-import { AddNewButtonStyle } from '../../Style'
+import { AddNewButtonStyle } from '../../Utils/Style'
 
 const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   const selectedCustomerId = useSelector(selectCustomerId)
