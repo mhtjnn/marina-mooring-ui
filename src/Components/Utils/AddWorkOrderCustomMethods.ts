@@ -10,23 +10,8 @@ import {
   WorkOrderInputChangeProps,
   WorkOrderValidationProps,
 } from '../../Type/ComponentBasedType'
-import { AttachFormsTypesData, VendorData } from '../CommonComponent/MetaDataComponent/MetaDataApi'
-import {
-  GetMooringIds,
-  GetTechnicians,
-  GetWorkOrderStatus,
-} from '../CommonComponent/MetaDataComponent/MoorserveMetaDataApi'
 import { parseTime } from './CommonMethod'
 
-export const { getVendorValue } = VendorData()
-export const { getTechniciansData } = GetTechnicians()
-export const { getMooringIdsData } = GetMooringIds()
-export const { getWorkOrderStatusData } = GetWorkOrderStatus()
-export const [saveWorkOrder] = useAddWorkOrderMutation()
-export const [updateWorkOrder] = useUpdateWorkOrderMutation()
-export const [getViewForms] = useGetViewFormMutation()
-export const [getMooringDetails] = useGetMooringByIdMutation()
-export const { getAttachFormsTypeData } = AttachFormsTypesData()
 export const workOrderValidateFields = ({
   workOrder,
   vendorId,

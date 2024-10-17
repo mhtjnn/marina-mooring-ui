@@ -17,14 +17,19 @@ import {
   GetBoatyardBasedOnMooringId,
   GetCustomerBasedOnMooringId,
   GetMooringBasedOnCustomerIdAndBoatyardId,
+  GetMooringIds,
   GetMooringsBasedOnBoatyardId,
   GetMooringsBasedOnCustomerId,
+  GetTechnicians,
+  GetWorkOrderStatus,
 } from '../../CommonComponent/MetaDataComponent/MoorserveMetaDataApi'
 import { MetaData, Params } from '../../../Type/CommonType'
 import {
+  AttachFormsTypesData,
   BoatyardNameData,
   CustomersData,
   InventoryDetailsData,
+  VendorData,
 } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
 import { useSelector } from 'react-redux'
 import { selectCustomerId } from '../../../Store/Slice/userSlice'
@@ -40,21 +45,15 @@ import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { formatDate, formatTime, parseDate } from '../../Utils/CommonMethod'
 import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
-import {
-  getAttachFormsTypeData,
-  getMooringDetails,
-  getMooringIdsData,
-  getTechniciansData,
-  getVendorValue,
-  getViewForms,
-  getWorkOrderStatusData,
-  handleEditMode,
-  saveWorkOrder,
-  updateWorkOrder,
-  workOrderValidateFields,
-} from '../../Utils/AddWorkOrderCustomMethods'
+import { handleEditMode, workOrderValidateFields } from '../../Utils/AddWorkOrderCustomMethods'
 import { handleImageChange, validateFiles } from '../../Helper/Helper'
 import { handleDecrement, handleIncrement } from '../../Utils/AddWorkOrderCustomMethods'
+import {
+  useAddWorkOrderMutation,
+  useGetViewFormMutation,
+  useUpdateWorkOrderMutation,
+} from '../../../Services/MoorServe/MoorserveApi'
+import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -140,6 +139,16 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const { getCustomersData } = CustomersData(selectedCustomerId)
   const { getBoatYardNameData } = BoatyardNameData(selectedCustomerId)
   const { getInventoryDetails } = InventoryDetailsData(vendorId)
+  const { getVendorValue } = VendorData()
+  const { getTechniciansData } = GetTechnicians()
+  const { getMooringIdsData } = GetMooringIds()
+  const { getWorkOrderStatusData } = GetWorkOrderStatus()
+  const [saveWorkOrder] = useAddWorkOrderMutation()
+  const [updateWorkOrder] = useUpdateWorkOrderMutation()
+  const [getViewForms] = useGetViewFormMutation()
+  const [getMooringDetails] = useGetMooringByIdMutation()
+  const { getAttachFormsTypeData } = AttachFormsTypesData()
+
   const toastRef = useRef<Toast>(null)
   const [imageVisible, setImageVisible] = useState(false)
   const [imageRequestDtoList, setimageRequestDtoList] = useState<any>()
