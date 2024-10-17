@@ -240,3 +240,17 @@ export const headerToPropertyMap: any = {
   'Shackle Swivel Condition': 'shackleSwivelCondition.condition',
   'Main Contact': 'mainContact',
 }
+
+
+export interface ValidationProps {
+  firstName: string
+  lastName: string
+  checkedMooring: boolean
+  mooringNumber?: string
+  mooringStatus?: string
+  validationRules: {
+    NAME_REGEX: RegExp
+  }
+  setFieldErrors: (errors: { [key: string]: string }) => void
+  setFirstErrorField: (field: string) => void
+}

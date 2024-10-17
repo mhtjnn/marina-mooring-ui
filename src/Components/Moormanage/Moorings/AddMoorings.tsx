@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { InputText } from 'primereact/inputtext'
 import { Dropdown } from 'primereact/dropdown'
 import InputComponent from '../../CommonComponent/InputComponent'
@@ -34,6 +34,9 @@ import { Dialog } from 'primereact/dialog'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
+import { validateFieldsForMoorings } from '../../Utils/RegexUtils'
+import { formatDate } from '../../Utils/CommanMethod'
+import { parseDate } from 'pdf-lib'
 
 const AddMoorings: React.FC<AddMooringProps> = ({
   moorings,
@@ -191,50 +194,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     }
   }, [])
 
-  const validateFields = () => {
-    const alphanumericRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/
-    const errors: { [key: string]: string } = {}
-    let firstError = ''
-
-    if (!formData?.customerName) {
-      errors.customerName = 'Customer Name is required'
-      if (!firstError) firstError = 'customerName'
-    }
-
-    if (!formData?.mooringNumber) {
-      errors.mooringNumber = 'Mooring Number is required'
-      if (!firstError) firstError = 'mooringNumber'
-    }
-    // else if (!alphanumericRegex.test(formData?.mooringNumber)) {
-    //   errors.mooringNumber = 'Mooring Number must be alphanumeric'
-    //   if (!firstError) firstError = 'mooringNumber'
-    // }
-
-    if (!formData?.mooringStatus) {
-      errors.mooringStatus = 'Mooring Status id required'
-      if (!firstError) firstError = 'mooringStatus'
-    }
-    setFirstErrorField(firstError)
-    setFieldErrors(errors)
-
-    return errors
-  }
-
-  const formatDate = (date: any) => {
-    if (!date) return null
-    const d = new Date(date)
-    const month = ('0' + (d.getMonth() + 1)).slice(-2)
-    const day = ('0' + d.getDate()).slice(-2)
-    const year = d.getFullYear()
-    return `${month}/${day}/${year}`
-  }
-
-  const parseDate = (dateString: any) => {
-    if (!dateString) return null
-    const [month, day, year] = dateString?.split('/')
-    return new Date(year, month - 1, day)
-  }
-
   const handleInputChange = (field: string, value: any) => {
     const numberRegex = /^\d+$/
 
@@ -383,7 +342,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   }
 
   const SaveMoorings = async () => {
-    const errors = validateFields()
+    const errors = validateFieldsForMoorings(formData, setFirstErrorField, setFieldErrors)
+    setFieldErrors(errors)
     if (Object.keys(errors).length > 0) {
       if (firstErrorRef.current) {
         firstErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
