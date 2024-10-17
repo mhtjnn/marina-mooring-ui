@@ -531,14 +531,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (mooringsBasedOnCustomerId !== null) {
       setIsLoading(false)
       setMooringBasedOnCustomerId(mooringsBasedOnCustomerId)
-      if (mooringsBasedOnCustomerId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.customerName?.id])
 
@@ -548,39 +540,15 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (boatyardBasedOnMooringId !== null) {
       setIsLoading(false)
       setBoatyardBasedOnMooringId(boatyardBasedOnMooringId)
-      if (boatyardBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Boatyard Associated with Selected Mooring',
-          life: 3000,
-        })
-      }
     }
 
     if (customerBasedOnMooringId !== null) {
-      if (customerBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Customer Associated with Selected Mooring',
-          life: 3000,
-        })
-      } else {
-        const firstLastName = customerBasedOnMooringId.map((item: any) => ({
-          firstName: item.firstName + ' ' + item.lastName,
-          id: item.id,
-        }))
-        setIsLoading(false)
-        setCustomerBasedOnMooringId(firstLastName)
-      }
-    } else {
-      toastRef.current?.show({
-        severity: 'info',
-        summary: 'Info',
-        detail: 'No Customer Associated with Selected Mooring',
-        life: 3000,
-      })
+      const firstLastName = customerBasedOnMooringId.map((item: any) => ({
+        firstName: item.firstName + ' ' + item.lastName,
+        id: item.id,
+      }))
+      setIsLoading(false)
+      setCustomerBasedOnMooringId(firstLastName)
     }
   }, [workOrder?.mooringId?.id])
 
@@ -588,14 +556,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     const { mooringBasedOnBoatyardId } = await getMooringsBasedOnBoatyardIdData()
     if (mooringBasedOnBoatyardId !== null) {
       setMooringsBasedOnBoatyardIdData(mooringBasedOnBoatyardId)
-      if (mooringBasedOnBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id])
 
@@ -604,14 +564,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       await getMooringBasedOnCustomerIdAndBoatyardIdData()
     if (mooringbasedOnCustomerIdAndBoatyardId !== null) {
       setbasedOnCustomerIdAndBoatyardId(mooringbasedOnCustomerIdAndBoatyardId)
-      if (mooringbasedOnCustomerIdAndBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer and Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id, workOrder?.customerName?.id])
 

@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery, BaseQueryApi, FetchArgs } from '@reduxjs/toolkit/query/react'
 import { RootState } from '../Store/Store'
 import { selectCustomerId, selectUserRole } from '../Store/Slice/userSlice'
-const baseUrl = process.env.REACT_APP_BASE_URL
-console.log('Base URL:', baseUrl)
 
 // Fetch base query configuration
 const baseQuery = fetchBaseQuery({

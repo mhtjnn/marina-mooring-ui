@@ -405,7 +405,7 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
 
         <div
           style={{
-            height: 'calc(100vh - 150px)',
+            height: 'calc(100vh - 160px)',
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: '#FFFFFF',

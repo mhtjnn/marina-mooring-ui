@@ -35,6 +35,7 @@ import {
 const AccountRecievable = () => {
   const toast = useRef<Toast>(null)
   const selectedCustomerId = useSelector(selectCustomerId)
+  const [amount, setamount] = useState()
   const [pageNumber, setPageNumber] = useState(0)
   const [pageNumber1, setPageNumber1] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -188,6 +189,7 @@ const AccountRecievable = () => {
 
   const handleActionTopSectionClick = (action: string, row: any) => {
     if (action === 'Approve') {
+      setamount(row.cost)
       setWorkOrderId(row?.id)
       setApproveModalOpen(true)
     } else if (action === 'Deny') {
@@ -522,6 +524,7 @@ const AccountRecievable = () => {
           <ApproveModal
             id={workOrderId}
             toast={toast}
+            amountValue={amount}
             setVisible={() => {
               setApproveModalOpen(false)
             }}
