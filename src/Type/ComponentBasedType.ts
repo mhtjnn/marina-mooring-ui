@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from 'react'
 import { MooringPayload, VendorPayload, WorkOrderPayload, WorkOrderResponse } from './ApiTypes'
 import { ButtonProps } from 'primereact/button'
 import { IconType } from 'primereact/utils'
-
 export interface CustomerDataProps {
   customer: any
   mooringRowData?: any
@@ -198,12 +197,22 @@ export interface CustomerAdminDataProps {
   setSelectedCustomer: Dispatch<SetStateAction<any>>
   setSelectedCustomerUsers?: Dispatch<SetStateAction<any>>
 }
-
 export interface HeaderProps {
   header?: string
   customer?: boolean
 }
-
+export interface ValidationProps {
+  firstName: string
+  lastName: string
+  checkedMooring: boolean
+  mooringNumber?: string
+  mooringStatus?: string
+  validationRules: {
+    NAME_REGEX: RegExp
+  }
+  setFieldErrors: (errors: { [key: string]: string }) => void
+  setFirstErrorField: (field: string) => void
+}
 export interface CustomModalProps {
   button?: boolean
   buttonText?: string
@@ -310,11 +319,10 @@ export interface PreviewProps {
   mooringResponse?: any
 }
 
-
 export interface AddDockProps {
-  checkedDock: boolean;
-  setCheckedDock: (checked: boolean) => void;
-  editCustomerMode: any;
+  checkedDock: boolean
+  setCheckedDock: (checked: boolean) => void
+  editCustomerMode: any
 }
 
 export interface AddMooringPropss {
