@@ -35,7 +35,7 @@ import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
 import { validateFieldsForMoorings } from '../../Utils/RegexUtils'
-import { formatDate } from '../../Utils/CommanMethod'
+import { formatDate } from '../../Utils/CommonMethod'
 import { parseDate } from 'pdf-lib'
 
 const AddMoorings: React.FC<AddMooringProps> = ({

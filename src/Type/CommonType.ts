@@ -9,20 +9,16 @@ import { BoatYardData, UserData } from './ApiTypes'
 export interface CityProps {
   name: string
   code: string
-  // id:number
 }
-
 export interface DataProps {
   moorings: BoatYardData[]
 }
-
 export interface CustomerData {
   id: string
   name: string
   email: string
   phone: number
 }
-
 export interface CustomerProps {
   id: string
   name: string
@@ -31,7 +27,6 @@ export interface CustomerProps {
   address: string
   city: string
 }
-
 export interface BillsData {
   id: number
   technician: string
@@ -41,7 +36,6 @@ export interface BillsData {
 export interface SidebarState {
   isOpen: boolean
 }
-
 export interface InitialState {
   token: string
   userData: UserData | null
@@ -50,40 +44,33 @@ export interface InitialState {
   customerId: string
   customerName: string
 }
-
 export interface FormFieldsProps {
   label: string
   value?: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   type?: string
 }
-
 export type NullableDateArray = (Date | null)[] | null
-
 export interface Role {
   id: number
   name: string
   description: string
 }
-
 export interface Country {
   id: number
   name: string
   label: string
 }
-
 export interface State {
   id: number
   name: string
   label: string
 }
-
 export interface ServiceAreaType {
   id: number
   name: string
   label: string
 }
-
 export interface MetaData {
   type: any
   id: number
@@ -107,7 +94,6 @@ export interface MetaData {
     }
   }
 }
-
 export interface MetaDataTechnician {
   id: number
   name: string
@@ -122,18 +108,15 @@ export interface MetaDataTechnician {
   zipCode: string
   companyName: string
 }
-
 export interface MetaDataCustomer {
   id: number
   firstName: string
   lastName: string
 }
-
 export interface Customer {
   id: number
   customerName: string
 }
-
 export interface Params {
   showCompletedWorkOrders?: string
   pageSizeTwo?: number
@@ -147,14 +130,12 @@ export interface Params {
   invoiceAmount?: number
   reportProblem?: string
 }
-
 export interface DropdownCellProps {
   value: string
   options?: any
   onChange: (e: any) => void
   rowId?: string
 }
-
 export interface ImageDataProps {
   imageData: any
   entityId: number
@@ -162,7 +143,6 @@ export interface ImageDataProps {
   closeModal: () => void
   getCustomersWithMooring: () => void
 }
-
 export interface DropdownValue {
   id: number
   label: string
@@ -175,14 +155,12 @@ export interface viewImageProp {
     imageData: string
   }
 }
-
 export const iconsByStatus = {
   GearOn: GearOnIcon,
   GearOff: GearOffIcon,
   NeedInspection: NeedInspectionIcon,
   NotInUse: NotInUseIcon,
 }
-
 export const chipValues = [
   'Mooring Number',
   'Harbor/Area',
@@ -211,7 +189,6 @@ export const chipValues = [
   'Inspection Date',
   'Main Contact',
 ]
-
 export const headerToPropertyMap: any = {
   'Mooring Number': 'mooringNumber',
   'Harbor/Area': 'harborOrArea',
@@ -240,8 +217,6 @@ export const headerToPropertyMap: any = {
   'Shackle Swivel Condition': 'shackleSwivelCondition.condition',
   'Main Contact': 'mainContact',
 }
-
-
 export interface ValidationProps {
   firstName: string
   lastName: string
@@ -253,4 +228,10 @@ export interface ValidationProps {
   }
   setFieldErrors: (errors: { [key: string]: string }) => void
   setFirstErrorField: (field: string) => void
+}
+export interface ImageChangeProps {
+  event: React.ChangeEvent<HTMLInputElement>
+  toastRef: any
+  setCustomerImages: React.Dispatch<React.SetStateAction<any>>
+  setimageRequestDtoList: React.Dispatch<React.SetStateAction<any>>
 }

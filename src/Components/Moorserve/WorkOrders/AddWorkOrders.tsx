@@ -5,37 +5,26 @@ import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
 import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
-
 import {
   ErrorResponse,
   MooringResponse,
   ViewFormsResponse,
   WorkOrderResponse,
 } from '../../../Type/ApiTypes'
-import {
-  useAddWorkOrderMutation,
-  useGetViewFormMutation,
-  useUpdateWorkOrderMutation,
-} from '../../../Services/MoorServe/MoorserveApi'
 import { Button } from 'primereact/button'
 import { WorkOrderProps } from '../../../Type/ComponentBasedType'
 import {
   GetBoatyardBasedOnMooringId,
   GetCustomerBasedOnMooringId,
   GetMooringBasedOnCustomerIdAndBoatyardId,
-  GetMooringIds,
   GetMooringsBasedOnBoatyardId,
   GetMooringsBasedOnCustomerId,
-  GetTechnicians,
-  GetWorkOrderStatus,
 } from '../../CommonComponent/MetaDataComponent/MoorserveMetaDataApi'
 import { MetaData, Params } from '../../../Type/CommonType'
 import {
-  AttachFormsTypesData,
   BoatyardNameData,
   CustomersData,
   InventoryDetailsData,
-  VendorData,
 } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
 import { useSelector } from 'react-redux'
 import { selectCustomerId } from '../../../Store/Slice/userSlice'
@@ -49,9 +38,23 @@ import PDFEditor from '../Forms/PdfEditor'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
-import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
-import { validateFiles } from '../../Helper/Helper'
+import { formatDate, formatTime, parseDate } from '../../Utils/CommonMethod'
 import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
+import {
+  getAttachFormsTypeData,
+  getMooringDetails,
+  getMooringIdsData,
+  getTechniciansData,
+  getVendorValue,
+  getViewForms,
+  getWorkOrderStatusData,
+  handleEditMode,
+  saveWorkOrder,
+  updateWorkOrder,
+  workOrderValidateFields,
+} from '../../Utils/AddWorkOrderCustomMethods'
+import { validateFiles } from '../../Helper/Helper'
+import { handleDecrement, handleIncrement } from '../../Utils/AddWorkOrderCustomMethods'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -85,7 +88,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     quantity: '',
     inventory: '',
   })
-
   const [time, setTime] = useState({ minutes: 0, seconds: 0 })
   const [basedOnCustomerIdAndBoatyardId, setbasedOnCustomerIdAndBoatyardId] = useState<MetaData[]>()
   const [mooringsBasedOnBoatyardIdData, setMooringsBasedOnBoatyardIdData] = useState<MetaData[]>()
@@ -137,16 +139,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   )
   const { getCustomersData } = CustomersData(selectedCustomerId)
   const { getBoatYardNameData } = BoatyardNameData(selectedCustomerId)
-  const { getAttachFormsTypeData } = AttachFormsTypesData()
-  const { getVendorValue } = VendorData()
   const { getInventoryDetails } = InventoryDetailsData(vendorId)
-  const { getTechniciansData } = GetTechnicians()
-  const { getMooringIdsData } = GetMooringIds()
-  const { getWorkOrderStatusData } = GetWorkOrderStatus()
-  const [saveWorkOrder] = useAddWorkOrderMutation()
-  const [updateWorkOrder] = useUpdateWorkOrderMutation()
-  const [getViewForms] = useGetViewFormMutation()
-  const [getMooringDetails] = useGetMooringByIdMutation()
   const toastRef = useRef<Toast>(null)
   const [imageVisible, setImageVisible] = useState(false)
   const [imageRequestDtoList, setimageRequestDtoList] = useState<any>()
@@ -167,42 +160,18 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   })()
 
-  const validateFields = () => {
-    const errors: { [key: string]: string } = {}
-    if (!workOrder.customerName) {
-      errors.customerName = 'Customer Name is required'
-    }
-    if (!workOrder.workOrderStatus) {
-      errors.workOrderStatus = 'Status is required'
-    }
-    if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
-      errors.vendor = 'Vendor is required'
-    }
-    if (!workOrder.inventory && vendorId) {
-      errors.inventory = 'Item Name is required'
-    }
-    setErrorMessage(errors)
-    return errors
-  }
-
   const handleNoteChange = (index: number, note: string) => {
     setimageRequestDtoList((prevList: any[]) =>
       prevList?.map((item, i) => (i === index ? { ...item, note } : item)),
     )
   }
-
   const handleInputChange = (field: string, value: any) => {
     const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
-      if (value !== '' && !costRegex.test(value)) {
-        return
-      }
+      if (value !== '' && !costRegex.test(value)) return
     }
-    if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) {
-      return
-    }
+    if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) return
     let updatedWorkOrder = { ...workOrder, [field]: value }
-
     if (editMode) {
       if (field === 'mooringId') {
         updatedWorkOrder = {
@@ -229,7 +198,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setLastChangedField(field)
       setEditMode(false)
     }
-
     setWorkOrder(updatedWorkOrder)
     if (errorMessage[field]) {
       setErrorMessage({
@@ -238,77 +206,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       })
     }
   }
-
-  const handleEditMode = () => {
-    setWorkOrder((prevState: any) => ({
-      ...prevState,
-      mooringId: workOrderData?.mooringResponseDto?.mooringNumber,
-      customerName:
-        workOrderData?.customerResponseDto?.firstName +
-        ' ' +
-        workOrderData?.customerResponseDto?.lastName,
-      boatyards: workOrderData?.boatyardResponseDto?.boatyardName,
-      assignedTo:
-        workOrderData?.technicianUserResponseDto?.firstName +
-        ' ' +
-        workOrderData?.technicianUserResponseDto?.lastName,
-      dueDate: workOrderData?.dueDate,
-      scheduleDate: workOrderData?.scheduledDate,
-      workOrderStatus: workOrderData?.workOrderStatusDto?.status,
-      value: workOrderData?.problem,
-      cost: workOrderData?.cost,
-      attachForm:
-        workOrderData?.formResponseDtoList && workOrderData?.formResponseDtoList?.[0]?.formName,
-      vendor:
-        workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.vendorName,
-      inventory:
-        workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.itemName,
-      quantity:
-        workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.quantity,
-    }))
-    setVendorId(
-      workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.id,
-    )
-    const parseTime = (timeString: any) => {
-      const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
-      return { minutes: hours * 60 + minutes, seconds }
-    }
-    const parsedTime = parseTime(workOrderData?.time)
-    setTime(parsedTime)
-  }
-
-  const handleIncrement = () => {
-    let { minutes, seconds } = time
-    if (seconds < 59) {
-      seconds += 1
-    } else {
-      minutes += 1
-      seconds = 0
-    }
-    setTime({ minutes, seconds })
-    setErrorMessage((prevError) => ({ ...prevError, time: '' }))
-  }
-
-  const handleDecrement = () => {
-    let { minutes, seconds } = time
-    if (seconds > 0) {
-      seconds -= 1
-    } else if (minutes > 0) {
-      minutes -= 1
-      seconds = 59
-    }
-    setTime({ minutes, seconds })
-    setErrorMessage((prevError) => ({ ...prevError, time: '' }))
-  }
-
   const handleTimeChange = (event: { target: { value: any } }) => {
     const [min, sec] = event.target.value?.split(':').map(Number)
     if (!isNaN(min) && !isNaN(sec) && min >= 0 && sec >= 0 && sec < 60) {
@@ -316,74 +213,52 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setErrorMessage((prevError) => ({ ...prevError, time: '' }))
     }
   }
+  // const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const fileInput = event.target
+  //   const files = Array.from(fileInput.files || [])
+  //   if (files.length === 0) return
+  //   const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
+  //     min: 5120,
+  //     max: 5242880,
+  //   })
+  //   if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
+  //     fileInput.value = ''
+  //     return
+  //   }
+  //   const newBase64Strings: string[] = []
+  //   const newImageUrls: string[] = []
+  //   const imageRequestDtoList: { imageName: string; imageData: string }[] = []
 
-  const formatTime = (minutes: number, seconds: number) => {
-    const formattedMinutes = minutes.toString().padStart(2, '0')
-    const formattedSeconds = seconds.toString().padStart(2, '0')
-    return `${formattedMinutes}:${formattedSeconds}`
-  }
+  //   for (const file of validFiles) {
+  //     try {
+  //       const base64String = await new Promise<string>((resolve, reject) => {
+  //         const reader = new FileReader()
+  //         reader.onload = () => {
+  //           if (typeof reader.result === 'string') {
+  //             resolve(reader.result?.split(',')[1])
+  //           } else {
+  //             reject(new Error('FileReader result is not a string.'))
+  //           }
+  //         }
+  //         reader.onerror = () => {
+  //           reject(new Error('Error reading file.'))
+  //         }
+  //         reader.readAsDataURL(file)
+  //       })
+  //       newBase64Strings.push(base64String)
+  //       newImageUrls.push(`data:image/png;base64,${base64String}`)
+  //       imageRequestDtoList.push({
+  //         imageName: file.name,
+  //         imageData: base64String,
+  //       })
+  //     } catch (error) {
+  //       console.error('Error reading file:', error)
+  //     }
+  //   }
 
-  const formatDate = (date: any) => {
-    if (!date) return null
-    const d = new Date(date)
-    const month = ('0' + (d.getMonth() + 1)).slice(-2)
-    const day = ('0' + d.getDate()).slice(-2)
-    const year = d.getFullYear()
-    return `${month}/${day}/${year}`
-  }
-
-  const parseDate = (dateString: any) => {
-    if (!dateString) return null
-    const [month, day, year] = dateString?.split('/')
-    return new Date(year, month - 1, day)
-  }
-
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileInput = event.target
-    const files = Array.from(fileInput.files || [])
-    if (files.length === 0) return
-    const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
-      min: 5120,
-      max: 5242880,
-    })
-    if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
-      fileInput.value = ''
-      return
-    }
-    const newBase64Strings: string[] = []
-    const newImageUrls: string[] = []
-    const imageRequestDtoList: { imageName: string; imageData: string }[] = []
-
-    for (const file of validFiles) {
-      try {
-        const base64String = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onload = () => {
-            if (typeof reader.result === 'string') {
-              resolve(reader.result?.split(',')[1])
-            } else {
-              reject(new Error('FileReader result is not a string.'))
-            }
-          }
-          reader.onerror = () => {
-            reject(new Error('Error reading file.'))
-          }
-          reader.readAsDataURL(file)
-        })
-        newBase64Strings.push(base64String)
-        newImageUrls.push(`data:image/png;base64,${base64String}`)
-        imageRequestDtoList.push({
-          imageName: file.name,
-          imageData: base64String,
-        })
-      } catch (error) {
-        console.error('Error reading file:', error)
-      }
-    }
-
-    setCustomerImages((prevImages) => [...prevImages, ...newImageUrls])
-    setimageRequestDtoList(imageRequestDtoList)
-  }
+  //   setCustomerImages((prevImages) => [...prevImages, ...newImageUrls])
+  //   setimageRequestDtoList(imageRequestDtoList)
+  // }
 
   const handleRemoveImage = (index: number) => {
     const newImages = [...customerImages]
@@ -392,7 +267,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const SaveWorkOrder = async () => {
-    const errors = validateFields()
+    const errors = workOrderValidateFields({
+      workOrder,
+      vendorId,
+      setErrorMessage,
+    })
     if (Object.keys(errors).length > 0) {
       setErrorMessage(errors)
       return
@@ -468,11 +347,12 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   }
 
   const UpdateWorkOrder = async () => {
-    const errors = validateFields()
-    if (Object.keys(errors).length > 0) {
-      return
-    }
-
+    const errors = workOrderValidateFields({
+      workOrder,
+      vendorId,
+      setErrorMessage,
+    })
+    if (Object.keys(errors).length > 0) return
     try {
       setIsLoading(true)
       const editPayload: any = {}
@@ -870,7 +750,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
   useEffect(() => {
     if (editModeWorkOrder) {
-      handleEditMode()
+      handleEditMode({ setWorkOrder, workOrderData, setVendorId, setTime })
     }
   }, [editModeWorkOrder])
 
@@ -1166,7 +1046,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 <h1
                   className="mt-1 p-[0.1rem] ml-2 mr-2 bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
-                    !isTechnician && handleDecrement()
+                    !isTechnician && handleDecrement({ time, setTime, setErrorMessage })
                   }}>
                   <GrFormSubtract />
                 </h1>
@@ -1183,7 +1063,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 <h1
                   className="mt-1 ml-2 mr-2 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
-                    !isTechnician && handleIncrement()
+                    !isTechnician && handleIncrement({ time, setTime, setErrorMessage })
                   }}>
                   <IoIosAdd />
                 </h1>
@@ -1623,5 +1503,4 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     </>
   )
 }
-
 export default AddWorkOrders
