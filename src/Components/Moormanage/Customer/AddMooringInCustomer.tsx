@@ -1,11 +1,14 @@
 import React from 'react'
 import { AddMooringProps, AddMooringPropss } from '../../../Type/ComponentBasedType'
-const AddMooringInCustomer: React.FC<AddMooringPropss> = ({ checkedMooring, setCheckedMooring }) => {
+const AddMooringInCustomer: React.FC<AddMooringPropss> = ({
+  checkedMooring,
+  setCheckedMooring,
+}) => {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckedMooring(e.target.checked ?? false)
   }
   return (
-    <div className="flex gap-4 mt-1">
+    <div className="flex gap-4 mt-4">
       <label className="custom-checkbox-container">
         <input
           type="checkbox"

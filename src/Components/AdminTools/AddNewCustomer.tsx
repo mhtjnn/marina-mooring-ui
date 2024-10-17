@@ -477,7 +477,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country])
+  }, [country?.id])
 
   const getUserHandler = async () => {
     try {
@@ -526,8 +526,8 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
   }, [])
 
   useEffect(() => {
-    if (country) fetchStateDataAndUpdate()
-  }, [country])
+    if (country?.id) fetchStateDataAndUpdate()
+  }, [country?.id])
 
   useEffect(() => {
     if (editMode || editCustomerMode) {

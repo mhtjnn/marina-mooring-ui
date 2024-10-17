@@ -1,15 +1,13 @@
-import React from 'react';
-import { AddDockProps } from '../../../Type/ComponentBasedType';
-
-
+import React from 'react'
+import { AddDockProps } from '../../../Type/ComponentBasedType'
 
 const AddDock: React.FC<AddDockProps> = ({ checkedDock, setCheckedDock, editCustomerMode }) => {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckedDock(e.target.checked ?? false);
-  };
+    setCheckedDock(e.target.checked ?? false)
+  }
 
   return (
-    <div className={`flex gap-4 mt-1 ${editCustomerMode ? '!mb-14' : ''}`}>
+    <div className={`flex gap-4 mt-4 ${editCustomerMode ? '!mb-14' : ''}`}>
       <label className="custom-checkbox-container">
         <input
           type="checkbox"
@@ -25,9 +23,9 @@ const AddDock: React.FC<AddDockProps> = ({ checkedDock, setCheckedDock, editCust
         />
         <span className="custom-checkbox"></span>
       </label>
-      <p className="font-medium text-lg text-[#000000] mt-5 ml-[14px]">Add Dock</p>
+      <p className="font-medium text-lg text-[#000000] ml-[14px]">Add Dock</p>
     </div>
-  );
-};
+  )
+}
 
-export default AddDock;
+export default AddDock

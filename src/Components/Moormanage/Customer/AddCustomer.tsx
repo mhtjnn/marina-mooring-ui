@@ -51,7 +51,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   editMooringMode,
   closeModal,
   getCustomer,
-  // toastRef,
   getCustomerRecord,
 }) => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -85,7 +84,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
   const [mooringStatus, setMooringStatus] = useState<MetaData[]>([])
   const [mapPositionChanged, setMapPositionChanged] = useState<boolean>(true)
-
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
       ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
@@ -94,11 +92,8 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   const [firstErrorField, setFirstErrorField] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [customerImages, setCustomerImages] = useState<string[]>([])
-  const [encodedCustomerImages, setEncodedCustomerImages] = useState<string[]>([])
   const [customerImageRequestDtoList, setCustomerImageRequestDtoList] = useState<any[]>([])
-
   const [mooringImages, setMooringImages] = useState<string[]>([])
-  const [encodedMooringImages, setEncodedMooringImages] = useState<string[]>([])
   const [mooringImageRequestDtoList, setMooringImageRequestDtoList] = useState<any[]>([])
   const [isBoatyardDisabled, setIsBoatyardDisabled] = useState(false)
   const [formData, setFormData] = useState<any>({
@@ -171,7 +166,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     setImages: React.Dispatch<React.SetStateAction<string[]>>,
-    setEncodedImages: React.Dispatch<React.SetStateAction<string[]>>,
     setImageRequestDtoList: React.Dispatch<React.SetStateAction<any[]>>,
     toastRef: any,
   ) => {
@@ -220,39 +214,24 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       }
     }
     setImages((prevImages) => [...prevImages, ...newImageUrls])
-    setEncodedImages((prevEncoded) => [...prevEncoded, ...newBase64Strings])
     setImageRequestDtoList((prevList) => [...prevList, ...newImageRequestDtoList])
   }
 
   const handleCustomerImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageChange(
-      event,
-      setCustomerImages,
-      setEncodedCustomerImages,
-      setCustomerImageRequestDtoList,
-      toastRef,
-    )
+    handleImageChange(event, setCustomerImages, setCustomerImageRequestDtoList, toastRef)
   }
 
   const handleMooringImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageChange(
-      event,
-      setMooringImages,
-      setEncodedMooringImages,
-      setMooringImageRequestDtoList,
-      toastRef,
-    )
+    handleImageChange(event, setMooringImages, setMooringImageRequestDtoList, toastRef)
   }
 
   const handleRemoveCustomerImage = (index: number) => {
     setCustomerImages((prevImages) => prevImages.filter((_, i) => i !== index))
-    setEncodedCustomerImages((prevEncoded) => prevEncoded.filter((_, i) => i !== index))
     setCustomerImageRequestDtoList((prevList: any[]) => prevList.filter((_, i) => i !== index))
   }
 
   const handleRemoveMooringImage = (index: number) => {
     setMooringImages((prevImages) => prevImages.filter((_, i) => i !== index))
-    setEncodedMooringImages((prevEncoded) => prevEncoded.filter((_, i) => i !== index))
     setMooringImageRequestDtoList((prevList: any[]) => prevList.filter((_, i) => i !== index))
   }
 
@@ -767,7 +746,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country])
+  }, [country?.id])
 
   const handleClick = () => {
     if (editCustomerMode) {
@@ -800,8 +779,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }, [])
 
   useEffect(() => {
-    if (country) fetchStateDataAndUpdate()
-  }, [country])
+    if (country?.id) {
+      fetchStateDataAndUpdate()
+    }
+  }, [country?.id])
 
   useEffect(() => {
     if (editMode && customer) handleEditMode()
@@ -1186,11 +1167,8 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
         )}
 
         {/* Add Mooring */}
-
         {(editCustomerMode && selectedCustomerType === 'Dock') ||
         (editCustomerMode && selectedCustomerType?.id === 5) ? (
-          // AddDock()
-
           <AddDock
             checkedDock={checkedDock}
             setCheckedDock={setCheckedDock}
@@ -1204,13 +1182,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
           <>
             {!editMooringMode && (
               <div className="flex gap-[7rem] text-xl text-black font-bold mb-12">
-                {/* {AddMooring()} */}
-
                 <AddMooringInCustomer
                   checkedMooring={checkedMooring}
                   setCheckedMooring={setCheckedMooring}
                 />
-
                 {selectedCustomerType?.id === 5 && (
                   <AddDock
                     checkedDock={checkedDock}

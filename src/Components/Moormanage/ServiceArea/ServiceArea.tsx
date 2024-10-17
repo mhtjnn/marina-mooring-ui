@@ -649,7 +649,7 @@ const ServiceArea = () => {
                 iconStyle={{
                   position: 'absolute',
                   left: '15px',
-                  top: '65%',
+                  top: '60%',
                   transform: 'translateY(-50%)',
                   width: '16px',
                   height: '16px',

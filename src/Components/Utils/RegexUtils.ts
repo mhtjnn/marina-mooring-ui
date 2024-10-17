@@ -81,6 +81,7 @@ export const validateFieldsForMoorings = (
     errors.mooringNumber = 'Mooring Number is required'
     if (!firstError) firstError = 'mooringNumber'
   }
+
   if (!formData.mooringStatus) {
     errors.mooringStatus = 'Mooring Status is required'
     if (!firstError) firstError = 'mooringStatus'

@@ -251,7 +251,7 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country])
+  }, [country?.id])
 
   useEffect(() => {
     fetchDataAndUpdate()
@@ -259,7 +259,7 @@ const AddBoatyards: React.FC<BoatYardProps> = ({
 
   useEffect(() => {
     if (country) fetchStateDataAndUpdate()
-  }, [country])
+  }, [country?.id])
 
   useEffect(() => {
     if (editMode && customerData) {
