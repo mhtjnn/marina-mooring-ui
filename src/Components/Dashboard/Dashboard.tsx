@@ -23,6 +23,7 @@ import { Calendar } from 'primereact/calendar'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import CustomDashboardMooringMap from '../Map/CustomDashboardMooringMap'
 import { properties } from '../Utils/MeassageProperties'
+import { TechnicianfirstLastName, firstLastName } from '../Helper/Helper'
 
 const Dashboard = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -156,17 +157,6 @@ const Dashboard = () => {
     setVisible(true)
   }
 
-  const firstLastName = (data: any) => {
-    if (data?.customerResponseDto === null && data?.customerResponseDto?.firstName === undefined)
-      return '-'
-    else if (
-      data?.customerResponseDto?.firstName === null &&
-      data?.customerResponseDto?.firstName === undefined
-    )
-      return '-'
-    else return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
-  }
-
   const Mooringcolumns: TableColumnProps[] = useMemo(
     () => [
       {
@@ -235,23 +225,6 @@ const Dashboard = () => {
     ],
     [],
   )
-
-  const TechnicianfirstLastName = (data: any) => {
-    if (
-      data?.technicianUserResponseDto === null &&
-      data?.technicianUserResponseDto?.firstName === undefined
-    )
-      return '-'
-    else if (
-      data?.technicianUserResponseDto?.firstName === null &&
-      data?.technicianUserResponseDto?.firstName === undefined
-    )
-      return '-'
-    else
-      return (
-        data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
-      )
-  }
 
   const WorkOrderColumns: TableColumnProps[] = useMemo(
     () => [

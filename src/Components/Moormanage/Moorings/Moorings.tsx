@@ -221,7 +221,16 @@ const Moorings = () => {
     setSelectedCustomer(customerRecordData)
     setIsEditMooring(true)
   }
-
+  const serviceArea = (rowData: any) =>
+    rowData?.serviceAreaResponseDto?.serviceAreaName !== null ? (
+      rowData?.serviceAreaResponseDto?.serviceAreaName
+    ) : (
+      <div className={'ml-5'}>-</div>
+    )
+  const gpsCoordinatesValue = (data: any) => {
+    if (data?.gpsCoordinates === null) return <div className={'ml-8'}>-</div>
+    else return data?.gpsCoordinates
+  }
   const tableColumns = useMemo(
     () => [
       {
@@ -247,7 +256,7 @@ const Moorings = () => {
       {
         id: 'customerName',
         label: 'Customer Name',
-        body: (rowData: any) => (rowData.customerName !== null ? rowData.customerName : '-'),
+        body: (rowData: any) => (rowData?.customerName !== null ? rowData?.customerName : '-'),
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',
@@ -258,6 +267,7 @@ const Moorings = () => {
       {
         id: 'serviceAreaResponseDto.serviceAreaName',
         label: 'Service Area',
+        body: serviceArea,
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',
@@ -268,6 +278,7 @@ const Moorings = () => {
       {
         id: 'gpsCoordinates',
         label: 'GPS Coordinates',
+        body: gpsCoordinatesValue,
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',
@@ -288,6 +299,7 @@ const Moorings = () => {
           borderBottom: '1px solid #C0C0C0',
           fontWeight: '700',
           color: '#000000',
+          width: '3vw',
           fontSize: '12px',
           backgroundColor: '#FFFFFF',
         },
@@ -306,6 +318,7 @@ const Moorings = () => {
       {
         id: 'gpsCoordinates',
         label: 'GPS Coordinates:',
+        body: gpsCoordinatesValue,
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',

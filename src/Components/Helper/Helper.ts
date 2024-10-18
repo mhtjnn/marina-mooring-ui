@@ -154,14 +154,35 @@ export const dataToPdf = (data: any[], toast: any) => {
   doc.save('WorkOrders.pdf')
 }
 export const firstLastName = (data: any) => {
-  const firstName = data?.customerResponseDto?.firstName
-  const lastName = data?.customerResponseDto?.lastName
-  return firstName !== null && firstName !== undefined ? `${firstName} ${lastName}` : '-'
+  if (data?.customerResponseDto === null && data?.customerResponseDto?.firstName === undefined)
+    return '-'
+  else if (
+    data?.customerResponseDto?.firstName === null &&
+    data?.customerResponseDto?.firstName === undefined
+  )
+    return '-'
+  else return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
 }
+export const CustomerfirstLastName = (data: any) => {
+  if (data?.firstName === null && data?.firstName === undefined) return '-'
+  else return data?.firstName + ' ' + data?.lastName
+}
+
 export const TechnicianfirstLastName = (data: any) => {
-  const firstName = data?.technicianUserResponseDto?.firstName
-  const lastName = data?.technicianUserResponseDto?.lastName
-  return firstName !== null && firstName !== undefined ? `${firstName} ${lastName}` : '-'
+  if (
+    data?.technicianUserResponseDto === null &&
+    data?.technicianUserResponseDto?.firstName === undefined
+  )
+    return '-'
+  else if (
+    data?.technicianUserResponseDto?.firstName === null &&
+    data?.technicianUserResponseDto?.firstName === undefined
+  )
+    return '-'
+  else
+    return (
+      data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
+    )
 }
 export const handleImageChange = async ({
   event,

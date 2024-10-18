@@ -45,6 +45,7 @@ import ViewImageDialog from '../../CommonComponent/ViewImageDialog'
 import { AddNewButtonStyle, DialogStyle, MooringTableColumnStyle } from '../../Utils/Style'
 import { AppContext } from '../../../Services/ContextApi/AppContext'
 import AddMoorings from '../Moorings/AddMoorings'
+import { CustomerfirstLastName } from '../../Helper/Helper'
 
 const Customer = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -219,16 +220,13 @@ const Customer = () => {
     setDialogVisible(true)
     setMooringRowData(rowData.data)
   }
-
-  const firstLastName = (data: any) => {
-    if (data?.firstName === null) return '-'
-    else return data?.firstName + ' ' + data?.lastName
-  }
-
   const handleHeaderClick = (columnId: any) => {
     setSortable(!sortable)
   }
-
+  const customerType = (data: any) => {
+    if (data?.customerTypeDto?.type === null) return <div className={'ml-5'}>-</div>
+    else return data?.customerTypeDto?.type
+  }
   const CustomerTableColumns = useMemo(
     () => [
       {
@@ -245,6 +243,7 @@ const Customer = () => {
       {
         id: 'customerTypeDto.type',
         label: 'Customer Type:',
+        body: customerType,
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
@@ -252,12 +251,11 @@ const Customer = () => {
           color: '#000000',
         },
         onHeaderClick: () => handleHeaderClick('customerType'),
-        // sortable: true,
       },
       {
         id: 'firstName',
         label: 'Name:',
-        body: firstLastName,
+        body: CustomerfirstLastName,
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
@@ -291,7 +289,10 @@ const Customer = () => {
     ],
     [],
   )
-
+  const gpsCoordinatesValue = (data: any) => {
+    if (data?.gpsCoordinates === null) return <div className={'ml-14'}>-</div>
+    else return data?.gpsCoordinates
+  }
   const MooringTableColumn = useMemo(
     () => [
       {
@@ -313,6 +314,7 @@ const Customer = () => {
       {
         id: 'gpsCoordinates',
         label: 'GPS Coordinates',
+        body: gpsCoordinatesValue,
         style: MooringTableColumnStyle,
       },
     ],
