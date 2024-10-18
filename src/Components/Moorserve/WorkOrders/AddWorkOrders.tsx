@@ -305,18 +305,12 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setIsLoading(true)
       const editPayload: any = {}
       if (workOrderData?.mooringResponseDto?.id) {
-        if (workOrder?.mooringId?.id !== workOrderData?.mooringResponseDto?.id) {
-          editPayload.mooringId = workOrder?.mooringId?.id
-        } else editPayload.mooringId = workOrderData?.mooringResponseDto?.id
-      } else {
-        editPayload.mooringId = workOrder?.mooringId?.id
+        if (workOrder?.mooringId?.id) editPayload.mooringId = workOrder?.mooringId?.id
+        else editPayload.mooringId = workOrderData?.mooringResponseDto?.id
       }
       if (workOrderData?.boatyardResponseDto?.id) {
-        if (workOrder?.boatyards?.id !== workOrderData?.boatyardResponseDto?.id) {
-          editPayload.boatyardId = workOrder?.boatyards?.id
-        } else editPayload.boatyardId = workOrderData?.boatyardResponseDto?.id
-      } else {
-        editPayload.boatyardId = workOrder?.boatyards?.id
+        if (workOrder?.boatyards?.id) editPayload.boatyardId = workOrder?.boatyards?.id
+        else editPayload.boatyardId = workOrderData?.boatyardResponseDto?.id
       }
       if (workOrder?.customerName?.id !== workOrderData?.customerResponseDto?.id) {
         editPayload.customerId = workOrder?.customerName?.id

@@ -7,7 +7,6 @@ import {
 } from '../../../Services/MoorServe/MoorserveApi'
 import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
 import Header from '../../Layout/LayoutComponents/Header'
-import { boatyardMooring, vendor } from '../../Utils/CustomData'
 import { InputText } from 'primereact/inputtext'
 import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
 import CustomModal from '../../CustomComponent/CustomModal'
@@ -196,15 +195,27 @@ const Estimates = () => {
 
   const dataToXlsx = (data: WorkOrderPayload[], fileName = 'EstimateData.xlsx') => {
     const formattedData = data?.map((item) => ({
-      CustomerName: `${item?.customerResponseDto?.firstName} ${item?.customerResponseDto?.lastName}`,
-      MooringNumber: item?.mooringResponseDto?.mooringNumber,
-      Boatyard: item?.boatyardResponseDto?.boatyardId,
-      AssignedTo: `${item?.technicianUserResponseDto?.firstName} ${item?.technicianUserResponseDto?.lastName}`,
-      DueDate: item?.dueDate,
-      Status: item?.workOrderStatusDto.status,
+      CustomerName: item?.customerResponseDto
+        ? `${item?.customerResponseDto?.firstName} ${item?.customerResponseDto?.lastName}`
+        : '-',
+      MooringNumber: item?.mooringResponseDto?.mooringNumber || '-',
+      Boatyard: item?.boatyardResponseDto?.boatyardId || '-',
+      AssignedTo: item?.technicianUserResponseDto
+        ? `${item?.technicianUserResponseDto?.firstName} ${item?.technicianUserResponseDto?.lastName}`
+        : '-',
+      DueDate: item?.dueDate || '-',
+      Status: item?.workOrderStatusDto?.status || '-',
     }))
 
     const worksheet = utils.json_to_sheet(formattedData)
+    worksheet['!cols'] = [
+      { wch: 30 }, // Customer Name
+      { wch: 20 }, // Mooring Number
+      { wch: 20 }, // Boatyard
+      { wch: 30 }, // Assigned To
+      { wch: 15 }, // Due Date
+      { wch: 20 }, // Status
+    ]
     const workbook = utils.book_new()
     utils.book_append_sheet(workbook, worksheet, 'Estimates')
     writeFile(workbook, fileName)
