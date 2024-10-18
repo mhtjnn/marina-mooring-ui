@@ -24,6 +24,7 @@ import { VirtualScroller } from 'primereact/virtualscroller'
 import { Dialog } from 'primereact/dialog'
 import ResetPassword from './ResetPassword'
 import { AddNewButtonStyle, DialogStyle } from '../Utils/Style'
+import { CustomerfirstLastName } from '../Helper/Helper'
 
 const CustomerOwner = () => {
   const dispatch = useDispatch()
@@ -161,11 +162,6 @@ const CustomerOwner = () => {
     fontWeight: 700,
   }
 
-  const firstLastNameCustomerOwner = (data: any) => {
-    if (data?.firstName === null) return '-'
-    else return data?.firstName + ' ' + data?.lastName
-  }
-
   const customerOwnerTableColumn = useMemo(
     () => [
       {
@@ -176,7 +172,7 @@ const CustomerOwner = () => {
       {
         id: 'name',
         label: 'Name',
-        body: firstLastNameCustomerOwner,
+        body: CustomerfirstLastName,
         style: { ...columnStyle, width: '4vw' },
       },
       {
@@ -229,11 +225,6 @@ const CustomerOwner = () => {
     style: { borderBottom: '1px solid #D5E1EA' },
   }
 
-  const firstLastName = (data: any) => {
-    if (data?.firstName === null) return '-'
-    else return data?.firstName + ' ' + data?.lastName
-  }
-
   const customerOwnerUserTableColumn = useMemo(
     () => [
       {
@@ -250,7 +241,7 @@ const CustomerOwner = () => {
       {
         id: 'name',
         label: 'Name',
-        body: firstLastName,
+        body: CustomerfirstLastName,
         style: {
           borderBottom: '1px solid #D5E1EA',
           backgroundColor: '#FFFFFF',

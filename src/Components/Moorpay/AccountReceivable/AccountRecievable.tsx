@@ -222,13 +222,23 @@ const AccountRecievable = () => {
     headerStyle: { ...AccountRecievableHeaderStyle },
     style: { borderBottom: '1px solid #D5E1EA', fontWeight: '400' },
   }
-
   const firstLastNameBottomSection = (data: any) => {
-    return (
-      data?.workOrderResponseDto?.customerResponseDto?.firstName +
-      ' ' +
-      data?.workOrderResponseDto?.customerResponseDto?.lastName
+    if (
+      data?.workOrderResponseDto?.customerResponseDto === null &&
+      data?.workOrderResponseDto?.customerResponseDto === undefined
     )
+      return '-'
+    else if (
+      data?.workOrderResponseDto?.customerResponseDto?.firstName === null &&
+      data?.workOrderResponseDto?.customerResponseDto?.firstName === undefined
+    )
+      return '-'
+    else
+      return (
+        data?.workOrderResponseDto?.customerResponseDto?.firstName +
+        ' ' +
+        data?.workOrderResponseDto?.customerResponseDto?.lastName
+      )
   }
   const invoiceAmount = (data: any) => {
     return '$' + '' + data?.invoiceAmount

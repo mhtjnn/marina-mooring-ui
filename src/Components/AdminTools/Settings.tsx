@@ -16,6 +16,7 @@ import {
   useEditMapCustomerToQuickBookMutation,
   useMapCustomerToQuickBookMutation,
 } from '../../Services/AdminTools/AdminToolsApi'
+import { CustomerfirstLastName } from '../Helper/Helper'
 
 const Settings = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -49,18 +50,12 @@ const Settings = () => {
     fontWeight: 700,
   }
 
-  const firstLastName = (data: any) => {
-    if (data?.firstName === null) return '-'
-    if (data?.lasttName === null) return '-'
-    else return data?.firstName + ' ' + data?.lastName
-  }
-
   const tableColumnsPermission = useMemo(
     () => [
       {
         id: 'firstName',
         label: 'Customer Name',
-        body: firstLastName,
+        body: CustomerfirstLastName,
         style: columnStyle,
       },
       {

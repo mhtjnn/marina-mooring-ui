@@ -94,3 +94,20 @@ export const WorkOrderDataTableStyle = {
   fontWeight: 600,
   backgroundColor: '#F9FAFB',
 }
+
+export const TechnicianTableColumnStyle = {
+  backgroundColor: '#FFFFFF',
+  fontWeight: '700',
+  fontSize: '12px',
+  color: '#000000',
+}
+
+export const WorkOrdersColumnStyle = {
+  fontSize: '12px',
+  height: '12px',
+  color: 'white',
+  backgroundColor: '#00426F',
+  marginTop: '1rem',
+  border: '1px solid #00426F',
+  fontWeight: '700',
+}

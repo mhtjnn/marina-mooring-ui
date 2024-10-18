@@ -323,9 +323,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       serviceAreaId: mooringRowData?.serviceAreaResponseDto?.serviceAreaName || '',
       mooringStatus: mooringRowData?.mooringStatus?.status || '',
     }))
-    console.log('mooringRowData?.installBottomChainDate', mooringRowData?.installBottomChainDate)
-    console.log('formData', formData)
-
     if (mooringRowData?.mooringStatus?.id !== 2) {
       setFormData((prevData: any) => ({
         ...prevData,
