@@ -94,9 +94,10 @@ export const handleEditMode = ({
       workOrderData?.customerResponseDto?.lastName,
     boatyards: workOrderData?.boatyardResponseDto?.boatyardName,
     assignedTo:
+      workOrderData?.technicianUserResponseDto &&
       workOrderData?.technicianUserResponseDto?.firstName +
-      ' ' +
-      workOrderData?.technicianUserResponseDto?.lastName,
+        ' ' +
+        workOrderData?.technicianUserResponseDto?.lastName,
     dueDate: workOrderData?.dueDate,
     scheduleDate: workOrderData?.scheduledDate,
     workOrderStatus: workOrderData?.workOrderStatusDto?.status,

@@ -31,6 +31,7 @@ import {
   WorkOrderPendingApprovalDataTableHeaderStyle,
   WorkOrderPendingApprovalDataTableStyle,
 } from '../../Utils/Style'
+import { firstLastName } from '../../Helper/Helper'
 
 const AccountRecievable = () => {
   const toast = useRef<Toast>(null)
@@ -169,9 +170,6 @@ const AccountRecievable = () => {
     }
   }, [searchInvoice, selectedCustomerId, pageNumberTwo, pageSizeTwo])
 
-  const firstLastName = (data: any) => {
-    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
-  }
   const accountRecievableTableColumn = useMemo(
     () => [
       { id: 'workOrderNumber', label: 'Work Order Number', style: AccountRecievableColumnStyle },

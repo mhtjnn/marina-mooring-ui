@@ -156,12 +156,12 @@ export const dataToPdf = (data: any[], toast: any) => {
 export const firstLastName = (data: any) => {
   const firstName = data?.customerResponseDto?.firstName
   const lastName = data?.customerResponseDto?.lastName
-  return firstName !== null ? `${firstName} ${lastName}` : '-'
+  return firstName !== null && firstName !== undefined ? `${firstName} ${lastName}` : '-'
 }
 export const TechnicianfirstLastName = (data: any) => {
   const firstName = data?.technicianUserResponseDto?.firstName
   const lastName = data?.technicianUserResponseDto?.lastName
-  return firstName !== null ? `${firstName} ${lastName}` : '-'
+  return firstName !== null && firstName !== undefined ? `${firstName} ${lastName}` : '-'
 }
 export const handleImageChange = async ({
   event,
