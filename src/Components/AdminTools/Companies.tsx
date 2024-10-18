@@ -282,7 +282,7 @@ const CustomerOwner = () => {
         },
       },
       {
-        id: 'roleResponseDto?.name',
+        id: 'roleResponseDto.name',
         label: 'Role',
         style: {
           borderBottom: '1px solid #D5E1EA',

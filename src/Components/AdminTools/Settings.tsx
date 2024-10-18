@@ -64,7 +64,7 @@ const Settings = () => {
         style: columnStyle,
       },
       {
-        id: 'quickbookCustomerResponseDto?.id',
+        id: 'quickbookCustomerResponseDto.id',
         label: 'QuickBook Customer Name',
         style: columnStyle,
         body: (rowData: {
@@ -89,12 +89,6 @@ const Settings = () => {
                       ? '-'
                       : rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName))
               }
-              // value={
-              //   dropdownValues[rowData.id] ||
-              //   rowData?.quickbookCustomerResponseDto?.quickbookCustomerFirstName +
-              //     ' ' +
-              //     rowData?.quickbookCustomerResponseDto?.quickbookCustomerLastName
-              // }
               options={quickBookCustomer?.map?.((option: any) => {
                 return { ...option, value: option.quickbookCustomerId }
               })}

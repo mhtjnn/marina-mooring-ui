@@ -86,12 +86,12 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
         body: firstLastName,
       },
       {
-        id: 'mooringResponseDto?.mooringNumber',
+        id: 'mooringResponseDto.mooringNumber',
         label: 'Mooring Number',
         style: AccountRecievableColumnStyle,
       },
       {
-        id: 'technicianUserResponseDto?.name',
+        id: 'technicianUserResponseDto.name',
         label: 'Assigned to',
         style: AccountRecievableColumnStyle,
         body: TechnicianfirstLastName,

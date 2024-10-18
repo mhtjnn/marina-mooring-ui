@@ -97,7 +97,7 @@ const Estimates = () => {
   const workOrderColumns = useMemo(
     () => [
       {
-        id: 'customerResponseDto?.customerId',
+        id: 'customerResponseDto.customerId',
         label: 'Customer ID',
         style: columnStyle,
       },
@@ -108,17 +108,17 @@ const Estimates = () => {
         body: firstLastName,
       },
       {
-        id: 'mooringResponseDto?.mooringNumber',
+        id: 'mooringResponseDto.mooringNumber',
         label: 'Mooring Number',
         style: columnStyle,
       },
       {
-        id: 'boatyardResponseDto?.boatyardId',
+        id: 'boatyardResponseDto.boatyardId',
         label: 'Boatyard',
         style: columnStyle,
       },
       {
-        id: 'technicianUserResponseDto?.name',
+        id: 'technicianUserResponseDto.name',
         label: 'Assigned to',
         style: columnStyle,
         body: TechnicianfirstLastName,

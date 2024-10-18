@@ -86,7 +86,7 @@ const Accordion = () => {
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'mooringResponseDto?.mooringNumber',
+        id: 'mooringResponseDto.mooringNumber',
         label: 'Mooring Number',
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
@@ -97,7 +97,7 @@ const Accordion = () => {
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'technicianUserResponseDto?.name',
+        id: 'technicianUserResponseDto.name',
         label: 'Assigned To',
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },

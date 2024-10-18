@@ -98,7 +98,7 @@ const Permission = () => {
       },
 
       {
-        id: 'roleResponseDto?.name',
+        id: 'roleResponseDto.name',
         label: 'Role',
         style: columnStyle,
       },

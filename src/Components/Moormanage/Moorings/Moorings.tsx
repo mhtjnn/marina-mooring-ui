@@ -256,7 +256,7 @@ const Moorings = () => {
         },
       },
       {
-        id: 'serviceAreaResponseDto?.serviceAreaName',
+        id: 'serviceAreaResponseDto.serviceAreaName',
         label: 'Service Area',
         style: {
           borderBottom: '1px solid #C0C0C0',

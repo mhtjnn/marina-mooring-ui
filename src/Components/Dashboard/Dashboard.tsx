@@ -237,9 +237,20 @@ const Dashboard = () => {
   )
 
   const TechnicianfirstLastName = (data: any) => {
-    return (
-      data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
+    if (
+      data?.technicianUserResponseDto === null &&
+      data?.technicianUserResponseDto?.firstName === undefined
     )
+      return '-'
+    else if (
+      data?.technicianUserResponseDto?.firstName === null &&
+      data?.technicianUserResponseDto?.firstName === undefined
+    )
+      return '-'
+    else
+      return (
+        data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
+      )
   }
 
   const WorkOrderColumns: TableColumnProps[] = useMemo(
@@ -250,7 +261,7 @@ const Dashboard = () => {
         style: { fontSize: '10px', width: '4.5vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'mooringResponseDto?.mooringNumber',
+        id: 'mooringResponseDto.mooringNumber',
         label: 'Mooring Number',
         style: { fontSize: '10px', backgroundColor: '#FFFFFF', color: '#000000' },
       },
@@ -261,7 +272,7 @@ const Dashboard = () => {
         style: { fontSize: '10px', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'technicianUserResponseDto?.name',
+        id: 'technicianUserResponseDto.name',
         label: 'Assigned To',
         body: TechnicianfirstLastName,
         style: { fontSize: '10px', backgroundColor: '#FFFFFF', color: '#000000' },
