@@ -304,14 +304,22 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     try {
       setIsLoading(true)
       const editPayload: any = {}
-      if (workOrder?.mooringId?.id !== workOrderData?.mooringResponseDto?.id) {
+      if (workOrderData?.mooringResponseDto?.id) {
+        if (workOrder?.mooringId?.id !== workOrderData?.mooringResponseDto?.id) {
+          editPayload.mooringId = workOrder?.mooringId?.id
+        } else editPayload.mooringId = workOrderData?.mooringResponseDto?.id
+      } else {
         editPayload.mooringId = workOrder?.mooringId?.id
+      }
+      if (workOrderData?.boatyardResponseDto?.id) {
+        if (workOrder?.boatyards?.id !== workOrderData?.boatyardResponseDto?.id) {
+          editPayload.boatyardId = workOrder?.boatyards?.id
+        } else editPayload.boatyardId = workOrderData?.boatyardResponseDto?.id
+      } else {
+        editPayload.boatyardId = workOrder?.boatyards?.id
       }
       if (workOrder?.customerName?.id !== workOrderData?.customerResponseDto?.id) {
         editPayload.customerId = workOrder?.customerName?.id
-      }
-      if (workOrder?.boatyards?.id !== workOrderData?.boatyardResponseDto?.id) {
-        editPayload.boatyardId = workOrder?.boatyards?.id
       }
       if (workOrder?.assignedTo?.id !== workOrderData?.technicianUserResponseDto?.id) {
         editPayload.technicianId = workOrder?.assignedTo?.id
@@ -339,7 +347,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (formattedTime !== workOrderData?.time) {
         editPayload.time = formattedTime
       }
-
       if (workOrder?.attachForm || workOrderData?.formResponseDtoList) {
         const formRequestDtoList: any[] = []
         if (workOrderData?.formResponseDtoList?.length > 0) {
