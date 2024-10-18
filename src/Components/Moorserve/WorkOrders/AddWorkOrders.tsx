@@ -997,8 +997,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 value={workOrder.attachForm}
                 onChange={(e) => {
                   handleInputChange('attachForm', e.target.value)
-                  console.log('e', e)
-
                   viewFormsData(e.value.id)
                   setFormData('')
                 }}
