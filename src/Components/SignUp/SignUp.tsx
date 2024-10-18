@@ -67,7 +67,7 @@ const SignUp = () => {
         })
         toast.current?.show({
           severity: 'success',
-          summary: data.message,
+          summary: data?.message,
         })
       }
     } catch (error) {

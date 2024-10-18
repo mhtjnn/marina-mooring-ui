@@ -38,8 +38,8 @@ const useFetchDataAndUpdate = (selectedCustomerId: any, workOrderData: any) => {
 
     if (getTechnicians) {
       const firstLastName = getTechnicians.map((item) => ({
-        firstName: `${item.firstName} ${item.lastName}`,
-        id: item.id,
+        firstName: `${item?.firstName} ${item?.lastName}`,
+        id: item?.id,
       }))
       setTechnicians(firstLastName)
     }
@@ -62,8 +62,8 @@ const useFetchDataAndUpdate = (selectedCustomerId: any, workOrderData: any) => {
 
     if (customersData) {
       const firstLastName = customersData.map((item) => ({
-        firstName: `${item.firstName} ${item.lastName}`,
-        id: item.id,
+        firstName: `${item?.firstName} ${item?.lastName}`,
+        id: item?.id,
       }))
       setcustomerNameValue(firstLastName)
     }

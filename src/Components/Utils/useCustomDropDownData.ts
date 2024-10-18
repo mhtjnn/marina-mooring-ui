@@ -65,8 +65,8 @@ const useCustomDropDownData = (workOrder: any) => {
     const { customerBasedOnMooringId } = await getCustomerBasedOnMooringIdData()
     if (customerBasedOnMooringId !== null) {
       const firstLastName = customerBasedOnMooringId?.map((item) => ({
-        firstName: `${item.firstName} ${item.lastName}`,
-        id: item.id,
+        firstName: `${item?.firstName} ${item?.lastName}`,
+        id: item?.id,
       }))
       setCustomerBasedOnMooringId(firstLastName)
     }

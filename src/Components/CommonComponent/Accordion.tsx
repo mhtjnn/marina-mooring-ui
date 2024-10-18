@@ -57,8 +57,8 @@ const Accordion = () => {
   }
 
   const firstLastName = (data: any) => {
-    if (data.customerResponseDto.firstName === null) return '-'
-    else return data.customerResponseDto.firstName + ' ' + data.customerResponseDto.lastName
+    if (data?.customerResponseDto?.firstName === null) return '-'
+    else return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
   }
 
   const onPageChange = (event: any) => {
@@ -86,7 +86,7 @@ const Accordion = () => {
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'mooringResponseDto.mooringNumber',
+        id: 'mooringResponseDto?.mooringNumber',
         label: 'Mooring Number',
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
@@ -97,7 +97,7 @@ const Accordion = () => {
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'technicianUserResponseDto.name',
+        id: 'technicianUserResponseDto?.name',
         label: 'Assigned To',
         style: { fontSize: '10px', width: '6vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },

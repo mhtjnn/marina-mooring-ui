@@ -162,8 +162,8 @@ const CustomerOwner = () => {
   }
 
   const firstLastNameCustomerOwner = (data: any) => {
-    if (data.firstName === null) return '-'
-    else return data.firstName + ' ' + data.lastName
+    if (data?.firstName === null) return '-'
+    else return data?.firstName + ' ' + data?.lastName
   }
 
   const customerOwnerTableColumn = useMemo(
@@ -230,8 +230,8 @@ const CustomerOwner = () => {
   }
 
   const firstLastName = (data: any) => {
-    if (data.firstName === null) return '-'
-    else return data.firstName + ' ' + data.lastName
+    if (data?.firstName === null) return '-'
+    else return data?.firstName + ' ' + data?.lastName
   }
 
   const customerOwnerUserTableColumn = useMemo(
@@ -282,7 +282,7 @@ const CustomerOwner = () => {
         },
       },
       {
-        id: 'roleResponseDto.name',
+        id: 'roleResponseDto?.name',
         label: 'Role',
         style: {
           borderBottom: '1px solid #D5E1EA',
@@ -573,8 +573,8 @@ const CustomerOwner = () => {
                   rowStyle={(rowData) => rowData}
                   columns={customerOwnerTableColumn}
                   onRowClick={(e) => {
-                    dispatch(setCustomerName(e.data.firstName + ' ' + e.data.lastName))
-                    dispatch(setCustomerId(e.data.id))
+                    dispatch(setCustomerName(e.data?.firstName + ' ' + e.data?.lastName))
+                    dispatch(setCustomerId(e.data?.id))
                   }}
                   style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '500' }}
                   actionButtons={ActionButtonColumn}

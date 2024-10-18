@@ -157,8 +157,14 @@ const Dashboard = () => {
   }
 
   const firstLastName = (data: any) => {
-    if (data.customerResponseDto.firstName === null) return '-'
-    else return data.customerResponseDto.firstName + ' ' + data.customerResponseDto.lastName
+    if (data?.customerResponseDto === null && data?.customerResponseDto?.firstName === undefined)
+      return '-'
+    else if (
+      data?.customerResponseDto?.firstName === null &&
+      data?.customerResponseDto?.firstName === undefined
+    )
+      return '-'
+    else return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
   }
 
   const Mooringcolumns: TableColumnProps[] = useMemo(
@@ -244,7 +250,7 @@ const Dashboard = () => {
         style: { fontSize: '10px', width: '4.5vw', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'mooringResponseDto.mooringNumber',
+        id: 'mooringResponseDto?.mooringNumber',
         label: 'Mooring Number',
         style: { fontSize: '10px', backgroundColor: '#FFFFFF', color: '#000000' },
       },
@@ -255,7 +261,7 @@ const Dashboard = () => {
         style: { fontSize: '10px', backgroundColor: '#FFFFFF', color: '#000000' },
       },
       {
-        id: 'technicianUserResponseDto.name',
+        id: 'technicianUserResponseDto?.name',
         label: 'Assigned To',
         body: TechnicianfirstLastName,
         style: { fontSize: '10px', backgroundColor: '#FFFFFF', color: '#000000' },

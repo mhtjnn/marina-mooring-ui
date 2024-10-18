@@ -211,8 +211,8 @@ const Customer = () => {
   }
 
   const handleCustomerTableRowClick = (rowData: any) => {
-    setCustomerId(rowData.data.id)
-    getCustomersWithMooring(rowData.data.id)
+    setCustomerId(rowData.data?.id)
+    getCustomersWithMooring(rowData.data?.id)
   }
 
   const handleMooringTableRowClick = (rowData: any) => {
@@ -221,8 +221,8 @@ const Customer = () => {
   }
 
   const firstLastName = (data: any) => {
-    if (data.firstName === null) return '-'
-    else return data.firstName + ' ' + data.lastName
+    if (data?.firstName === null) return '-'
+    else return data?.firstName + ' ' + data?.lastName
   }
 
   const handleHeaderClick = (columnId: any) => {
@@ -343,7 +343,7 @@ const Customer = () => {
           color: 'black',
           label: 'View Image',
           onClick: (data) => {
-            setShowImage((prev) => ({ ...prev, id: data.id, imageData: data.imageData }))
+            setShowImage((prev) => ({ ...prev, id: data?.id, imageData: data?.imageData }))
             setImageVisible(true)
           },
           underline: true,

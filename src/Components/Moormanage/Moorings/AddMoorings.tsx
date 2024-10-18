@@ -177,8 +177,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     if (customersData !== null) {
       setIsLoading(false)
       const firstLastName = customersData.map((item) => ({
-        label: item.firstName + ' ' + item.lastName,
-        value: item.id,
+        label: item?.firstName + ' ' + item?.lastName,
+        value: item?.id,
       }))
       setcustomerName(firstLastName)
     }

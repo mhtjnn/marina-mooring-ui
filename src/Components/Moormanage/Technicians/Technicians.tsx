@@ -127,7 +127,7 @@ const Technicians = () => {
   const WorkOrdersColumn = useMemo(
     () => [
       { id: 'id', label: 'ID', style: WorkOrdersColumnStyle },
-      { id: 'mooringResponseDto.mooringNumber', label: 'Mooring', style: WorkOrdersColumnStyle },
+      { id: 'mooringResponseDto?.mooringNumber', label: 'Mooring', style: WorkOrdersColumnStyle },
       {
         id: 'firstName',
         label: 'Customer Name',
@@ -546,7 +546,6 @@ const Technicians = () => {
               backgroundColor: '#FFFFFF',
               marginRight: '50px',
               width: '700px',
-              
             }}>
             <div className="flex justify-between mt-6  mb-3 ">
               <div className="font-bold ml-5">

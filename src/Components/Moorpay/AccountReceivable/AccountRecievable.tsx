@@ -236,7 +236,7 @@ const AccountRecievable = () => {
   const outstandingInvoiceTableColumn = useMemo(
     () => [
       {
-        id: 'workOrderResponseDto.workOrderNumber',
+        id: 'workOrderResponseDto?.workOrderNumber',
         label: 'Work Order Number',
         style: AccountRecievableColumnStyle,
       },

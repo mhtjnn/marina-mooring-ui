@@ -50,9 +50,9 @@ const Settings = () => {
   }
 
   const firstLastName = (data: any) => {
-    if (data.firstName === null) return '-'
-    if (data.lasttName === null) return '-'
-    else return data.firstName + ' ' + data.lastName
+    if (data?.firstName === null) return '-'
+    if (data?.lasttName === null) return '-'
+    else return data?.firstName + ' ' + data?.lastName
   }
 
   const tableColumnsPermission = useMemo(
@@ -64,7 +64,7 @@ const Settings = () => {
         style: columnStyle,
       },
       {
-        id: 'quickbookCustomerResponseDto.id',
+        id: 'quickbookCustomerResponseDto?.id',
         label: 'QuickBook Customer Name',
         style: columnStyle,
         body: (rowData: {
@@ -201,9 +201,9 @@ const Settings = () => {
     const { quickBookCustomerData } = await getQuickBookCustomerData()
     if (quickBookCustomerData !== null) {
       const parsedData = quickBookCustomerData?.map((item: any) => ({
-        label: item.quickbookCustomerFirstName + ' ' + item.quickbookCustomerLastName,
-        id: item.id,
-        quickbookCustomerId: item.quickbookCustomerId,
+        label: item?.quickbookCustomerFirstName + ' ' + item?.quickbookCustomerLastName,
+        id: item?.id,
+        quickbookCustomerId: item?.quickbookCustomerId,
       }))
       setQuickBookCustomer(parsedData)
     }

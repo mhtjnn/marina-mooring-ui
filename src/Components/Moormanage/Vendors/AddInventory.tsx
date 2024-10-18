@@ -145,7 +145,7 @@ const AddInventory: React.FC<AddInventoryProps> = ({
       toastRef?.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: data.message,
+        detail: data?.message,
         life: 3000,
       })
     }

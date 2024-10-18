@@ -80,7 +80,7 @@ export const formatGpsCoordinates = (gpsCoordinatesValue: any): [number, number]
   return [39.4926173, -117.5714859]
 }
 export const dataToPdf = (data: any[], toast: any) => {
-  if (!Array.isArray(data) || data.length === 0) {
+  if (!Array.isArray(data) || data?.length === 0) {
     const message = 'Invalid data provided. Expected an array of objects.'
     toast?.current?.show({
       severity: 'error',
@@ -119,23 +119,23 @@ export const dataToPdf = (data: any[], toast: any) => {
   addHeaders()
   yPosition += 5 // Additional space between headers and values
   doc.setFontSize(10)
-  data.forEach((item, rowIndex) => {
+  data?.forEach((item, rowIndex) => {
     let xPosition = xStart
     const row = [
       item?.customerResponseDto?.firstName && item?.customerResponseDto?.lastName
-        ? `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`
+        ? `${item?.customerResponseDto?.firstName} ${item?.customerResponseDto?.lastName}`
         : 'N/A',
       item?.mooringResponseDto?.mooringNumber
-        ? item.mooringResponseDto.mooringNumber.toString()
+        ? item?.mooringResponseDto?.mooringNumber.toString()
         : 'N/A',
       item?.boatyardResponseDto?.boatyardId
-        ? item.boatyardResponseDto.boatyardId.toString()
+        ? item?.boatyardResponseDto?.boatyardId.toString()
         : 'N/A',
       item?.technicianUserResponseDto?.firstName && item?.technicianUserResponseDto?.lastName
-        ? `${item.technicianUserResponseDto.firstName} ${item.technicianUserResponseDto.lastName}`
+        ? `${item?.technicianUserResponseDto?.firstName} ${item?.technicianUserResponseDto?.lastName}`
         : 'N/A',
-      item?.dueDate ? item.dueDate.toString() : 'N/A',
-      item?.workOrderStatusDto?.status ? item.workOrderStatusDto.status : 'N/A',
+      item?.dueDate ? item?.dueDate.toString() : 'N/A',
+      item?.workOrderStatusDto?.status ? item?.workOrderStatusDto.status : 'N/A',
     ]
     row.forEach((cell, colIndex) => {
       const textLines = doc.splitTextToSize(cell.toString(), columnWidths[colIndex])
@@ -143,7 +143,7 @@ export const dataToPdf = (data: any[], toast: any) => {
       xPosition += columnWidths[colIndex]
     })
     yPosition += 10
-    if ((rowIndex + 1) % recordsPerPage === 0 && rowIndex + 1 < data.length) {
+    if ((rowIndex + 1) % recordsPerPage === 0 && rowIndex + 1 < data?.length) {
       doc.addPage()
       yPosition = yStart
       addHeaders()

@@ -34,6 +34,6 @@ export const parseTime = (timeString: any) => {
 }
 
 export const firstLastName = (data: any) => {
-  if (data.firstName === null) return '-'
-  else return data.firstName + ' ' + data.lastName
+  if (data?.firstName === null) return '-'
+  else return data?.firstName + ' ' + data?.lastName
 }

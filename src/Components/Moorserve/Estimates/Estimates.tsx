@@ -86,7 +86,7 @@ const Estimates = () => {
   }
 
   const firstLastName = (data: any) => {
-    return data.customerResponseDto.firstName + ' ' + data.customerResponseDto.lastName
+    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
   }
   const TechnicianfirstLastName = (data: any) => {
     return (
@@ -97,7 +97,7 @@ const Estimates = () => {
   const workOrderColumns = useMemo(
     () => [
       {
-        id: 'customerResponseDto.customerId',
+        id: 'customerResponseDto?.customerId',
         label: 'Customer ID',
         style: columnStyle,
       },
@@ -108,17 +108,17 @@ const Estimates = () => {
         body: firstLastName,
       },
       {
-        id: 'mooringResponseDto.mooringNumber',
+        id: 'mooringResponseDto?.mooringNumber',
         label: 'Mooring Number',
         style: columnStyle,
       },
       {
-        id: 'boatyardResponseDto.boatyardId',
+        id: 'boatyardResponseDto?.boatyardId',
         label: 'Boatyard',
         style: columnStyle,
       },
       {
-        id: 'technicianUserResponseDto.name',
+        id: 'technicianUserResponseDto?.name',
         label: 'Assigned to',
         style: columnStyle,
         body: TechnicianfirstLastName,
@@ -204,12 +204,12 @@ const Estimates = () => {
 
   const dataToXlsx = (data: WorkOrderPayload[], fileName = 'EstimateData.xlsx') => {
     const formattedData = data?.map((item) => ({
-      CustomerName: `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`,
-      MooringNumber: item.mooringResponseDto.mooringNumber,
-      Boatyard: item.boatyardResponseDto.boatyardId,
-      AssignedTo: `${item.technicianUserResponseDto.firstName} ${item.technicianUserResponseDto.lastName}`,
-      DueDate: item.dueDate,
-      Status: item.workOrderStatusDto.status,
+      CustomerName: `${item?.customerResponseDto?.firstName} ${item?.customerResponseDto?.lastName}`,
+      MooringNumber: item?.mooringResponseDto?.mooringNumber,
+      Boatyard: item?.boatyardResponseDto?.boatyardId,
+      AssignedTo: `${item?.technicianUserResponseDto?.firstName} ${item?.technicianUserResponseDto?.lastName}`,
+      DueDate: item?.dueDate,
+      Status: item?.workOrderStatusDto.status,
     }))
 
     const worksheet = utils.json_to_sheet(formattedData)

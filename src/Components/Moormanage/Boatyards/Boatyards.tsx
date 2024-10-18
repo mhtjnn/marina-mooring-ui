@@ -288,7 +288,7 @@ const Boatyards = () => {
             setSelectedMooring(content[0])
             setTotalRecords(totalSize)
             if (selectedBoatYard) {
-              const data = content.find((data) => data.id === selectedBoatYard.id)
+              const data = content.find((data) => data?.id === selectedBoatYard.id)
               if (data) {
                 setSelectedBoatYard(data)
               }

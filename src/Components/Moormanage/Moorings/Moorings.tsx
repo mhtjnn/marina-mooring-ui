@@ -256,7 +256,7 @@ const Moorings = () => {
         },
       },
       {
-        id: 'serviceAreaResponseDto.serviceAreaName',
+        id: 'serviceAreaResponseDto?.serviceAreaName',
         label: 'Service Area',
         style: {
           borderBottom: '1px solid #C0C0C0',
@@ -352,7 +352,7 @@ const Moorings = () => {
           color: 'black',
           label: 'View Image',
           onClick: (data) => {
-            setShowImage((prev) => ({ ...prev, id: data.id, imageData: data.imageData }))
+            setShowImage((prev) => ({ ...prev, id: data?.id, imageData: data?.imageData }))
             setImageVisible(true)
           },
           underline: true,

@@ -378,9 +378,9 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           if (workOrderData?.inventoryResponseDtoList?.length > 0) {
             workOrderData.inventoryResponseDtoList.forEach((item: any, index: number) => {
               inventoryRequestDtoList.push({
-                id: item.id,
-                quantity: item.quantity,
-                parentInventoryId: item.parentInventoryId,
+                id: item?.id,
+                quantity: item?.quantity,
+                parentInventoryId: item?.parentInventoryId,
               })
             })
           }
@@ -473,7 +473,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       let vendorList = []
       if (workOrderData?.inventoryResponseDtoList) {
         vendorList = workOrderData.inventoryResponseDtoList
-          .map((item: any) => item.vendorResponseDto)
+          .map((item: any) => item?.vendorResponseDto)
           .filter((vendor: any) => vendor !== null)
 
         vendorList.forEach((vendor: any) => existingVendorIds.add(vendor.id))
@@ -506,8 +506,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
     if (customerBasedOnMooringId !== null) {
       const firstLastName = customerBasedOnMooringId.map((item: any) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
       }))
       setIsLoading(false)
       setCustomerBasedOnMooringId(firstLastName)
@@ -1121,7 +1121,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                       <span>{option.itemName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
                         workOrderData.inventoryResponseDtoList.some(
-                          (item: any) => item.id === option.id,
+                          (item: any) => item?.id === option.id,
                         ) && (
                           <i
                             className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"

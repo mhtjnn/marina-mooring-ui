@@ -535,7 +535,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       toastRef?.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: data.message,
+        detail: data?.message,
         life: 3000,
       })
     }
@@ -797,7 +797,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
 
   useEffect(() => {
     if (checkedDock === true) {
-      setSelectedCustomerType(customerType.find((item: any) => item.id === 5)?.type)
+      setSelectedCustomerType(customerType.find((item: any) => item?.id === 5)?.type)
     } else if (checkedDock === false && !editCustomerMode) {
       setSelectedCustomerType('')
     }

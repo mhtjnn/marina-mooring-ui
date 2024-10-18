@@ -6,12 +6,12 @@ import { Provider } from 'react-redux'
 import { store } from './Store/Store'
 import { ToastContainer } from 'react-toastify'
 import { Toaster } from 'react-hot-toast'
-import { PrimeReactProvider } from 'primereact/api'
 import 'primereact/resources/themes/saga-blue/theme.css'
 import 'primereact/resources/primereact.min.css'
 import './utils.css'
 import { AppProvider } from './Services/ContextApi/AppContext'
 import { FormDataProvider } from './Services/ContextApi/FormDataContext'
+import { PrimeReactProvider } from 'primereact/api'
 const queryClient = new QueryClient()
 const App: React.FC = () => {
   const allPages = useRoutes(routes)

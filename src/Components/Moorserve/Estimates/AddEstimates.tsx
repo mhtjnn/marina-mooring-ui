@@ -409,9 +409,9 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           if (workOrderData?.inventoryResponseDtoList?.length > 0) {
             workOrderData.inventoryResponseDtoList.forEach((item: any, index: number) => {
               inventoryRequestDtoList.push({
-                id: item.id,
-                quantity: item.quantity,
-                parentInventoryId: item.parentInventoryId,
+                id: item?.id,
+                quantity: item?.quantity,
+                parentInventoryId: item?.parentInventoryId,
               })
             })
           }
@@ -479,8 +479,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     const { boatYardName } = await getBoatYardNameData()
     if (getTechnicians !== null) {
       const firstLastName = getTechnicians.map((item) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
       }))
       setIsLoading(false)
       setTechnicians(firstLastName)
@@ -496,8 +496,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     }
     if (customersData !== null) {
       const firstLastName = customersData.map((item) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
       }))
       setIsLoading(false)
       setcustomerNameValue(firstLastName)
@@ -515,7 +515,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setVendorsName(vendorValue)
       if (workOrderData?.inventoryResponseDtoList) {
         const vendorList = workOrderData?.inventoryResponseDtoList
-          ?.map((item: any) => item.vendorResponseDto)
+          ?.map((item: any) => item?.vendorResponseDto)
           .filter((vendor: any) => vendor !== null)
         setVendorsName((prevState) => [...prevState, ...vendorList])
       }
@@ -551,8 +551,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
 
     if (customerBasedOnMooringId !== null) {
       const firstLastName = customerBasedOnMooringId.map((item: any) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
       }))
       setIsLoading(false)
       setCustomerBasedOnMooringId(firstLastName)
@@ -967,7 +967,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                       <span>{option.vendorName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
                         workOrderData.inventoryResponseDtoList.some(
-                          (item: any) => item?.vendorResponseDto.id === option.id,
+                          (item: any) => item?.vendorResponseDto?.id === option.id,
                         ) && (
                           <i
                             className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
@@ -1007,7 +1007,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                       <span>{option.itemName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
                         workOrderData.inventoryResponseDtoList.some(
-                          (item: any) => item.id === option.id,
+                          (item: any) => item?.id === option.id,
                         ) && (
                           <i
                             className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"

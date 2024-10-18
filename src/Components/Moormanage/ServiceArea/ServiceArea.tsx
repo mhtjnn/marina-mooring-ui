@@ -307,7 +307,7 @@ const ServiceArea = () => {
             setSelectedMooring(content[0])
             setTotalRecords(totalSize)
             if (selectedServiceArea) {
-              const data = content.find((data) => data.id === selectedServiceArea.id)
+              const data = content.find((data) => data?.id === selectedServiceArea.id)
               if (data) {
                 setSelectedServiceArea(data)
               }
