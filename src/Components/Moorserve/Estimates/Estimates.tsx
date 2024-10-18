@@ -22,6 +22,7 @@ import React from 'react'
 import { properties } from '../../Utils/MeassageProperties'
 import { AddNewButtonStyle } from '../../Utils/Style'
 import AddEstimates from './AddEstimates'
+import { TechnicianfirstLastName, firstLastName } from '../../Helper/Helper'
 
 const Estimates = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -83,15 +84,6 @@ const Estimates = () => {
     color: '#000000',
     fontWeight: '700',
     fontSize: '12px',
-  }
-
-  const firstLastName = (data: any) => {
-    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
-  }
-  const TechnicianfirstLastName = (data: any) => {
-    return (
-      data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
-    )
   }
 
   const workOrderColumns = useMemo(

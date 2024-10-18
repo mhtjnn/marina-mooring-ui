@@ -240,6 +240,7 @@ const Moorings = () => {
           borderBottom: '1px solid #C0C0C0',
           fontWeight: '700',
           color: '#000000',
+          width: '3vw',
           backgroundColor: '#FFFFFF',
         },
       },

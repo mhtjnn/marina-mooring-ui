@@ -35,8 +35,7 @@ import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
 import { validateFieldsForMoorings } from '../../Utils/RegexUtils'
-import { formatDate } from '../../Utils/CommonMethod'
-import { parseDate } from 'pdf-lib'
+import { formatDate, parseDate } from '../../Utils/CommonMethod'
 
 const AddMoorings: React.FC<AddMooringProps> = ({
   moorings,
@@ -60,7 +59,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const { getCustomersData } = CustomersData(selectedCustomerId)
   const { getBoatYardNameData } = BoatyardNameData(selectedCustomerId)
   const { getServiceAreaData } = ServiceAreaData()
-
   const [type, setType] = useState<MetaData[]>([])
   const [mooringStatus, setMooringStatus] = useState<MetaData[]>([])
   const [weightData, setWeightData] = useState<MetaData[]>([])
@@ -90,7 +88,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
-
   const [saveMoorings] = useAddMooringsMutation()
   const [updateMooring] = useUpdateMooringsMutation()
   const [isLoading, setIsLoading] = useState(true)
@@ -229,11 +226,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       })
     }
   }
-
-  const uploadImages = () => {
-    setImageVisible(true)
-  }
-
   const handleRemoveImage = (index: number) => {
     setMooringImages((prevImages) => prevImages.filter((_, i) => i !== index))
     setEncodedImages((prevEncoded) => prevEncoded.filter((_, i) => i !== index))
@@ -331,6 +323,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       serviceAreaId: mooringRowData?.serviceAreaResponseDto?.serviceAreaName || '',
       mooringStatus: mooringRowData?.mooringStatus?.status || '',
     }))
+    console.log('mooringRowData?.installBottomChainDate', mooringRowData?.installBottomChainDate)
+    console.log('formData', formData)
 
     if (mooringRowData?.mooringStatus?.id !== 2) {
       setFormData((prevData: any) => ({
@@ -765,7 +759,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                     paddingLeft: '0.5rem',
                     cursor: 'pointer',
                   }}>
-                  <div onClick={uploadImages} className="flex gap-3 text-center">
+                  <div onClick={() => setImageVisible(true)} className="flex gap-3 text-center">
                     <FaFileUpload
                       style={{ fontSize: '22px', color: '#0098FF', marginTop: '3px' }}
                     />

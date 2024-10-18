@@ -220,9 +220,7 @@ const Customer = () => {
     setDialogVisible(true)
     setMooringRowData(rowData.data)
   }
-  const handleHeaderClick = (columnId: any) => {
-    setSortable(!sortable)
-  }
+
   const customerType = (data: any) => {
     if (data?.customerTypeDto?.type === null) return <div className={'ml-5'}>-</div>
     else return data?.customerTypeDto?.type
@@ -238,7 +236,6 @@ const Customer = () => {
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
       {
         id: 'customerTypeDto.type',
@@ -250,7 +247,7 @@ const Customer = () => {
           fontSize: '12px',
           color: '#000000',
         },
-        onHeaderClick: () => handleHeaderClick('customerType'),
+        onHeaderClick: () => setSortable(!sortable),
       },
       {
         id: 'firstName',
@@ -262,29 +259,34 @@ const Customer = () => {
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
       {
         id: 'emailAddress',
         label: 'Email:',
+        body: (rowData: any) => {
+          if (rowData?.emailAddress === null) return <div className={'ml-5'}>-</div>
+          else return rowData?.emailAddress
+        },
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
       {
         id: 'phone',
         label: 'Phone:',
+        body: (rowData: any) => {
+          if (rowData?.phone === '') return <div className={'ml-5'}>-</div>
+          else return rowData?.phone
+        },
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
     ],
     [],

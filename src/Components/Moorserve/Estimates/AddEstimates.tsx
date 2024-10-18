@@ -134,25 +134,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       return moorings
     }
   })()
-
-  const validateFields = () => {
-    const errors: { [key: string]: string } = {}
-    if (!workOrder.customerName) {
-      errors.customerName = 'Customer Name is required'
-    }
-    if (!workOrder.workOrderStatus) {
-      errors.workOrderStatus = 'Status is required'
-    }
-    if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
-      errors.vendor = 'Vendor is required'
-    }
-    if (!workOrder.inventory && vendorId) {
-      errors.inventory = 'Item Name is required'
-    }
-    setErrorMessage(errors)
-    return errors
-  }
-
   const handleInputChange = (field: string, value: any) => {
     const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
@@ -211,9 +192,10 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         workOrderData?.customerResponseDto?.lastName,
       boatyards: workOrderData?.boatyardResponseDto?.boatyardName,
       assignedTo:
+        workOrderData?.technicianUserResponseDto &&
         workOrderData?.technicianUserResponseDto?.firstName +
-        ' ' +
-        workOrderData?.technicianUserResponseDto?.lastName,
+          ' ' +
+          workOrderData?.technicianUserResponseDto?.lastName,
       dueDate: workOrderData?.dueDate,
       scheduleDate: workOrderData?.scheduledDate,
       workOrderStatus: workOrderData?.workOrderStatusDto?.status,
