@@ -20,6 +20,9 @@ import { properties } from '../../Utils/MeassageProperties'
 import { WorkOrderValue } from '../../../Type/ComponentBasedType'
 import { jsPDF } from 'jspdf'
 import { AddNewButtonStyle } from '../../Style'
+import AddWorkOrder2 from './AddWorkOrder2'
+import { IoMdSave } from "react-icons/io";
+import { Dialog } from 'primereact/dialog'
 
 const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -372,38 +375,88 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
               }}>
               Export To PDF
             </Button>
-            <div className="items-center">
+            
+
+
+
+               <div className="items-center">
               <CustomModal
                 buttonText={'ADD NEW'}
                 icon={
-                  <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8  mb-0.5" />
+                  <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8 mb-0.5" />
                 }
-                children={
-                  <AddWorkOrders
-                    workOrderData={selectedCustomer}
-                    setWorkOrderData={setSelectedCustomer}
-                    editModeWorkOrder={editMode}
-                    setVisible={setVisible}
-                    visible={visible}
-                    toastRef={toast}
-                    closeModal={handleModalClose}
-                    isAccountRecievable={false}
-                  />
+                children={<AddWorkOrder2 
+                   workOrderData={selectedCustomer}
+                  setWorkOrderData={setSelectedCustomer}
+                  editModeWorkOrder={editMode}
+                  setVisible={setVisible}
+                  visible={visible}
+                  toastRef={toast}
+                  closeModal={handleModalClose}
+                  isAccountRecievable={false}/>}
+                visible={visible}
+                onClick={handleButtonClick}
+                onHide={() => { }}
+                buttonStyle={{ ...AddNewButtonStyle, marginTop: '-16px' }}
+                dialogStyle={{
+                  width: '800px',
+                  height: '526px'
+                }}
+              />
+            </div>
+            <style>
+              {`
+               .p-dialog-header-icon {
+                display: none !important}
+               .p-dialog-content {
+                padding: 0 !important}
+                .p-dialog-header, .p-dialog-footer {
+                  padding: 0 !important;
+                  margin: 0 !important;
                 }
-                headerText={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}
+                .p-component {
+                  padding: 0 !important
+                  margin: 0 !important
+                  .p-dialog-body {
+                    padding: 0 !important;
+                    margin: 0 !important;
+                  }
+              `}
+            </style> 
+ 
+
+
+               {/* 
+
+              <div className="items-center">
+              <CustomModal
+                buttonText={'ADD NEW'}
+                icon={
+                  <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8 mb-0.5" />
+                }
+                children={<AddWorkOrder2
+                  workOrderData={selectedCustomer}
+                  setWorkOrderData={setSelectedCustomer}
+                  editModeWorkOrder={editMode}
+                  setVisible={setVisible}
+                  visible={visible}
+                  toastRef={toast}
+                  closeModal={handleModalClose}
+                  isAccountRecievable={false}/>}
                 visible={visible}
                 onClick={handleButtonClick}
                 onHide={handleModalClose}
                 buttonStyle={{ ...AddNewButtonStyle, marginTop: '-16px' }}
                 dialogStyle={{
                   width: '800px',
-                  height: '526px',
-                  borderRadius: '1rem',
+                  height: '526px'
                 }}
-              />
-            </div>
-          </div>
-        )}
+               />
+              </div> */}
+
+              </div> 
+        )} 
+
 
         <div
           style={{
