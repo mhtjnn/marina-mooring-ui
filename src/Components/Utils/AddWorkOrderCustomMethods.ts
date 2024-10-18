@@ -87,11 +87,13 @@ export const handleEditMode = ({
 }: WorkOrderEditModeProps) => {
   setWorkOrder((prevState: any) => ({
     ...prevState,
-    mooringId: workOrderData?.mooringResponseDto?.mooringNumber,
+    mooringId:
+      workOrderData?.mooringResponseDto && workOrderData?.mooringResponseDto?.mooringNumber,
     customerName:
+      workOrderData?.customerResponseDto &&
       workOrderData?.customerResponseDto?.firstName +
-      ' ' +
-      workOrderData?.customerResponseDto?.lastName,
+        ' ' +
+        workOrderData?.customerResponseDto?.lastName,
     boatyards: workOrderData?.boatyardResponseDto?.boatyardName,
     assignedTo:
       workOrderData?.technicianUserResponseDto &&

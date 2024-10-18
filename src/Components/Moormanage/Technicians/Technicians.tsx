@@ -26,6 +26,7 @@ import { Toast } from 'primereact/toast'
 import { Paginator } from 'primereact/paginator'
 import { Dialog } from 'primereact/dialog'
 import AddWorkOrders from '../../Moorserve/WorkOrders/AddWorkOrders'
+import { firstLastName } from '../../Helper/Helper'
 
 const Technicians = () => {
   const [dateFrom, setDateFrom] = useState<any>()
@@ -119,9 +120,6 @@ const Technicians = () => {
     setSelectedWorkOredrRowData(row)
     setAddWorkOrderModal(true)
     setModalVisible(true)
-  }
-  const firstLastName = (data: any) => {
-    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
   }
 
   const WorkOrdersColumn = useMemo(

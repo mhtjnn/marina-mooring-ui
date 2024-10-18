@@ -21,7 +21,7 @@ const UploadImages: React.FC<ShowImagesProps> = ({
   return (
     <div>
       <Toast ref={toastRef} />
-      <div className={`ml-4 ${isLoading ? 'blurred' : ''}`} style={{ marginBottom: '60px' }}>
+      <div className={`ml-4`} style={{ marginBottom: '60px' }}>
         <div className="flex justify-center text-center">
           <div className="mt-6">
             <input
@@ -128,7 +128,7 @@ const UploadImages: React.FC<ShowImagesProps> = ({
       </div>
 
       <div
-        className={`flex gap-4 ml-4 absolute bottom-0 left-0 right-0 ${isLoading ? 'blurred' : ''}`}
+        className={`flex gap-4 ml-4 absolute bottom-0 left-0 right-0 `}
         style={{ padding: '16px', backgroundColor: 'white' }}>
         <Button
           label={'Close'}

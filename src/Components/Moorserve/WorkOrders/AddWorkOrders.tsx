@@ -1363,7 +1363,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         }}
         visible={imageVisible}
         header="Images"
-        onHide={handleModalClose}
+        onHide={() => setImageVisible(false)}
         children={
           <ShowImages
             handleNoteChange={handleNoteChange}
