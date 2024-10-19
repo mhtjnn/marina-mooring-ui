@@ -14,7 +14,6 @@ import { Params } from '../../../Type/CommonType'
 import ReasonModal from './ReasonModal'
 import ApproveModal from './ApproveModal'
 import { properties } from '../../Utils/MeassageProperties'
-import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
 import {
   useGetCompletedWorkOrderWithPendingPayApprovalMutation,
   useGetWorkOrderInvoicesMutation,
@@ -32,6 +31,7 @@ import {
   WorkOrderPendingApprovalDataTableStyle,
 } from '../../Utils/Style'
 import { firstLastName } from '../../Helper/Helper'
+import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
 
 const AccountRecievable = () => {
   const toast = useRef<Toast>(null)

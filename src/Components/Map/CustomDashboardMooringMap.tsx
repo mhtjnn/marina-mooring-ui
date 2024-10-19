@@ -179,7 +179,7 @@ const CustomDashboardMooringMap: React.FC<CustomMooringPositionMapProps> = ({
                           mooringId={mooring?.mooringNumber}
                           mooringData={mooring}
                           selectedMooring={mooring}
-                          boatId={mooring?.boatId}
+                          boatId={mooring?.mooringNumber}
                           boatName={mooring?.boatName}
                         />
                       </Popup>

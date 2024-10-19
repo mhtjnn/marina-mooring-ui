@@ -55,6 +55,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
     setMapModalOpen((prevState: any) => ({ ...prevState, editMode: false }))
     setCustomerModalVisible(false)
   }
+  console.log('mooringData', mooringData)
 
   return (
     <>
@@ -64,17 +65,9 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
           <div>
             <p className="text-sm m-0 font-bold text-white">
               {mooringPage ? (
-                <>
-                  {mooringData?.boatId != null && mooringData?.boatId}
-                  <br />
-                  {mooringData?.boatName != null && mooringData?.boatName}
-                </>
+                <>{mooringData?.mooringNumber != null && mooringData?.mooringNumber}</>
               ) : (
-                <>
-                  {boatId != null && boatId}
-                  <br />
-                  {boatName != null && boatName}
-                </>
+                <>{boatId != null && boatId}</>
               )}
             </p>
           </div>
@@ -92,7 +85,6 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
             onClick={viewEdit}>
             View/edit
           </p>
-          <p className="text-xs text-white">ID: {mooringId}</p>
         </div>
 
         {customerModalVisible && (
