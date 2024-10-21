@@ -359,20 +359,18 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       const editPayload: any = {}
       if (workOrderData?.mooringResponseDto?.id) {
         if (workOrder?.mooringId?.id) {
-          editPayload.mooringId = workOrder?.mooringId?.id 
-        } else { 
+          editPayload.mooringId = workOrder?.mooringId?.id
+        } else {
           editPayload.mooringId = workOrderData?.mooringResponseDto?.id
         }
       } else if (workOrder?.mooringId?.id) {
-        editPayload.mooringId = workOrder?.mooringId?.id; 
+        editPayload.mooringId = workOrder?.mooringId?.id
       }
       if (workOrderData?.boatyardResponseDto?.id) {
-        if (workOrder?.boatyards?.id) 
-          {
-            editPayload.boatyardId = workOrder?.boatyards?.id 
-          }
-        else {
-          editPayload.boatyardId = workOrderData?.boatyardResponseDto?.id 
+        if (workOrder?.boatyards?.id) {
+          editPayload.boatyardId = workOrder?.boatyards?.id
+        } else {
+          editPayload.boatyardId = workOrderData?.boatyardResponseDto?.id
         }
       } else if (workOrder?.boatyards?.id) {
         editPayload.boatyardId = workOrder?.boatyards?.id
@@ -400,8 +398,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         editPayload.problem = workOrder?.value
       }
       if (imageRequestDtoList && imageRequestDtoList.length > 0) {
-        console.log('imageRequestDtoList', imageRequestDtoList)
-
         editPayload.imageRequestDtoList = imageRequestDtoList
       }
       const formattedTime = '00:' + formatTime(time.minutes, time.seconds)

@@ -244,7 +244,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
           color: 'red',
           label: 'Delete',
           onClick: (data) => {
-            deleteWorkOrderVoiceMemo(data?.id)
+            deleteWorkOrderVoiceMemo(data?.id, workOrderId)
           },
           underline: true,
           style: {
@@ -424,14 +424,14 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
     }
   }
 
-  const deleteWorkOrderVoiceMemo = async (id: any) => {
+  const deleteWorkOrderVoiceMemo = async (id: any, workOrderID?: any) => {
     setIsLoading(true)
     try {
       const response = await deleteVoiceMemo({ id: id }).unwrap()
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
         setIsLoading(false)
-        getWorkOrderDataById(workOrderId)
+        if (workOrderId) getWorkOrderDataById(workOrderId)
         toast?.current?.show({
           severity: 'success',
           summary: 'Success',
