@@ -3,6 +3,7 @@ import { Button } from 'primereact/button'
 import AddWorkOrders from './AddWorkOrders'
 import { ErrorResponse, WorkOrderPayload, WorkOrderResponse } from '../../../Type/ApiTypes'
 import {
+  useDeleteVoiceMemoMutation,
   useGetVoiceMemoMutation,
   useGetWorkOrderByIdMutation,
   useGetWorkOrdersMutation,
@@ -65,6 +66,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
   const [getWorkOrder] = useGetWorkOrdersMutation()
   const [getWorkOrderById] = useGetWorkOrderByIdMutation()
   const [getVoiceMemo] = useGetVoiceMemoMutation()
+  const [deleteVoiceMemo] = useDeleteVoiceMemoMutation()
 
   const handleToggle = (faq: SetStateAction<string>) => {
     if (faq === 'faq1' && accordion === 'faq1') {
@@ -231,11 +233,10 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
           },
         },
         {
-          color: 'black',
+          color: 'red',
           label: 'Delete',
           onClick: (data) => {
-            setImageData(data)
-            setImageEditVisible(true)
+            deleteWorkOrderVoiceMemo(data?.id)
           },
           underline: true,
           style: {
@@ -374,6 +375,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       if (status === 200) {
         setWorkOrderImages(content?.imageResponseDtoList)
         setVoiceMemo(content?.voiceMEMOResponseDtoList)
+        setIsLoading(false)
       } else {
         setIsLoading(false)
         toast?.current?.show({
@@ -397,6 +399,37 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
         setPlayVoiceMemo(content)
+        setIsLoading(false)
+      } else {
+        setIsLoading(false)
+        toast?.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: message,
+          life: 3000,
+        })
+      }
+    } catch (error) {
+      const { message: msg } = error as ErrorResponse
+      setIsLoading(false)
+      console.error('Error occurred while fetching customer data:', msg)
+    }
+  }
+
+  const deleteWorkOrderVoiceMemo = async (id: any) => {
+    setIsLoading(true)
+    try {
+      const response = await deleteVoiceMemo({ id: id }).unwrap()
+      const { status, content, message, totalSize } = response as WorkOrderResponse
+      if (status === 200) {
+        toast?.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: message,
+          life: 3000,
+        })
+        setIsLoading(false)
+        getWorkOrderById(workOrderId)
       } else {
         setIsLoading(false)
         toast?.current?.show({

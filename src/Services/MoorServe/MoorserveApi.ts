@@ -245,6 +245,13 @@ const MoorserveApi = userApi.injectEndpoints({
         body: payload,
       }),
     }),
+
+    DeleteVoiceMemo: builder.mutation({
+      query: ({ id }: { id?: string }) => ({
+        url: `api/v1/voiceMEMO/deleteVoiceMEMO/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 })
 
@@ -270,4 +277,5 @@ export const {
   useDeleteFormMutation,
   useGetViewFormMutation,
   useGetVoiceMemoMutation,
+  useDeleteVoiceMemoMutation,
 } = MoorserveApi
