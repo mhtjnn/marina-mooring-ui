@@ -116,6 +116,9 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
     style: { borderBottom: '1px solid #D5E1EA' },
   }
 
+  const ReasonForDenial = (data: any) => {
+    return data?.reasonForDenial !== null ? data?.reasonForDenial : '-'
+  }
   const workOrderColumns = useMemo(
     () => [
       {
@@ -136,7 +139,12 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
         body: TechnicianfirstLastName,
       },
       { id: 'dueDate', label: 'Due Date', style: AccountRecievableColumnStyle },
-      { id: 'reason', label: 'Notes', style: AccountRecievableColumnStyle },
+      {
+        id: 'reasonForDenial',
+        label: 'Notes',
+        style: AccountRecievableColumnStyle,
+        body: ReasonForDenial,
+      },
       { id: 'workOrderStatusDto.status', label: 'Status', style: AccountRecievableColumnStyle },
     ],
     [],
@@ -422,14 +430,14 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       const response = await deleteVoiceMemo({ id: id }).unwrap()
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
+        setIsLoading(false)
+        getWorkOrderDataById(workOrderId)
         toast?.current?.show({
           severity: 'success',
           summary: 'Success',
           detail: message,
           life: 3000,
         })
-        setIsLoading(false)
-        getWorkOrderById(workOrderId)
       } else {
         setIsLoading(false)
         toast?.current?.show({
