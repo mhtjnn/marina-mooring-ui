@@ -36,4 +36,5 @@ export const properties = {
   OutstandingInvoicesHeader: 'Outstanding Invoices',
   exportToPdfText: 'Export To PDF',
   buttonText: 'ADD NEW',
+  voiceMemoHeader: 'Voice Memo',
 }

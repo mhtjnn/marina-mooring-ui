@@ -256,6 +256,11 @@ export interface ViewImageProps {
   setImageVisible: React.Dispatch<React.SetStateAction<boolean>>
   showImage: any
 }
+export interface PlayVoiceMemoProps {
+  imageVisible: boolean
+  setImageVisible: React.Dispatch<React.SetStateAction<boolean>>
+  voiceMemo: any
+}
 export interface EditImageProps {
   imageEditVisible: any
   setImageEditVisible: React.Dispatch<React.SetStateAction<boolean>>

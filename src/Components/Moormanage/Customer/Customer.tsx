@@ -478,7 +478,6 @@ const Customer = () => {
         style={{
           height: 'calc(100vh - 200px)',
           minHeight: 'calc(100vh - 200px)',
-          // minHeight: '700px',
           width: '500px',
           minWidth: '500px',
           backgroundColor: '#FFFFFF',
@@ -888,7 +887,7 @@ const Customer = () => {
             />
           </div>
 
-          {/* last container */}
+          {/* Right container */}
           {rightContainerWidth ? (
             <div
               style={{
@@ -1008,6 +1007,7 @@ const Customer = () => {
                       </div>
                     </div>
                   </label>
+                  {/* Mooring Data Table */}
                   <div
                     className={`content transition-all ease-in-out duration-500 ${accordion === 'faq1' ? '' : 'hidden'}`}>
                     <div style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -1123,6 +1123,7 @@ const Customer = () => {
                       </div>
                     </div>
                   </label>
+                  {/* Images */}
                   <div
                     className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div

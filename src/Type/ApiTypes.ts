@@ -992,6 +992,12 @@ export interface WorkOrderStatusDto {
   description: string
 }
 
+export interface voiceMEMOResponseList {
+  encodedData: any
+  id: number
+  name: string
+  userResponseDto: any
+}
 export interface WorkOrderResponse {
   message: string
   status: number
@@ -1012,6 +1018,8 @@ export interface WorkOrderResponse {
     technicianUserResponseDto: TechnicianUserResponseDto
     customerOwnerUserResponseDto: CustomerOwnerUserResponseDto
     workOrderStatusDto: WorkOrderStatusDto
+    imageResponseDtoList: ImageDtoList
+    voiceMEMOResponseDtoList: voiceMEMOResponseList
   }
 }
 

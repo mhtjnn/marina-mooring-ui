@@ -20,6 +20,14 @@ const MoorserveApi = userApi.injectEndpoints({
       }),
     }),
 
+    //Get Work Order Voice Memo By Id
+    getVoiceMemo: builder.mutation({
+      query: ({ id }: { id?: string }) => ({
+        url: `api/v1/voiceMEMO/fetchVoiceMEMO/${id}`,
+        method: 'GET',
+      }),
+    }),
+
     //Get WorkOrders
     getWorkOrders: builder.mutation({
       query: ({
@@ -261,4 +269,5 @@ export const {
   useSavePaymentMutation,
   useDeleteFormMutation,
   useGetViewFormMutation,
+  useGetVoiceMemoMutation,
 } = MoorserveApi
