@@ -55,8 +55,6 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
     setMapModalOpen((prevState: any) => ({ ...prevState, editMode: false }))
     setCustomerModalVisible(false)
   }
-  console.log('mooringData', mooringData)
-
   return (
     <>
       <Toast ref={toastRef} />
