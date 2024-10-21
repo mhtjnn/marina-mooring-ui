@@ -55,7 +55,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [workOrderImages, setWorkOrderImages] = useState<any>()
   const [showImage, setShowImage] = useState({ id: '', imageData: '' })
-  const [playVoiceMemo, setPlayVoiceMemo] = useState({ id: '', voiceMemoData: '' })
+  const [playVoiceMemo, setPlayVoiceMemo] = useState<any>()
   const [imageVisible, setImageVisible] = useState(false)
   const [voiceMemoVisible, setVoiceMemoVisible] = useState(false)
   const [imageData, setImageData] = useState<any>()
@@ -396,11 +396,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       const response = await getVoiceMemo({ id: id }).unwrap()
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
-        // setPlayVoiceMemo((prev) => ({
-        //   ...prev,
-        //   id: content?.id,
-        //   voiceMemoData: content?.encodedData,
-        // }))
+        setPlayVoiceMemo(content)
       } else {
         setIsLoading(false)
         toast?.current?.show({
@@ -746,7 +742,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
                       data={voiceMemo}
                       columns={workOrderVoiceMemoColumns}
                       selectionMode="single"
-                      actionButtons={ActionButtonColumn}
+                      actionButtons={WorkOrderVoiceMemoActionButtonColumn}
                       dataKey="id"
                       rowStyle={(rowData: any) => rowData}
                       emptyMessage={

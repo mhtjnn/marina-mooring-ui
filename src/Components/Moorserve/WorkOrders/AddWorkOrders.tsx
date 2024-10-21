@@ -39,7 +39,7 @@ import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { formatDate, formatTime, parseDate } from '../../Utils/CommonMethod'
 import { handleEditMode } from '../../Utils/AddWorkOrderCustomMethods'
-import { handleImageChange } from '../../Helper/Helper'
+import { handleImageChange, validateFiles } from '../../Helper/Helper'
 import { handleDecrement, handleIncrement } from '../../Utils/AddWorkOrderCustomMethods'
 import {
   useAddWorkOrderMutation,
@@ -206,6 +206,59 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       })
     }
   }
+
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    toastRef: any,
+    setCustomerImages: React.Dispatch<React.SetStateAction<any>>,
+    setimageRequestDtoList: React.Dispatch<React.SetStateAction<any>>,
+  ) => {
+    const fileInput = event.target
+    const files = Array.from(fileInput.files || [])
+    if (files.length === 0) return
+    const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
+      min: 5120,
+      max: 5242880,
+    })
+    if (invalidTypeFiles.length > 0 || invalidSizeFiles.length > 0) {
+      fileInput.value = ''
+      return
+    }
+    const newBase64Strings: string[] = []
+    const newImageUrls: string[] = []
+    const imageRequestDtoList: { imageName: string; imageData: string }[] = []
+
+    for (const file of validFiles) {
+      try {
+        const base64String = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => {
+            if (typeof reader.result === 'string') {
+              resolve(reader.result?.split(',')[1])
+            } else {
+              reject(new Error('FileReader result is not a string.'))
+            }
+          }
+          reader.onerror = () => {
+            reject(new Error('Error reading file.'))
+          }
+          reader.readAsDataURL(file)
+        })
+        newBase64Strings.push(base64String)
+        newImageUrls.push(`data:image/png;base64,${base64String}`)
+        imageRequestDtoList.push({
+          imageName: file.name,
+          imageData: base64String,
+        })
+      } catch (error) {
+        console.error('Error reading file:', error)
+      }
+    }
+
+    setCustomerImages((prevImages: any) => [...prevImages, ...newImageUrls])
+    setimageRequestDtoList(imageRequestDtoList)
+  }
+
   const handleTimeChange = (event: { target: { value: any } }) => {
     const [min, sec] = event.target.value?.split(':').map(Number)
     if (!isNaN(min) && !isNaN(sec) && min >= 0 && sec >= 0 && sec < 60) {
@@ -1364,13 +1417,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             hoveredIndex={hoveredIndex}
             handleRemoveImage={handleRemoveImage}
             setHoveredIndex={setHoveredIndex}
-            handleImageChange={(event) =>
-              handleImageChange({
-                event,
-                toastRef,
-                setCustomerImages,
-                setimageRequestDtoList,
-              })
+            handleImageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleImageChange(event, toastRef, setCustomerImages, setimageRequestDtoList)
             }
             setImageVisible={setImageVisible}
             imageRequestDtoList={imageRequestDtoList}
