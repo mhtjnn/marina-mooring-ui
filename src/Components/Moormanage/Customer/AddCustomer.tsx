@@ -172,7 +172,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   ) => {
     const fileInput = event.target
     const files = Array.from(fileInput.files || [])
-
     if (files.length === 0) return
     const { validFiles, invalidTypeFiles, invalidSizeFiles } = validateFiles(files, toastRef, {
       min: 5120,
@@ -202,7 +201,6 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
           }
           reader.readAsDataURL(file)
         })
-
         newBase64Strings.push(base64String)
         newImageUrls.push(`data:image/png;base64,${base64String}`)
         newImageRequestDtoList.push({

@@ -50,6 +50,7 @@ import { useGetMooringByIdMutation } from '../../../Services/MoorManage/Moormana
 import useFetchDataAndUpdate from '../../Utils/UseFetchDataAndUpdate'
 import { workOrderValidateFields } from '../../Utils/RegexUtils'
 import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
+import UploadImages from '../../CommonComponent/UploadImages'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -102,14 +103,14 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
   const [imageVisible, setImageVisible] = useState(false)
-  const [imageRequestDtoList, setimageRequestDtoList] = useState<any>()
+  const [imageRequestDtoList, setImageRequestDtoList] = useState<any[]>([])
   const [statusChanged, setStatusChanged] = useState(
     workOrderData?.inventoryResponseDtoList?.length > 0 &&
       workOrderData?.workOrderStatusDto?.id === 10,
   )
   const { formData, setFormData } = useContext(FormDataContext)
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
-  const [customerImages, setCustomerImages] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>([])
   const [vendorId, setVendorId] = useState<any>()
   const [isDirty, setIsDirty] = useState<boolean>(false)
   const { getMooringBasedOnCustomerIdAndBoatyardIdData } = GetMooringBasedOnCustomerIdAndBoatyardId(
@@ -161,8 +162,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   })()
   const handleNoteChange = (index: number, note: string) => {
-    setimageRequestDtoList((prevList: any[]) =>
-      prevList?.map((item, i) => (i === index ? { ...item, note } : item)),
+    setImageRequestDtoList((prevList: any[]) =>
+      prevList.map((item, i) => (i === index ? { ...item, note } : item)),
     )
   }
   const handleInputChange = (field: string, value: any) => {
@@ -210,8 +211,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     toastRef: any,
-    setCustomerImages: React.Dispatch<React.SetStateAction<any>>,
-    setimageRequestDtoList: React.Dispatch<React.SetStateAction<any>>,
+    setImages: React.Dispatch<React.SetStateAction<any>>,
+    setImageRequestDtoList: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     const fileInput = event.target
     const files = Array.from(fileInput.files || [])
@@ -226,7 +227,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
     const newBase64Strings: string[] = []
     const newImageUrls: string[] = []
-    const imageRequestDtoList: { imageName: string; imageData: string }[] = []
+    const newImageRequestDtoList: { imageName: string; imageData: string; note: string }[] = []
 
     for (const file of validFiles) {
       try {
@@ -246,17 +247,17 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         })
         newBase64Strings.push(base64String)
         newImageUrls.push(`data:image/png;base64,${base64String}`)
-        imageRequestDtoList.push({
+        newImageRequestDtoList.push({
           imageName: file.name,
           imageData: base64String,
+          note: '',
         })
       } catch (error) {
         console.error('Error reading file:', error)
       }
     }
-
-    setCustomerImages((prevImages: any) => [...prevImages, ...newImageUrls])
-    setimageRequestDtoList(imageRequestDtoList)
+    setImages((prevImages: any) => [...prevImages, ...newImageUrls])
+    setImageRequestDtoList((prevList: any) => [...prevList, ...newImageRequestDtoList])
   }
 
   const handleTimeChange = (event: { target: { value: any } }) => {
@@ -267,9 +268,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
   const handleRemoveImage = (index: number) => {
-    const newImages = [...customerImages]
-    newImages.splice(index, 1)
-    setCustomerImages(newImages)
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index))
+    setImageRequestDtoList((prevList: any[]) => prevList.filter((_, i) => i !== index))
   }
   const SaveWorkOrder = async () => {
     const errors = workOrderValidateFields({
@@ -388,6 +388,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         editPayload.problem = workOrder?.value
       }
       if (imageRequestDtoList && imageRequestDtoList.length > 0) {
+        console.log('imageRequestDtoList', imageRequestDtoList)
+
         editPayload.imageRequestDtoList = imageRequestDtoList
       }
       const formattedTime = '00:' + formatTime(time.minutes, time.seconds)
@@ -1412,18 +1414,18 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         header="Images"
         onHide={() => setImageVisible(false)}
         children={
-          <ShowImages
+          <UploadImages
             handleNoteChange={handleNoteChange}
             hoveredIndex={hoveredIndex}
             handleRemoveImage={handleRemoveImage}
             setHoveredIndex={setHoveredIndex}
             handleImageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              handleImageChange(event, toastRef, setCustomerImages, setimageRequestDtoList)
+              handleImageChange(event, toastRef, setImages, setImageRequestDtoList)
             }
             setImageVisible={setImageVisible}
             imageRequestDtoList={imageRequestDtoList}
             isLoading={isLoading}
-            images={customerImages}
+            images={images}
             toastRef={toastRef}
           />
         }></PopUpCustomModal>
