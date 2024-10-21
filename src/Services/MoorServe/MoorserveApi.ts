@@ -20,6 +20,14 @@ const MoorserveApi = userApi.injectEndpoints({
       }),
     }),
 
+    //Get Work Order Voice Memo By Id
+    getVoiceMemo: builder.mutation({
+      query: ({ id }: { id?: string }) => ({
+        url: `api/v1/voiceMEMO/fetchVoiceMEMO/${id}`,
+        method: 'GET',
+      }),
+    }),
+
     //Get WorkOrders
     getWorkOrders: builder.mutation({
       query: ({
@@ -237,6 +245,13 @@ const MoorserveApi = userApi.injectEndpoints({
         body: payload,
       }),
     }),
+
+    DeleteVoiceMemo: builder.mutation({
+      query: ({ id }: { id?: string }) => ({
+        url: `api/v1/voiceMEMO/deleteVoiceMEMO/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 })
 
@@ -261,4 +276,6 @@ export const {
   useSavePaymentMutation,
   useDeleteFormMutation,
   useGetViewFormMutation,
+  useGetVoiceMemoMutation,
+  useDeleteVoiceMemoMutation,
 } = MoorserveApi

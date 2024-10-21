@@ -26,6 +26,8 @@ import { Toast } from 'primereact/toast'
 import { Paginator } from 'primereact/paginator'
 import { Dialog } from 'primereact/dialog'
 import AddWorkOrders from '../../Moorserve/WorkOrders/AddWorkOrders'
+import { CustomerfirstLastName, firstLastName } from '../../Helper/Helper'
+import { TechnicianTableColumnStyle, WorkOrdersColumnStyle } from '../../Utils/Style'
 
 const Technicians = () => {
   const [dateFrom, setDateFrom] = useState<any>()
@@ -71,41 +73,25 @@ const Technicians = () => {
     setPageNumber2(event.first)
     setPageSizeTwo(event.rows)
   }
-
-  const TechnicianTableColumnStyle = {
-    backgroundColor: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: '12px',
-    color: '#000000',
-  }
-
-  const WorkOrdersColumnStyle = {
-    fontSize: '12px',
-    height: '12px',
-    color: 'white',
-    backgroundColor: '#00426F',
-    marginTop: '1rem',
-    border: '1px solid #00426F',
-    fontWeight: '700',
-  }
-
-  const TechfirstLastName = (data: any) => {
-    return data?.firstName + ' ' + data?.lastName
-  }
-
   const TechnicianTableColumn = useMemo(
     () => [
-      { id: 'id', label: 'ID', style: TechnicianTableColumnStyle },
+      {
+        id: 'id',
+        label: 'ID',
+        style: {
+          ...TechnicianTableColumnStyle,
+          width: '4vw',
+        },
+      },
       {
         id: 'name',
         label: 'Technicians Name',
-        body: TechfirstLastName,
+        body: CustomerfirstLastName,
         style: TechnicianTableColumnStyle,
       },
       { id: 'openWorkOrder', label: 'Open Work Orders', style: TechnicianTableColumnStyle },
       { id: 'closeWorkOrder', label: 'Completed Jobs', style: TechnicianTableColumnStyle },
     ],
-
     [],
   )
 
@@ -120,13 +106,17 @@ const Technicians = () => {
     setAddWorkOrderModal(true)
     setModalVisible(true)
   }
-  const firstLastName = (data: any) => {
-    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
-  }
 
   const WorkOrdersColumn = useMemo(
     () => [
-      { id: 'id', label: 'ID', style: WorkOrdersColumnStyle },
+      {
+        id: 'id',
+        label: 'ID',
+        style: {
+          ...WorkOrdersColumnStyle,
+          width: '4vw',
+        },
+      },
       { id: 'mooringResponseDto.mooringNumber', label: 'Mooring', style: WorkOrdersColumnStyle },
       {
         id: 'firstName',
@@ -546,7 +536,6 @@ const Technicians = () => {
               backgroundColor: '#FFFFFF',
               marginRight: '50px',
               width: '700px',
-              
             }}>
             <div className="flex justify-between mt-6  mb-3 ">
               <div className="font-bold ml-5">

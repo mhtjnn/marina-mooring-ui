@@ -152,9 +152,9 @@ const AdminLayout = () => {
             />
             {menuItems?.map((item, index) => (
               <React.Fragment key={index}>
-                {item.name && (
+                {item?.name && (
                   <NavLink
-                    to={item.link}
+                    to={item?.link}
                     style={{
                       display: 'flex',
                       height: '40px',
@@ -163,7 +163,9 @@ const AdminLayout = () => {
                       marginLeft: open ? '20px' : '10px',
                       marginRight: open ? '20px' : '10px',
                       background:
-                        selectedCategory === 0 && item.name === 'DASHBOARD' ? '#0098FF' : '#00426F',
+                        selectedCategory === 0 && item?.name === 'DASHBOARD'
+                          ? '#0098FF'
+                          : '#00426F',
                       borderRadius: '4px',
                       flexDirection: 'row',
                       alignItems: 'center',
@@ -173,7 +175,7 @@ const AdminLayout = () => {
                       handleMainCategoryClick(index)
                     }}>
                     <img
-                      src={item.icon}
+                      src={item?.icon}
                       alt=""
                       width={22}
                       style={{
@@ -191,9 +193,9 @@ const AdminLayout = () => {
                         display: open ? 'flex' : 'none',
                         flexGrow: 1,
                       }}>
-                      {item.name}
+                      {item?.name}
                     </span>
-                    {item.subcategories && open && (
+                    {item?.subcategories && open && (
                       <img
                         src={
                           openSubMenus[index]
@@ -214,9 +216,9 @@ const AdminLayout = () => {
                 )}
 
                 {/* Submenu Items */}
-                {item.subcategories && openSubMenus[index] && (
+                {item?.subcategories && openSubMenus[index] && (
                   <div style={{ marginTop: '10px' }}>
-                    {item.subcategories?.map((subcategory, subIndex) => (
+                    {item?.subcategories?.map((subcategory, subIndex) => (
                       <NavLink
                         to={subcategory.link}
                         style={{

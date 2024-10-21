@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from 'react'
 import { MooringPayload, VendorPayload, WorkOrderPayload, WorkOrderResponse } from './ApiTypes'
 import { ButtonProps } from 'primereact/button'
 import { IconType } from 'primereact/utils'
-
 export interface CustomerDataProps {
   customer: any
   mooringRowData?: any
@@ -24,7 +23,6 @@ export interface BoatYardProps {
   boatYardData: () => void
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
-
 export interface ServiceAreaProps {
   customerData: any
   editMode: boolean
@@ -34,7 +32,6 @@ export interface ServiceAreaProps {
   serviceAreaData: () => void
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
 }
-
 export interface BoatData {
   id: string
   customerName: string
@@ -42,29 +39,24 @@ export interface BoatData {
   mooringServiceDate: string
   mooringLocation: string
 }
-
 export interface BillsData {
   workOrderNo: string
   customerName: string
   assignedTo: string
   date: string
 }
-
 export interface LoginFormProps {
   admin?: boolean
 }
-
 export interface MooringDetail {
   id: string
   mainContact: string
   mooringNumber: string
   boatName: string
 }
-
 export interface RowExpansionProps {
   mooringDetails: MooringDetail[]
 }
-
 export interface AddMooringProps {
   moorings: MooringPayload
   editMode: boolean
@@ -76,14 +68,12 @@ export interface AddMooringProps {
   getCustomer: () => void
   getCustomerRecord?: () => void
 }
-
 export interface Technician_Data {
   id: string
   techniciansName: string
   openWorkOrders: string
   completedJobs: string
 }
-
 export interface AddVendorProps {
   vendors: VendorPayload
   editMode: boolean
@@ -91,7 +81,6 @@ export interface AddVendorProps {
   getVendor: () => void
   toastRef?: any
 }
-
 export interface AddInventoryProps {
   id: any
   closeModal: () => void
@@ -100,7 +89,6 @@ export interface AddInventoryProps {
   editMode: boolean
   selectedInventory: any
 }
-
 export interface MoorPayProps {
   invoice: string
   mooringId: string
@@ -110,7 +98,6 @@ export interface MoorPayProps {
   time: string
   amount: string
 }
-
 export interface EstimateProps {
   customerId: string
   customerName: string
@@ -119,7 +106,6 @@ export interface EstimateProps {
   assigned: string
   duedate: string
 }
-
 export interface TimeCardsProps {
   id: string
   boatName: string
@@ -128,7 +114,6 @@ export interface TimeCardsProps {
   measurement: string
   place: string
 }
-
 export interface WorkOrderProps {
   workOrderData: any
   editModeWorkOrder?: boolean
@@ -145,11 +130,9 @@ export interface WorkOrderProps {
   getWorkOrderWithPendingPayApproval?: () => void
   getOutStandingInvoice?: () => void
 }
-
 export interface WorkOrderValue {
   report?: boolean
 }
-
 export interface ReasonModalProps {
   selectedRowData: any
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -158,7 +141,6 @@ export interface ReasonModalProps {
   getOutStandingInvoice: () => void
   toast: any
 }
-
 export interface PermissionData {
   id: string
   email: string
@@ -166,7 +148,6 @@ export interface PermissionData {
   phone: string
   role: string
 }
-
 export type StatCardProps = {
   items: {
     title: string
@@ -174,7 +155,6 @@ export type StatCardProps = {
     count: number
   }[]
 }
-
 export interface CustomerAdminDataProps {
   customerData?: any
   editMode: boolean
@@ -198,12 +178,26 @@ export interface CustomerAdminDataProps {
   setSelectedCustomer: Dispatch<SetStateAction<any>>
   setSelectedCustomerUsers?: Dispatch<SetStateAction<any>>
 }
-
 export interface HeaderProps {
   header?: string
   customer?: boolean
 }
-
+export interface ValidationProps {
+  firstName: string
+  lastName: string
+  checkedMooring: boolean
+  mooringNumber?: string
+  mooringStatus?: string
+  validationRules: {
+    NAME_REGEX: RegExp
+  }
+  setFieldErrors: (errors: { [key: string]: string }) => void
+  setFirstErrorField: (field: string) => void
+}
+export interface WorkOrderValidationProps {
+  workOrder: any
+  setErrorMessage: (errors: { [key: string]: string }) => void
+}
 export interface CustomModalProps {
   button?: boolean
   buttonText?: string
@@ -220,7 +214,13 @@ export interface CustomModalProps {
   dialogStyle?: React.CSSProperties
   footerContent?: React.ReactNode
 }
-
+export interface PopUpCustomModalProps {
+  visible: boolean
+  header: string | JSX.Element
+  onHide: () => void
+  children: React.ReactNode
+  style?: any
+}
 export interface inputHeader {
   header?: string
   iconStyle?: React.CSSProperties
@@ -231,7 +231,6 @@ export interface inputHeader {
   value?: string | undefined
   borderBottom?: React.CSSProperties
 }
-
 export interface PaymentModalProps {
   visible?: boolean
   onHide?: any
@@ -243,7 +242,6 @@ export interface ContactModalProps {
   onHide?: any
   onSendEmail: (emailDetails: { recipient: string; subject: string; message: string }) => void
 }
-
 export interface ApproveModalProps {
   id: number
   toast?: any
@@ -253,13 +251,16 @@ export interface ApproveModalProps {
   getWorkOrderWithPendingPayApproval: () => void
   getOutStandingInvoice: () => void
 }
-
 export interface ViewImageProps {
   imageVisible: boolean
   setImageVisible: React.Dispatch<React.SetStateAction<boolean>>
   showImage: any
 }
-
+export interface PlayVoiceMemoProps {
+  imageVisible: boolean
+  setImageVisible: React.Dispatch<React.SetStateAction<boolean>>
+  voiceMemo: any
+}
 export interface EditImageProps {
   imageEditVisible: any
   setImageEditVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -269,7 +270,6 @@ export interface EditImageProps {
   handleModalClose: () => void
   getCustomersWithMooring: () => void
 }
-
 export interface FormDataProps {
   closeModal: () => void
   getFormsData: () => void
@@ -290,16 +290,46 @@ export interface ShowImagesProps {
   images: string[]
   toastRef?: any
 }
-
 export interface ResetModalProps {
   isResetModalOpen: () => void
   customerId: any
   isLoggedInUser?: boolean
 }
-
 export interface PreviewProps {
   fileData: string
   fileName?: any
   onClose: () => void
   mooringResponse?: any
+}
+export interface AddDockProps {
+  checkedDock: boolean
+  setCheckedDock: (checked: boolean) => void
+  editCustomerMode: any
+}
+export interface AddMooringPropss {
+  checkedMooring: boolean
+  setCheckedMooring: (checked: boolean) => void
+}
+export interface IncrementProps {
+  time: any
+  setTime: Dispatch<SetStateAction<any>>
+  setErrorMessage: Dispatch<SetStateAction<any>>
+}
+export interface WorkOrderInputChangeProps {
+  field: any
+  value: any
+  workOrder: any
+  setWorkOrder: Dispatch<SetStateAction<any>>
+  editMode: boolean
+  setEditMode: Dispatch<SetStateAction<boolean>>
+  lastChangedField: string | null
+  setLastChangedField: Dispatch<SetStateAction<any>>
+  errorMessage: any
+  setErrorMessage: Dispatch<SetStateAction<any>>
+}
+export interface WorkOrderEditModeProps {
+  setWorkOrder: Dispatch<SetStateAction<any>>
+  workOrderData: any
+  setVendorId: Dispatch<SetStateAction<any>>
+  setTime: Dispatch<SetStateAction<any>>
 }

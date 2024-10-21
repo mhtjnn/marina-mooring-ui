@@ -146,10 +146,12 @@ export interface AuthenticationData {
 export interface ErrorResponse {
   status: number
   message: string
+  error: any
   data: {
     content: string
     message: string
     status: number
+    error: any
   }
 }
 
@@ -990,12 +992,19 @@ export interface WorkOrderStatusDto {
   description: string
 }
 
+export interface voiceMEMOResponseList {
+  encodedData: any
+  id: number
+  name: string
+  userResponseDto: any
+}
 export interface WorkOrderResponse {
   message: string
   status: number
   currentSize: number
   totalSize: number
   errorList: []
+  error: any
   time: string
   content: {
     id: number
@@ -1009,6 +1018,8 @@ export interface WorkOrderResponse {
     technicianUserResponseDto: TechnicianUserResponseDto
     customerOwnerUserResponseDto: CustomerOwnerUserResponseDto
     workOrderStatusDto: WorkOrderStatusDto
+    imageResponseDtoList: ImageDtoList
+    voiceMEMOResponseDtoList: voiceMEMOResponseList
   }
 }
 

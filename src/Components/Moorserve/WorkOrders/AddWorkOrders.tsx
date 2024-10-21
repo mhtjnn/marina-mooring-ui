@@ -5,35 +5,23 @@ import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
 import { FaFileUpload } from 'react-icons/fa'
 import { Dialog } from 'primereact/dialog'
-
 import {
   ErrorResponse,
   MooringResponse,
   ViewFormsResponse,
   WorkOrderResponse,
 } from '../../../Type/ApiTypes'
-import {
-  useAddWorkOrderMutation,
-  useGetViewFormMutation,
-  useUpdateWorkOrderMutation,
-} from '../../../Services/MoorServe/MoorserveApi'
 import { Button } from 'primereact/button'
 import { WorkOrderProps } from '../../../Type/ComponentBasedType'
 import {
   GetBoatyardBasedOnMooringId,
   GetCustomerBasedOnMooringId,
   GetMooringBasedOnCustomerIdAndBoatyardId,
-  GetMooringIds,
   GetMooringsBasedOnBoatyardId,
   GetMooringsBasedOnCustomerId,
-  GetTechnicians,
-  GetWorkOrderStatus,
 } from '../../CommonComponent/MetaDataComponent/MoorserveMetaDataApi'
 import { MetaData, Params } from '../../../Type/CommonType'
 import {
-  AttachFormsTypesData,
-  BoatyardNameData,
-  CustomersData,
   InventoryDetailsData,
   VendorData,
 } from '../../CommonComponent/MetaDataComponent/MetaDataApi'
@@ -49,8 +37,20 @@ import PDFEditor from '../Forms/PdfEditor'
 import { FormDataContext } from '../../../Services/ContextApi/FormDataContext'
 import { InputText } from 'primereact/inputtext'
 import InputComponent from '../../CommonComponent/InputComponent'
+import { formatDate, formatTime, parseDate } from '../../Utils/CommonMethod'
+import { handleEditMode } from '../../Utils/AddWorkOrderCustomMethods'
+import { handleImageChange, validateFiles } from '../../Helper/Helper'
+import { handleDecrement, handleIncrement } from '../../Utils/AddWorkOrderCustomMethods'
+import {
+  useAddWorkOrderMutation,
+  useGetViewFormMutation,
+  useUpdateWorkOrderMutation,
+} from '../../../Services/MoorServe/MoorserveApi'
 import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
-import { validateFiles } from '../../Helper/Helper'
+import useFetchDataAndUpdate from '../../Utils/UseFetchDataAndUpdate'
+import { workOrderValidateFields } from '../../Utils/RegexUtils'
+import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
+import UploadImages from '../../CommonComponent/UploadImages'
 
 const AddWorkOrders: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -84,20 +84,14 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     quantity: '',
     inventory: '',
   })
-
   const [time, setTime] = useState({ minutes: 0, seconds: 0 })
   const [basedOnCustomerIdAndBoatyardId, setbasedOnCustomerIdAndBoatyardId] = useState<MetaData[]>()
   const [mooringsBasedOnBoatyardIdData, setMooringsBasedOnBoatyardIdData] = useState<MetaData[]>()
   const [mooringBasedOnCustomerId, setMooringBasedOnCustomerId] = useState<MetaData[]>()
   const [boatyardBasedOnMooringId, setBoatyardBasedOnMooringId] = useState<MetaData[]>()
   const [customerBasedOnMooringId, setCustomerBasedOnMooringId] = useState<any[]>()
-  const [technicians, setTechnicians] = useState<any[]>()
   const [mooringDetails, setmooringDetails] = useState<any>()
-  const [moorings, setMoorings] = useState<MetaData[]>()
   const [viewPdf, setViewPdf] = useState<any>()
-  const [workOrderStatusValue, setWorkOrderStatusValue] = useState<MetaData[]>()
-  const [customerNameValue, setcustomerNameValue] = useState<any[]>()
-  const [boatyardsName, setBoatYardsName] = useState<MetaData[]>([])
   const [vendorsName, setVendorsName] = useState<MetaData[]>([])
   const [inventory, setInventory] = useState<MetaData[]>([])
   const [editMode, setEditMode] = useState<boolean>(
@@ -108,14 +102,15 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const [isLoading, setIsLoading] = useState(true)
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
+  const [imageVisible, setImageVisible] = useState(false)
+  const [imageRequestDtoList, setImageRequestDtoList] = useState<any[]>([])
   const [statusChanged, setStatusChanged] = useState(
     workOrderData?.inventoryResponseDtoList?.length > 0 &&
       workOrderData?.workOrderStatusDto?.id === 10,
   )
-  const [formsData, setFormsData] = useState<any[]>([])
   const { formData, setFormData } = useContext(FormDataContext)
   const [hoveredIndex, setHoveredIndex] = useState<null | number>(null)
-  const [customerImages, setCustomerImages] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>([])
   const [vendorId, setVendorId] = useState<any>()
   const [isDirty, setIsDirty] = useState<boolean>(false)
   const { getMooringBasedOnCustomerIdAndBoatyardIdData } = GetMooringBasedOnCustomerIdAndBoatyardId(
@@ -134,26 +129,27 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   const { getCustomerBasedOnMooringIdData } = GetCustomerBasedOnMooringId(
     workOrder?.mooringId?.id && workOrder?.mooringId?.id,
   )
-  const { getCustomersData } = CustomersData(selectedCustomerId)
-  const { getBoatYardNameData } = BoatyardNameData(selectedCustomerId)
-  const { getAttachFormsTypeData } = AttachFormsTypesData()
-  const { getVendorValue } = VendorData()
   const { getInventoryDetails } = InventoryDetailsData(vendorId)
-  const { getTechniciansData } = GetTechnicians()
-  const { getMooringIdsData } = GetMooringIds()
-  const { getWorkOrderStatusData } = GetWorkOrderStatus()
+  const { getVendorValue } = VendorData()
   const [saveWorkOrder] = useAddWorkOrderMutation()
   const [updateWorkOrder] = useUpdateWorkOrderMutation()
   const [getViewForms] = useGetViewFormMutation()
   const [getMooringDetails] = useGetMooringByIdMutation()
   const toastRef = useRef<Toast>(null)
-  const [imageVisible, setImageVisible] = useState(false)
-  const [imageRequestDtoList, setimageRequestDtoList] = useState<any>()
+  const {
+    fetchDataAndUpdate,
+    technicians,
+    moorings,
+    workOrderStatusValue,
+    customerNameValue,
+    boatyardsName,
+    formsData,
+    isLoader,
+  } = useFetchDataAndUpdate(selectedCustomerId, workOrderData)
   const boatyardsNameOptions = workOrder?.mooringId?.id ? boatyardBasedOnMooringId : boatyardsName
   const CustomerNameOptions = workOrder?.mooringId?.id
     ? customerBasedOnMooringId
     : customerNameValue
-
   const MooringNameOptions = (() => {
     if (workOrder?.customerName?.id && workOrder?.boatyards?.id) {
       return basedOnCustomerIdAndBoatyardId
@@ -165,43 +161,18 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       return moorings
     }
   })()
-
-  const validateFields = () => {
-    const errors: { [key: string]: string } = {}
-    if (!workOrder.customerName) {
-      errors.customerName = 'Customer Name is required'
-    }
-    if (!workOrder.workOrderStatus) {
-      errors.workOrderStatus = 'Status is required'
-    }
-    if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
-      errors.vendor = 'Vendor is required'
-    }
-    if (!workOrder.inventory && vendorId) {
-      errors.inventory = 'Item Name is required'
-    }
-    setErrorMessage(errors)
-    return errors
-  }
-
   const handleNoteChange = (index: number, note: string) => {
-    setimageRequestDtoList((prevList: any[]) =>
-      prevList?.map((item, i) => (i === index ? { ...item, note } : item)),
+    setImageRequestDtoList((prevList: any[]) =>
+      prevList.map((item, i) => (i === index ? { ...item, note } : item)),
     )
   }
-
   const handleInputChange = (field: string, value: any) => {
     const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
-      if (value !== '' && !costRegex.test(value)) {
-        return
-      }
+      if (value !== '' && !costRegex.test(value)) return
     }
-    if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) {
-      return
-    }
+    if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) return
     let updatedWorkOrder = { ...workOrder, [field]: value }
-
     if (editMode) {
       if (field === 'mooringId') {
         updatedWorkOrder = {
@@ -228,7 +199,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setLastChangedField(field)
       setEditMode(false)
     }
-
     setWorkOrder(updatedWorkOrder)
     if (errorMessage[field]) {
       setErrorMessage({
@@ -238,106 +208,12 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
   }
 
-  const handleEditMode = () => {
-    setWorkOrder((prevState: any) => ({
-      ...prevState,
-      mooringId: workOrderData?.mooringResponseDto?.mooringNumber,
-      customerName:
-        workOrderData?.customerResponseDto?.firstName +
-        ' ' +
-        workOrderData?.customerResponseDto?.lastName,
-      boatyards: workOrderData?.boatyardResponseDto?.boatyardName,
-      assignedTo:
-        workOrderData?.technicianUserResponseDto?.firstName +
-        ' ' +
-        workOrderData?.technicianUserResponseDto?.lastName,
-      dueDate: workOrderData?.dueDate,
-      scheduleDate: workOrderData?.scheduledDate,
-      workOrderStatus: workOrderData?.workOrderStatusDto?.status,
-      value: workOrderData?.problem,
-      cost: workOrderData?.cost,
-      attachForm:
-        workOrderData?.formResponseDtoList && workOrderData?.formResponseDtoList?.[0]?.formName,
-      vendor:
-        workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.vendorName,
-      inventory:
-        workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.itemName,
-      quantity:
-        workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.quantity,
-    }))
-    setVendorId(
-      workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.id,
-    )
-    const parseTime = (timeString: any) => {
-      const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
-      return { minutes: hours * 60 + minutes, seconds }
-    }
-    const parsedTime = parseTime(workOrderData.time)
-    setTime(parsedTime)
-  }
-
-  const handleIncrement = () => {
-    let { minutes, seconds } = time
-    if (seconds < 59) {
-      seconds += 1
-    } else {
-      minutes += 1
-      seconds = 0
-    }
-    setTime({ minutes, seconds })
-    setErrorMessage((prevError) => ({ ...prevError, time: '' }))
-  }
-
-  const handleDecrement = () => {
-    let { minutes, seconds } = time
-    if (seconds > 0) {
-      seconds -= 1
-    } else if (minutes > 0) {
-      minutes -= 1
-      seconds = 59
-    }
-    setTime({ minutes, seconds })
-    setErrorMessage((prevError) => ({ ...prevError, time: '' }))
-  }
-
-  const handleTimeChange = (event: { target: { value: any } }) => {
-    const [min, sec] = event.target.value?.split(':').map(Number)
-    if (!isNaN(min) && !isNaN(sec) && min >= 0 && sec >= 0 && sec < 60) {
-      setTime({ minutes: min, seconds: sec })
-      setErrorMessage((prevError) => ({ ...prevError, time: '' }))
-    }
-  }
-
-  const formatTime = (minutes: number, seconds: number) => {
-    const formattedMinutes = minutes.toString().padStart(2, '0')
-    const formattedSeconds = seconds.toString().padStart(2, '0')
-    return `${formattedMinutes}:${formattedSeconds}`
-  }
-
-  const formatDate = (date: any) => {
-    if (!date) return null
-    const d = new Date(date)
-    const month = ('0' + (d.getMonth() + 1)).slice(-2)
-    const day = ('0' + d.getDate()).slice(-2)
-    const year = d.getFullYear()
-    return `${month}/${day}/${year}`
-  }
-
-  const parseDate = (dateString: any) => {
-    if (!dateString) return null
-    const [month, day, year] = dateString?.split('/')
-    return new Date(year, month - 1, day)
-  }
-
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    toastRef: any,
+    setImages: React.Dispatch<React.SetStateAction<any>>,
+    setImageRequestDtoList: React.Dispatch<React.SetStateAction<any>>,
+  ) => {
     const fileInput = event.target
     const files = Array.from(fileInput.files || [])
     if (files.length === 0) return
@@ -351,7 +227,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     }
     const newBase64Strings: string[] = []
     const newImageUrls: string[] = []
-    const imageRequestDtoList: { imageName: string; imageData: string }[] = []
+    const newImageRequestDtoList: { imageName: string; imageData: string; note: string }[] = []
 
     for (const file of validFiles) {
       try {
@@ -371,27 +247,35 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         })
         newBase64Strings.push(base64String)
         newImageUrls.push(`data:image/png;base64,${base64String}`)
-        imageRequestDtoList.push({
+        newImageRequestDtoList.push({
           imageName: file.name,
           imageData: base64String,
+          note: '',
         })
       } catch (error) {
         console.error('Error reading file:', error)
       }
     }
-
-    setCustomerImages((prevImages) => [...prevImages, ...newImageUrls])
-    setimageRequestDtoList(imageRequestDtoList)
+    setImages((prevImages: any) => [...prevImages, ...newImageUrls])
+    setImageRequestDtoList((prevList: any) => [...prevList, ...newImageRequestDtoList])
   }
 
+  const handleTimeChange = (event: { target: { value: any } }) => {
+    const [min, sec] = event.target.value?.split(':').map(Number)
+    if (!isNaN(min) && !isNaN(sec) && min >= 0 && sec >= 0 && sec < 60) {
+      setTime({ minutes: min, seconds: sec })
+      setErrorMessage((prevError) => ({ ...prevError, time: '' }))
+    }
+  }
   const handleRemoveImage = (index: number) => {
-    const newImages = [...customerImages]
-    newImages.splice(index, 1)
-    setCustomerImages(newImages)
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index))
+    setImageRequestDtoList((prevList: any[]) => prevList.filter((_, i) => i !== index))
   }
-
   const SaveWorkOrder = async () => {
-    const errors = validateFields()
+    const errors = workOrderValidateFields({
+      workOrder,
+      setErrorMessage,
+    })
     if (Object.keys(errors).length > 0) {
       setErrorMessage(errors)
       return
@@ -434,7 +318,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     try {
       setIsLoading(true)
       const response = await saveWorkOrder(payload).unwrap()
-      const { status, message } = response as WorkOrderResponse
+      const { status, message, error } = response as WorkOrderResponse
       if (status === 200 || status === 201) {
         closeModal()
         toastRef?.current?.show({
@@ -449,40 +333,50 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         toastRef?.current?.show({
           severity: 'error',
           summary: 'Error',
-          detail: message,
+          detail: message || error,
           life: 3000,
         })
       }
     } catch (error) {
       const { message, data } = error as ErrorResponse
       setIsLoading(false)
-
       toastRef?.current?.show({
         severity: 'error',
         summary: 'Error',
-        detail: message || data?.message,
+        detail: message || data?.message || data?.error,
         life: 3000,
       })
     }
   }
-
   const UpdateWorkOrder = async () => {
-    const errors = validateFields()
-    if (Object.keys(errors).length > 0) {
-      return
-    }
-
+    const errors = workOrderValidateFields({
+      workOrder,
+      setErrorMessage,
+    })
+    if (Object.keys(errors).length > 0) return
     try {
       setIsLoading(true)
       const editPayload: any = {}
-      if (workOrder?.mooringId?.id !== workOrderData?.mooringResponseDto?.id) {
+      if (workOrderData?.mooringResponseDto?.id) {
+        if (workOrder?.mooringId?.id) {
+          editPayload.mooringId = workOrder?.mooringId?.id
+        } else {
+          editPayload.mooringId = workOrderData?.mooringResponseDto?.id
+        }
+      } else if (workOrder?.mooringId?.id) {
         editPayload.mooringId = workOrder?.mooringId?.id
+      }
+      if (workOrderData?.boatyardResponseDto?.id) {
+        if (workOrder?.boatyards?.id) {
+          editPayload.boatyardId = workOrder?.boatyards?.id
+        } else {
+          editPayload.boatyardId = workOrderData?.boatyardResponseDto?.id
+        }
+      } else if (workOrder?.boatyards?.id) {
+        editPayload.boatyardId = workOrder?.boatyards?.id
       }
       if (workOrder?.customerName?.id !== workOrderData?.customerResponseDto?.id) {
         editPayload.customerId = workOrder?.customerName?.id
-      }
-      if (workOrder?.boatyards?.id !== workOrderData?.boatyardResponseDto?.id) {
-        editPayload.boatyardId = workOrder?.boatyards?.id
       }
       if (workOrder?.assignedTo?.id !== workOrderData?.technicianUserResponseDto?.id) {
         editPayload.technicianId = workOrder?.assignedTo?.id
@@ -510,7 +404,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       if (formattedTime !== workOrderData?.time) {
         editPayload.time = formattedTime
       }
-
       if (workOrder?.attachForm || workOrderData?.formResponseDtoList) {
         const formRequestDtoList: any[] = []
         if (workOrderData?.formResponseDtoList?.length > 0) {
@@ -539,21 +432,19 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             parentFormId: workOrder.attachForm?.parentFormId,
           })
         }
-
         if (formRequestDtoList.length > 0) {
           editPayload.formRequestDtoList = formRequestDtoList
         }
       }
-
       if (workOrder?.inventory) {
         if (workOrder?.inventory?.id || workOrderData?.inventoryResponseDtoList?.length > 0) {
           const inventoryRequestDtoList: any[] = []
           if (workOrderData?.inventoryResponseDtoList?.length > 0) {
             workOrderData.inventoryResponseDtoList.forEach((item: any, index: number) => {
               inventoryRequestDtoList.push({
-                id: item.id,
-                quantity: item.quantity,
-                parentInventoryId: item.parentInventoryId,
+                id: item?.id,
+                quantity: item?.quantity,
+                parentInventoryId: item?.parentInventoryId,
               })
             })
           }
@@ -614,12 +505,10 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       })
     }
   }
-
   const handleModalClose = () => {
     setDenyModalOpen(false)
     setApproveModalOpen(false)
   }
-
   const handleSave = () => {
     if (editModeWorkOrder) {
       UpdateWorkOrder()
@@ -627,53 +516,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       SaveWorkOrder()
     }
   }
-
-  const fetchDataAndUpdate = useCallback(async () => {
-    const { getTechnicians } = await getTechniciansData()
-    const { mooringIds } = await getMooringIdsData()
-    const { WorkOrderStatus } = await getWorkOrderStatusData()
-    const { customersData } = await getCustomersData()
-    const { boatYardName } = await getBoatYardNameData()
-    const { attachFormsTypeValue } = await getAttachFormsTypeData()
-
-    if (getTechnicians !== null) {
-      const firstLastName = getTechnicians.map((item) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
-      }))
-      setIsLoading(false)
-      setTechnicians(firstLastName)
-    }
-    if (mooringIds !== null) {
-      setIsLoading(false)
-      const filteredMoorings = mooringIds?.filter((mooring) => mooring?.mooringNumber !== '')
-      setMoorings(filteredMoorings)
-    }
-    if (WorkOrderStatus !== null) {
-      setIsLoading(false)
-      setWorkOrderStatusValue(WorkOrderStatus)
-    }
-    if (attachFormsTypeValue != null) {
-      setIsLoading(false)
-      setFormsData(attachFormsTypeValue)
-      if (workOrderData?.formResponseDtoList) {
-        setFormsData((prevState) => [...prevState, ...workOrderData?.formResponseDtoList])
-      }
-    }
-    if (customersData !== null) {
-      const firstLastName = customersData.map((item) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
-      }))
-      setIsLoading(false)
-      setcustomerNameValue(firstLastName)
-    }
-    if (boatYardName !== null) {
-      setIsLoading(false)
-      setBoatYardsName(boatYardName)
-    }
-  }, [])
-
   const fetchInventoryDetails = async () => {
     const { inventoryDetails } = await getInventoryDetails()
     if (inventoryDetails !== null) {
@@ -695,7 +537,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       let vendorList = []
       if (workOrderData?.inventoryResponseDtoList) {
         vendorList = workOrderData.inventoryResponseDtoList
-          .map((item: any) => item.vendorResponseDto)
+          .map((item: any) => item?.vendorResponseDto)
           .filter((vendor: any) => vendor !== null)
 
         vendorList.forEach((vendor: any) => existingVendorIds.add(vendor.id))
@@ -728,8 +570,8 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
     if (customerBasedOnMooringId !== null) {
       const firstLastName = customerBasedOnMooringId.map((item: any) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
       }))
       setIsLoading(false)
       setCustomerBasedOnMooringId(firstLastName)
@@ -869,7 +711,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
 
   useEffect(() => {
     if (editModeWorkOrder) {
-      handleEditMode()
+      handleEditMode({ setWorkOrder, workOrderData, setVendorId, setTime })
     }
   }, [editModeWorkOrder])
 
@@ -908,7 +750,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     <>
       <Toast ref={toastRef} />
 
-      <div className={`"w-full h-full mb-20 ml-4" ${isLoading ? 'blurred' : ''}`}>
+      <div className={`"w-full h-full mb-20 ml-4" ${isLoader ? 'blurred' : ''}`}>
         {/* Customer Name */}
         <div className="flex gap-6">
           <div>
@@ -925,7 +767,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={CustomerNameOptions}
                 optionLabel="firstName"
                 editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -955,7 +797,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={MooringNameOptions}
                 optionLabel="mooringNumber"
                 editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1011,7 +853,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={boatyardsNameOptions}
                 optionLabel="boatyardName"
                 editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1036,7 +878,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={technicians}
                 optionLabel="firstName"
                 editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1048,7 +890,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
             </div>
           </div>
 
-          {isLoading && (
+          {isLoader && (
             <ProgressSpinner
               style={{
                 position: 'absolute',
@@ -1072,7 +914,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 value={parseDate(workOrder.dueDate)}
                 onChange={(e) => handleInputChange('dueDate', formatDate(e.target.value))}
                 dateFormat="mm/dd/yy"
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1098,7 +940,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 value={parseDate(workOrder.scheduleDate)}
                 onChange={(e) => handleInputChange('scheduleDate', formatDate(e.target.value))}
                 dateFormat="mm/dd/yy"
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1129,7 +971,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={workOrderStatusValue}
                 optionLabel="status"
                 editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1165,7 +1007,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 <h1
                   className="mt-1 p-[0.1rem] ml-2 mr-2 bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
-                    !isTechnician && handleDecrement()
+                    !isTechnician && handleDecrement({ time, setTime, setErrorMessage })
                   }}>
                   <GrFormSubtract />
                 </h1>
@@ -1173,7 +1015,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   type="text"
                   value={formatTime(time.minutes, time.seconds)}
                   onChange={handleTimeChange}
-                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  disabled={isLoader || isAccountRecievable || isTechnician}
                   className="text-center w-16"
                   style={{
                     boxShadow: 'none',
@@ -1182,7 +1024,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 <h1
                   className="mt-1 ml-2 mr-2 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
                   onClick={() => {
-                    !isTechnician && handleIncrement()
+                    !isTechnician && handleIncrement({ time, setTime, setErrorMessage })
                   }}>
                   <IoIosAdd />
                 </h1>
@@ -1225,7 +1067,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 options={formsData}
                 optionLabel="formName"
                 editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1259,7 +1101,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                 type="text"
                 value={workOrder.cost}
                 onChange={(e: any) => handleInputChange('cost', e.target.value)}
-                disabled={isLoading || isAccountRecievable || isTechnician}
+                disabled={isLoader || isAccountRecievable || isTechnician}
                 style={{
                   width: '230px',
                   height: '32px',
@@ -1275,9 +1117,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Vendor <p className="text-red-600">*</p>
-                </div>
+                <div className="flex gap-1">Vendor</div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -1290,11 +1130,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   options={vendorsName}
                   optionLabel="vendorName"
                   editable
-                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  disabled={isLoader || isAccountRecievable || isTechnician}
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: errorMessage.vendor ? '1px solid red' : '1px solid #D5E1EA',
+                    border: '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -1313,9 +1153,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   )}
                 />
               </div>
-              <p>
-                {errorMessage.vendor && <small className="p-error">{errorMessage.vendor}</small>}
-              </p>
             </div>
           ) : null}
         </div>
@@ -1324,9 +1161,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Item <p className="text-red-600">*</p>
-                </div>
+                <div className="flex gap-1">Item</div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -1337,11 +1172,11 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   options={inventory}
                   optionLabel="itemName"
                   editable
-                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  disabled={isLoader || isAccountRecievable || isTechnician}
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
+                    border: '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -1350,7 +1185,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                       <span>{option.itemName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
                         workOrderData.inventoryResponseDtoList.some(
-                          (item: any) => item.id === option.id,
+                          (item: any) => item?.id === option.id,
                         ) && (
                           <i
                             className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
@@ -1360,11 +1195,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                   )}
                 />
               </div>
-              <p>
-                {errorMessage.inventory && (
-                  <small className="p-error">{errorMessage.inventory}</small>
-                )}
-              </p>
             </div>
           ) : null}
           {/* Quantity */}
@@ -1381,7 +1211,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
                     handleInputChange('quantity', e.target.value)
                   }}
                   type="number"
-                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  disabled={isLoader || isAccountRecievable || isTechnician}
                   style={{
                     width: '230px',
                     height: '32px',
@@ -1405,7 +1235,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
               value={workOrder.value}
               rows={3}
               cols={30}
-              disabled={isLoading || isAccountRecievable || isTechnician}
+              disabled={isLoader || isAccountRecievable || isTechnician}
               onChange={(e) => handleInputChange('value', e.target.value)}
               style={{
                 width: '740px',
@@ -1425,7 +1255,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       {/* Save and Back buttons */}
 
       <div
-        className={`"flex gap-6 bottom-2 absolute left-7" ${isLoading ? 'blurred' : ''}`}
+        className={`"flex gap-6 bottom-2 absolute left-7" ${isLoader ? 'blurred' : ''}`}
         style={{
           width: '100%',
           height: '80px',
@@ -1511,116 +1341,102 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           </>
         )}
       </div>
-
-      <Dialog
-        position="center"
+      {/* Approve Modal */}
+      <PopUpCustomModal
         style={{
           width: '520px',
           minWidth: '520px',
           height: '260px',
           minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={approveModalOpen}
+        header="Approve"
         onHide={handleModalClose}
-        header="Approve">
-        <ApproveModal
-          id={workOrderData?.id}
-          toast={toastRef}
-          amountValue={workOrderData?.cost}
-          setVisible={() => {
-            setApproveModalOpen(false)
-          }}
-          getWorkOrderWithPendingPayApproval={() => {
-            if (getWorkOrderWithPendingPayApproval) {
-              getWorkOrderWithPendingPayApproval()
-            }
-          }}
-          getOutStandingInvoice={() => {
-            if (getOutStandingInvoice) {
-              getOutStandingInvoice()
-            }
-          }}
-          closeModal={() => {
-            closeModal()
-            handleModalClose()
-          }}
-        />
-      </Dialog>
-
-      <Dialog
-        position="center"
+        children={
+          <ApproveModal
+            id={workOrderData?.id}
+            amountValue={workOrderData?.cost}
+            toast={toastRef}
+            setVisible={() => {
+              setApproveModalOpen(false)
+            }}
+            getWorkOrderWithPendingPayApproval={() => {
+              if (getWorkOrderWithPendingPayApproval) {
+                getWorkOrderWithPendingPayApproval()
+              }
+            }}
+            getOutStandingInvoice={() => {
+              if (getOutStandingInvoice) {
+                getOutStandingInvoice()
+              }
+            }}
+            closeModal={() => {
+              closeModal()
+              handleModalClose()
+            }}
+          />
+        }></PopUpCustomModal>
+      {/* Deny Modal */}
+      <PopUpCustomModal
         style={{
           width: '520px',
           minWidth: '520px',
           height: '260px',
           minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={denyModalOpen}
+        header="Deny"
         onHide={handleModalClose}
-        header="Deny">
-        <ReasonModal
-          getWorkOrderWithPendingPayApproval={() => {
-            if (getWorkOrderWithPendingPayApproval) {
-              getWorkOrderWithPendingPayApproval()
-            }
-          }}
-          toast={toastRef}
-          getOutStandingInvoice={() => {
-            if (getOutStandingInvoice) {
-              getOutStandingInvoice()
-            }
-          }}
-          selectedRowData={workOrderData?.id}
-          setVisible={() => {
-            setDenyModalOpen(false)
-          }}
-          closeModal={() => {
-            closeModal()
-            handleModalClose()
-          }}
-        />
-      </Dialog>
-
-      <Dialog
-        position="center"
+        children={
+          <ReasonModal
+            getWorkOrderWithPendingPayApproval={() => {
+              if (getWorkOrderWithPendingPayApproval) {
+                getWorkOrderWithPendingPayApproval()
+              }
+            }}
+            toast={toastRef}
+            getOutStandingInvoice={() => {
+              if (getOutStandingInvoice) {
+                getOutStandingInvoice()
+              }
+            }}
+            selectedRowData={workOrderData?.id}
+            setVisible={() => {
+              setDenyModalOpen(false)
+            }}
+            closeModal={() => {
+              closeModal()
+              handleModalClose()
+            }}
+          />
+        }></PopUpCustomModal>
+      {/* Show Image */}
+      <PopUpCustomModal
         style={{
           width: '800px',
           minWidth: '800px',
           height: '580px',
           minHeight: '580px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
         visible={imageVisible}
+        header="Images"
         onHide={() => setImageVisible(false)}
-        header={'Images'}>
-        <ShowImages
-          handleNoteChange={handleNoteChange}
-          hoveredIndex={hoveredIndex}
-          handleRemoveImage={handleRemoveImage}
-          setHoveredIndex={setHoveredIndex}
-          handleImageChange={handleImageChange}
-          setImageVisible={setImageVisible}
-          imageRequestDtoList={imageRequestDtoList}
-          isLoading={isLoading}
-          images={customerImages}
-          toastRef={toastRef}
-        />
-        {/* <Toast ref={toastRef} /> */}
-      </Dialog>
-
+        children={
+          <UploadImages
+            handleNoteChange={handleNoteChange}
+            hoveredIndex={hoveredIndex}
+            handleRemoveImage={handleRemoveImage}
+            setHoveredIndex={setHoveredIndex}
+            handleImageChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleImageChange(event, toastRef, setImages, setImageRequestDtoList)
+            }
+            setImageVisible={setImageVisible}
+            imageRequestDtoList={imageRequestDtoList}
+            isLoading={isLoading}
+            images={images}
+            toastRef={toastRef}
+          />
+        }></PopUpCustomModal>
       {viewPdf && (
         <PDFEditor
           fileData={formData ? formData : viewPdf?.encodedFormData}
@@ -1632,5 +1448,4 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     </>
   )
 }
-
 export default AddWorkOrders

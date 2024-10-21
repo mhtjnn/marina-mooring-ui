@@ -64,7 +64,6 @@ const AddVendor: React.FC<AddVendorProps> = ({ vendors, editMode, closeModal, ge
   const handleInputChange = (field: string, value: any) => {
     if (field === 'phone') {
       value = formatPhoneNumber(value)
-      
     }
     if (field === 'phoneForRepresentative') {
       value = formatPhoneNumber(value)

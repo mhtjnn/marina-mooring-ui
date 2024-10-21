@@ -107,7 +107,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
       const selectedCustomerAdminName = selectedCustomerAdmin
         ? selectedCustomerAdmin.firstName + ' ' + selectedCustomerAdmin.lastName
         : ''
-      if (customerData?.roleResponseDto.id !== 2) {
+      if (customerData?.roleResponseDto?.id !== 2) {
         setSelectedCustomerId(selectedCustomerAdminName)
       }
       dispatch(setCustomerName(selectedCustomerAdminName))
@@ -477,7 +477,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country])
+  }, [country?.id])
 
   const getUserHandler = async () => {
     try {
@@ -490,7 +490,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
         setIsLoading(false)
         if (content.length > 0) {
           const firstLastName = content?.map((item) => ({
-            label: item.firstName + ' ' + item.lastName,
+            label: item?.firstName + ' ' + item?.lastName,
             value: item,
           }))
           setgetCustomerOwnerData(firstLastName)
@@ -526,8 +526,8 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
   }, [])
 
   useEffect(() => {
-    if (country) fetchStateDataAndUpdate()
-  }, [country])
+    if (country?.id) fetchStateDataAndUpdate()
+  }, [country?.id])
 
   useEffect(() => {
     if (editMode || editCustomerMode) {

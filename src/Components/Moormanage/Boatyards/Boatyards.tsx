@@ -34,7 +34,7 @@ import { RiDeleteBin5Fill } from 'react-icons/ri'
 import { Paginator } from 'primereact/paginator'
 import React from 'react'
 import MooringInformations from '../../CommonComponent/MooringInformations'
-import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle } from '../../Utils/Style'
 import { AppContext } from '../../../Services/ContextApi/AppContext'
 
 const Boatyards = () => {
@@ -288,7 +288,7 @@ const Boatyards = () => {
             setSelectedMooring(content[0])
             setTotalRecords(totalSize)
             if (selectedBoatYard) {
-              const data = content.find((data) => data.id === selectedBoatYard.id)
+              const data = content.find((data) => data?.id === selectedBoatYard.id)
               if (data) {
                 setSelectedBoatYard(data)
               }
@@ -487,7 +487,7 @@ const Boatyards = () => {
               iconStyle={{
                 position: 'absolute',
                 left: '15px',
-                top: '65%',
+                top: '60%',
                 transform: 'translateY(-50%)',
                 width: '16px',
                 height: '16px',

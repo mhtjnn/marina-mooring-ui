@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ header, customer }) => {
   const imageData = userData?.imageDto?.imageData
   const UserName =
     userData && userData?.firstName && userData?.lastName
-      ? userData.firstName + ' ' + userData.lastName
+      ? userData?.firstName + ' ' + userData?.lastName
       : ''
   const imageUrl = imageData ? `data:image/jpeg;base64,${imageData}` : '/assets/images/user12.png'
 
@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ header, customer }) => {
       if (status === 200 && Array.isArray(content)) {
         if (content.length > 0) {
           const firstLastName = content.map((item) => ({
-            label: `${item.firstName || '-'} ${item.lastName || '-'}`,
+            label: `${item?.firstName || '-'} ${item?.lastName || '-'}`,
             value: item,
           }))
 
