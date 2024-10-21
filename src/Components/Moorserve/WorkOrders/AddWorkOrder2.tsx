@@ -1286,6 +1286,36 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
         {activeTab === 'Additional Information' && <div>Additional Information content goes here...</div>}
       </div>
     </div>
+    
+    <Dialog
+        position="center"
+        style={{
+          width: '800px',
+          minWidth: '800px',
+          height: '580px',
+          minHeight: '580px',
+          borderRadius: '1rem',
+          fontWeight: '400',
+          cursor: 'alias',
+        }}
+        draggable={false}
+        visible={imageVisible}
+        onHide={() => setImageVisible(false)}
+        header={'Images'}>
+        <ShowImages
+          handleNoteChange={handleNoteChange}
+          hoveredIndex={hoveredIndex}
+          handleRemoveImage={handleRemoveImage}
+          setHoveredIndex={setHoveredIndex}
+          handleImageChange={handleImageChange}
+          setImageVisible={setImageVisible}
+          imageRequestDtoList={imageRequestDtoList}
+          isLoading={isLoading}
+          images={customerImages}
+          toastRef={toastRef}
+        />
+        {/* <Toast ref={toastRef} /> */}
+      </Dialog>
     </>
   )
 }
