@@ -42,6 +42,7 @@ import { validateFields } from '../../Utils/RegexUtils'
 import AddDock from './AddDock'
 import AddMooringInCustomer from './AddMooringInCustomer'
 import { formatDate, handleFocus, parseDate } from '../../Utils/CommonMethod'
+import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
 
 const AddCustomer: React.FC<CustomerDataProps> = ({
   customer,
@@ -1961,34 +1962,30 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
         />
       </div>
 
-      <Dialog
-        position="center"
+      <PopUpCustomModal
         style={{
           width: '800px',
           minWidth: '800px',
           height: '650px',
           minHeight: '650px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
         visible={customerImageVisible}
         onHide={() => setCustomerImageVisible(false)}
-        header={'Images'}>
-        <UploadImages
-          handleNoteChange={handleCustomerNoteChange}
-          hoveredIndex={hoveredIndex}
-          handleRemoveImage={handleRemoveCustomerImage}
-          setHoveredIndex={setHoveredIndex}
-          handleImageChange={handleCustomerImageChange}
-          setImageVisible={setCustomerImageVisible}
-          imageRequestDtoList={customerImageRequestDtoList}
-          isLoading={isLoading}
-          images={customerImages}
-          toastRef={toastRef}
-        />
-      </Dialog>
+        header={'Images'}
+        children={
+          <UploadImages
+            handleNoteChange={handleCustomerNoteChange}
+            hoveredIndex={hoveredIndex}
+            handleRemoveImage={handleRemoveCustomerImage}
+            setHoveredIndex={setHoveredIndex}
+            handleImageChange={handleCustomerImageChange}
+            setImageVisible={setCustomerImageVisible}
+            imageRequestDtoList={customerImageRequestDtoList}
+            isLoading={isLoading}
+            images={customerImages}
+            toastRef={toastRef}
+          />
+        }></PopUpCustomModal>
       {/* Upload Mooring Image */}
       <Dialog
         position="center"
