@@ -381,6 +381,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       const response = await getWorkOrderById({ id: id }).unwrap()
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
+        setWorkOrderId(id)
         setWorkOrderImages(content?.imageResponseDtoList)
         setVoiceMemo(content?.voiceMEMOResponseDtoList)
         setIsLoading(false)
@@ -431,7 +432,10 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
         setIsLoading(false)
-        if (workOrderId) getWorkOrderDataById(workOrderId)
+        if (workOrderId) {
+          getWorkOrderDataById(workOrderId)
+        }
+        getWorkOrderData()
         toast?.current?.show({
           severity: 'success',
           summary: 'Success',

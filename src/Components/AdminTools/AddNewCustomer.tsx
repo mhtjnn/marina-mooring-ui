@@ -394,7 +394,6 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
         roleId: role?.id,
         confirmPassword: encodedPassword, // Using base64 encoded password for confirmPassword
       }
-
       // Send the encoded password to the server
       const response = await addCustomer({
         payload: addUserPayload,
@@ -477,7 +476,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country?.id])
+  }, [country?.id, customerData?.countryResponseDto?.id])
 
   const getUserHandler = async () => {
     try {
@@ -526,8 +525,8 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
   }, [])
 
   useEffect(() => {
-    if (country?.id) fetchStateDataAndUpdate()
-  }, [country?.id])
+    if (country?.id || customerData?.countryResponseDto?.id) fetchStateDataAndUpdate()
+  }, [country?.id, customerData?.countryResponseDto?.id])
 
   useEffect(() => {
     if (editMode || editCustomerMode) {

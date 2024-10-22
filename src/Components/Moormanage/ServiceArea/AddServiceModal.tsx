@@ -275,7 +275,7 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country?.id])
+  }, [country?.id, customerData?.countryResponseDto?.id])
 
   useEffect(() => {
     fetchDataAndUpdate()
@@ -283,7 +283,7 @@ const AddServiceModal: React.FC<ServiceAreaProps> = ({
 
   useEffect(() => {
     if (country) fetchStateDataAndUpdate()
-  }, [country?.id])
+  }, [country?.id, customerData?.countryResponseDto?.id])
 
   useEffect(() => {
     if (editMode && customerData) {

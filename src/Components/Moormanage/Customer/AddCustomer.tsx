@@ -745,7 +745,7 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country?.id])
+  }, [country?.id, customer?.countryResponseDto?.id])
 
   const handleClick = () => {
     if (editCustomerMode) {
@@ -778,10 +778,10 @@ const AddCustomer: React.FC<CustomerDataProps> = ({
   }, [])
 
   useEffect(() => {
-    if (country?.id) {
+    if (country?.id || customer?.countryResponseDto?.id) {
       fetchStateDataAndUpdate()
     }
-  }, [country?.id])
+  }, [country?.id, customer?.countryResponseDto?.id])
 
   useEffect(() => {
     if (editMode && customer) handleEditMode()
