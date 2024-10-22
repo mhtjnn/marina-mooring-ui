@@ -432,7 +432,6 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
         setIsLoading(false)
-        getWorkOrderData()
         if (workOrderId) {
           setIsLoading(true)
           getWorkOrderDataById(workOrderId)

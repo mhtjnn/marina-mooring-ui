@@ -99,7 +99,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   )
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>({})
   const [lastChangedField, setLastChangedField] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [denyModalOpen, setDenyModalOpen] = useState(false)
   const [imageVisible, setImageVisible] = useState(false)
@@ -280,6 +280,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       setErrorMessage(errors)
       return
     }
+    setIsLoading(true)
     const payload: any = {
       mooringId: workOrder?.mooringId?.id,
       customerId: workOrder?.customerName?.id,
@@ -356,6 +357,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (Object.keys(errors).length > 0) return
     try {
       setIsLoading(true)
+
       const editPayload: any = {}
       if (workOrderData?.mooringResponseDto?.id) {
         if (workOrder?.mooringId?.id) {
@@ -891,6 +893,20 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
           </div>
 
           {isLoader && (
+            <ProgressSpinner
+              style={{
+                position: 'absolute',
+                top: '45%',
+                left: '45%',
+                transform: 'translate(-50%, -50%)',
+                width: '50px',
+                height: '50px',
+              }}
+              strokeWidth="4"
+            />
+          )}
+
+          {isLoading && (
             <ProgressSpinner
               style={{
                 position: 'absolute',
