@@ -379,9 +379,8 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
     setIsLoading(true)
     try {
       const response = await getWorkOrderById({ id: id }).unwrap()
-      const { status, content, message, totalSize } = response as WorkOrderResponse
+      const { status, content, message } = response as WorkOrderResponse
       if (status === 200) {
-        setWorkOrderId(id)
         setWorkOrderImages(content?.imageResponseDtoList)
         setVoiceMemo(content?.voiceMEMOResponseDtoList)
         setIsLoading(false)
@@ -466,7 +465,6 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
   const handleModalClose = () => {
     setVisible(false)
     setEditMode(false)
-    getWorkOrderData()
     setImageEditVisible(false)
   }
   useEffect(() => {
