@@ -20,7 +20,6 @@ import {
   setCustomerName,
 } from '../../Store/Slice/userSlice'
 import { Paginator } from 'primereact/paginator'
-import { VirtualScroller } from 'primereact/virtualscroller'
 import { Dialog } from 'primereact/dialog'
 import ResetPassword from './ResetPassword'
 import { AddNewButtonStyle, DialogStyle } from '../Utils/Style'

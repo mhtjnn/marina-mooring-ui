@@ -235,3 +235,17 @@ export const handleImageChange = async ({
   setCustomerImages((prevImages: any) => [...prevImages, ...newImageUrls])
   setimageRequestDtoList(imageRequestDtoList)
 }
+export const parseCoordinates = (coordinates: string): [number, number] | null => {
+  if (!coordinates) return null
+
+  const parts = coordinates.trim().split(/\s+|,/).map(parseFloat)
+  const [latitude, longitude] = parts
+
+  return isNaN(latitude) || isNaN(longitude) ? null : [latitude, longitude]
+}
+
+export const formatCoordinates = (coordinates: [number, number] | null): string | null => {
+  if (!coordinates) return null
+  const [latitude, longitude] = coordinates
+  return `${latitude} ${longitude}`
+}

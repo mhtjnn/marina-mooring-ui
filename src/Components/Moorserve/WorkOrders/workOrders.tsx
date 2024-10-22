@@ -379,7 +379,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
     setIsLoading(true)
     try {
       const response = await getWorkOrderById({ id: id }).unwrap()
-      const { status, content, message, totalSize } = response as WorkOrderResponse
+      const { status, content, message } = response as WorkOrderResponse
       if (status === 200) {
         setWorkOrderImages(content?.imageResponseDtoList)
         setVoiceMemo(content?.voiceMEMOResponseDtoList)
@@ -431,7 +431,10 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
       const { status, content, message, totalSize } = response as WorkOrderResponse
       if (status === 200) {
         setIsLoading(false)
-        if (workOrderId) getWorkOrderDataById(workOrderId)
+        if (workOrderId) {
+          setIsLoading(true)
+          getWorkOrderDataById(workOrderId)
+        }
         toast?.current?.show({
           severity: 'success',
           summary: 'Success',
@@ -462,7 +465,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
   const handleModalClose = () => {
     setVisible(false)
     setEditMode(false)
-    getWorkOrderData()
+    setImageEditVisible(false)
   }
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -826,7 +829,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
           />
         }></PopUpCustomModal>
 
-      {/* Image Information */}
+      {/* Edit Image Information */}
       <PopUpCustomModal
         style={{
           width: '700px',

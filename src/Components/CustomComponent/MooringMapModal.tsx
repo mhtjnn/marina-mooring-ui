@@ -7,6 +7,7 @@ import { useGetMooringByIdMutation } from '../../Services/MoorManage/MoormanageA
 import { ErrorResponse, MooringResponse } from '../../Type/ApiTypes'
 import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
+import { formatCoordinates } from '../Helper/Helper'
 
 const MooringMapModal: React.FC<TimeLineProps> = ({
   gpsValue,
@@ -73,7 +74,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
             <p className="text-xs text-white mt-2">
               GPS Coordinates:
               <br />
-              {gpsValue}
+              {formatCoordinates(gpsValue)}
             </p>
           </div>
         </div>
