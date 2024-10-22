@@ -15,6 +15,7 @@ import {
 import { MooringPayload, MooringWithGpsCoordinates } from '../../Type/ApiTypes'
 import MooringMapModal from '../CustomComponent/MooringMapModal'
 import { Toast } from 'primereact/toast'
+import { formatCoordinates } from '../Helper/Helper'
 
 const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
   position,
@@ -130,6 +131,7 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                   const coordinates = parseCoordinates(mooring.gpsCoordinates) || [
                     39.4926173, -117.5714859,
                   ]
+
                   const position: LatLngExpression = coordinates
                   const iconKey = mooring?.mooringStatus?.id as keyof typeof iconsByStatusId
                   const icon = iconsByStatusId[iconKey] || DefaultIcon
@@ -156,6 +158,7 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                   const position: LatLngExpression = coordinates
                   const iconKey = mooring?.statusId as keyof typeof iconsByStatusId
                   const icon = iconsByStatusId[iconKey] || DefaultIcon
+
                   return (
                     <Marker key={index} position={position} icon={icon} ref={mapRef}>
                       <Popup>

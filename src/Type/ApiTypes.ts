@@ -327,7 +327,7 @@ export interface MooringPayload {
   lastName: string
   harborOrArea: string
   waterDepth: string
-  gpsCoordinates: string
+  gpsCoordinates: any
   boatyardName: string
   boatName: string
   boatSize: string
@@ -430,7 +430,7 @@ export interface MooringWithGpsCoordinates {
   id: number
   mooringId: string
   mooringNumber: string
-  gpsCoordinates: string
+  gpsCoordinates: any
   statusId: number
 }
 export interface MooringResponse {
