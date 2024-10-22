@@ -129,6 +129,7 @@ export interface WorkOrderProps {
   closeModal: () => void
   getWorkOrderWithPendingPayApproval?: () => void
   getOutStandingInvoice?: () => void
+  getWorkOrderData?: () => void
 }
 export interface WorkOrderValue {
   report?: boolean

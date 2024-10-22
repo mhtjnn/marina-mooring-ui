@@ -61,6 +61,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
   isAccountRecievable,
   getWorkOrderWithPendingPayApproval,
   getOutStandingInvoice,
+  getWorkOrderData,
   isInvoice,
   isTechnician,
   visible,
@@ -322,6 +323,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
       const { status, message, error } = response as WorkOrderResponse
       if (status === 200 || status === 201) {
         closeModal()
+        if (getWorkOrderData) getWorkOrderData()
         toastRef?.current?.show({
           severity: 'success',
           summary: 'Success',
@@ -357,7 +359,6 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
     if (Object.keys(errors).length > 0) return
     try {
       setIsLoading(true)
-
       const editPayload: any = {}
       if (workOrderData?.mooringResponseDto?.id) {
         if (workOrder?.mooringId?.id) {
@@ -473,6 +474,7 @@ const AddWorkOrders: React.FC<WorkOrderProps> = ({
         setIsLoading(false)
         if (status === 200 || status === 201) {
           closeModal()
+          if (getWorkOrderData) getWorkOrderData()
           toastRef?.current?.show({
             severity: 'success',
             summary: 'Success',

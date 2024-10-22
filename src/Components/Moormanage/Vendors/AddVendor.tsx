@@ -238,7 +238,7 @@ const AddVendor: React.FC<AddVendorProps> = ({ vendors, editMode, closeModal, ge
         stateId: formData?.stateForAddress?.id || vendors?.stateResponseDto?.id,
         countryId: formData?.countryForAddress?.id || vendors?.countryResponseDto?.id,
         zipCode: formData?.zipCodeForAddress || vendors?.zipCode,
-        vendorAddress: formData?.vendorAddress || vendors?.address,
+        address: formData?.vendorAddress || vendors?.address,
         remitAddress: formData?.remitAddress || vendors?.remitAddress,
         companyEmail: formData?.emailForAddress || vendors?.companyEmail,
         accountNumber: formData?.accountNumber || vendors?.accountNumber,

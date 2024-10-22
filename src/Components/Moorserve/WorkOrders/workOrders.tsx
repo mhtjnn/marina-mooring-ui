@@ -509,6 +509,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
                   toastRef={toast}
                   closeModal={handleModalClose}
                   isAccountRecievable={false}
+                  getWorkOrderData={getWorkOrderData}
                 />
               }
               headerText={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}
