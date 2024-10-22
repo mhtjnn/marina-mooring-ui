@@ -468,6 +468,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
     setVisible(false)
     setEditMode(false)
     getWorkOrderData()
+    setImageEditVisible(false)
   }
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -831,7 +832,7 @@ const WorkOrders: React.FC<WorkOrderValue> = () => {
           />
         }></PopUpCustomModal>
 
-      {/* Image Information */}
+      {/* Edit Image Information */}
       <PopUpCustomModal
         style={{
           width: '700px',
