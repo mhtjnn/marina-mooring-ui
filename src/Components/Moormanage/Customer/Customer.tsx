@@ -93,7 +93,7 @@ const Customer = () => {
 
   const handleToggle = (faq: string) => {
     if (accordion === faq) {
-      setAccordion('')
+      setAccordion("faq1")
     } else {
       setAccordion(faq)
     }
