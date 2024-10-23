@@ -294,7 +294,6 @@ const Boatyards = () => {
               }
             }
             setFilteredboatyardsData(content)
-
             const timeoutId = setTimeout(() => {
               setIsLoading(false)
             }, 400)

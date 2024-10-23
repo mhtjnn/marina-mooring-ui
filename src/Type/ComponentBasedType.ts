@@ -131,9 +131,6 @@ export interface WorkOrderProps {
   getOutStandingInvoice?: () => void
   getWorkOrderData?: () => void
 }
-export interface WorkOrderValue {
-  report?: boolean
-}
 export interface ReasonModalProps {
   selectedRowData: any
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -333,4 +330,11 @@ export interface WorkOrderEditModeProps {
   workOrderData: any
   setVendorId: Dispatch<SetStateAction<any>>
   setTime: Dispatch<SetStateAction<any>>
+}
+export interface AccordianProps {
+  properties: any
+  accordion: any
+  handleToggle: any
+  workOrderData: any
+  workOrderColumns: any
 }

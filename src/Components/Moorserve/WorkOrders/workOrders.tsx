@@ -22,7 +22,6 @@ import { ProgressSpinner } from 'primereact/progressspinner'
 import { Paginator } from 'primereact/paginator'
 import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton'
 import { properties } from '../../Utils/MeassageProperties'
-import { WorkOrderValue } from '../../../Type/ComponentBasedType'
 import {
   AccountRecievableColumnStyle,
   AddNewButtonStyle,
@@ -37,7 +36,7 @@ import AddImage from '../../Moormanage/Customer/AddImage'
 import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
 import VoiceMemoPlayer from '../../CommonComponent/VoiceMemoPlayer'
 
-const WorkOrders: React.FC<WorkOrderValue> = () => {
+const WorkOrders = () => {
   const toast = useRef<Toast>(null)
   const selectedCustomerId = useSelector(selectCustomerId)
   const [visible, setVisible] = useState(false)
