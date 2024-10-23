@@ -34,6 +34,7 @@ import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import InputComponent from '../../CommonComponent/InputComponent'
 import { InputText } from 'primereact/inputtext'
+import { workOrderValidateFields } from '../../Utils/RegexUtils'
 
 const AddEstimates: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -133,33 +134,14 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       return moorings
     }
   })()
-
-  const validateFields = () => {
-    const errors: { [key: string]: string } = {}
-    if (!workOrder.customerName) {
-      errors.customerName = 'Customer Name is required'
-    }
-    if (!workOrder.workOrderStatus) {
-      errors.workOrderStatus = 'Status is required'
-    }
-    if (!workOrder.vendor && workOrder?.workOrderStatus?.id === 10) {
-      errors.vendor = 'Vendor is required'
-    }
-    if (!workOrder.inventory && vendorId) {
-      errors.inventory = 'Item Name is required'
-    }
-    setErrorMessage(errors)
-    return errors
-  }
-
   const handleInputChange = (field: string, value: any) => {
-    const numberRegex = /^\d+$/
-
+    const costRegex = /^\d*\.?\d*$/
     if (field === 'cost') {
-      if (value !== '' && !numberRegex.test(value)) {
+      if (value !== '' && !costRegex.test(value)) {
         return
       }
     }
+
     if (field === 'quantity' && value !== '' && !/^\d*\.?\d*$/.test(value)) {
       return
     }
@@ -203,16 +185,19 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   const handleEditMode = () => {
     setWorkOrder((prevState: any) => ({
       ...prevState,
-      mooringId: workOrderData?.mooringResponseDto?.mooringNumber,
+      mooringId:
+        workOrderData?.mooringResponseDto && workOrderData?.mooringResponseDto?.mooringNumber,
       customerName:
+        workOrderData?.customerResponseDto &&
         workOrderData?.customerResponseDto?.firstName +
-        ' ' +
-        workOrderData?.customerResponseDto?.lastName,
+          ' ' +
+          workOrderData?.customerResponseDto?.lastName,
       boatyards: workOrderData?.boatyardResponseDto?.boatyardName,
       assignedTo:
+        workOrderData?.technicianUserResponseDto &&
         workOrderData?.technicianUserResponseDto?.firstName +
-        ' ' +
-        workOrderData?.technicianUserResponseDto?.lastName,
+          ' ' +
+          workOrderData?.technicianUserResponseDto?.lastName,
       dueDate: workOrderData?.dueDate,
       scheduleDate: workOrderData?.scheduledDate,
       workOrderStatus: workOrderData?.workOrderStatusDto?.status,
@@ -298,7 +283,10 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }
 
   const SaveEstimate = async () => {
-    const errors = validateFields()
+    const errors = workOrderValidateFields({
+      workOrder,
+      setErrorMessage,
+    })
     if (Object.keys(errors).length > 0) {
       setErrorMessage(errors)
       return
@@ -313,7 +301,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       workOrderStatusId: workOrder?.workOrderStatus?.id,
       time: '00:' + formatTime(time.minutes, time.seconds),
       problem: workOrder?.value,
-      cost: workOrder?.cost,
+      cost: Number(workOrder?.cost),
     }
     if (workOrder?.inventory) {
       payload.inventoryRequestDtoList = [
@@ -358,7 +346,10 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
   }
 
   const UpdateEstimate = async () => {
-    const errors = validateFields()
+    const errors = workOrderValidateFields({
+      workOrder,
+      setErrorMessage,
+    })
     if (Object.keys(errors).length > 0) {
       return
     }
@@ -390,7 +381,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
         editPayload.problem = workOrder?.value
       }
       if (workOrder?.cost !== workOrderData?.cost) {
-        editPayload.cost = workOrder?.cost
+        editPayload.cost = Number(workOrder?.cost)
       }
       const formattedTime = '00:' + formatTime(time.minutes, time.seconds)
       if (formattedTime !== workOrderData?.time) {
@@ -402,9 +393,9 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           if (workOrderData?.inventoryResponseDtoList?.length > 0) {
             workOrderData.inventoryResponseDtoList.forEach((item: any, index: number) => {
               inventoryRequestDtoList.push({
-                id: item.id,
-                quantity: item.quantity,
-                parentInventoryId: item.parentInventoryId,
+                id: item?.id,
+                quantity: item?.quantity,
+                parentInventoryId: item?.parentInventoryId,
               })
             })
           }
@@ -472,8 +463,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     const { boatYardName } = await getBoatYardNameData()
     if (getTechnicians !== null) {
       const firstLastName = getTechnicians.map((item) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
       }))
       setIsLoading(false)
       setTechnicians(firstLastName)
@@ -489,8 +480,8 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     }
     if (customersData !== null) {
       const firstLastName = customersData.map((item) => ({
-        firstName: item.firstName + ' ' + item.lastName,
-        id: item.id,
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
       }))
       setIsLoading(false)
       setcustomerNameValue(firstLastName)
@@ -508,7 +499,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       setVendorsName(vendorValue)
       if (workOrderData?.inventoryResponseDtoList) {
         const vendorList = workOrderData?.inventoryResponseDtoList
-          ?.map((item: any) => item.vendorResponseDto)
+          ?.map((item: any) => item?.vendorResponseDto)
           .filter((vendor: any) => vendor !== null)
         setVendorsName((prevState) => [...prevState, ...vendorList])
       }
@@ -531,14 +522,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (mooringsBasedOnCustomerId !== null) {
       setIsLoading(false)
       setMooringBasedOnCustomerId(mooringsBasedOnCustomerId)
-      if (mooringsBasedOnCustomerId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.customerName?.id])
 
@@ -548,39 +531,15 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     if (boatyardBasedOnMooringId !== null) {
       setIsLoading(false)
       setBoatyardBasedOnMooringId(boatyardBasedOnMooringId)
-      if (boatyardBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Boatyard Associated with Selected Mooring',
-          life: 3000,
-        })
-      }
     }
 
     if (customerBasedOnMooringId !== null) {
-      if (customerBasedOnMooringId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Customer Associated with Selected Mooring',
-          life: 3000,
-        })
-      } else {
-        const firstLastName = customerBasedOnMooringId.map((item: any) => ({
-          firstName: item.firstName + ' ' + item.lastName,
-          id: item.id,
-        }))
-        setIsLoading(false)
-        setCustomerBasedOnMooringId(firstLastName)
-      }
-    } else {
-      toastRef.current?.show({
-        severity: 'info',
-        summary: 'Info',
-        detail: 'No Customer Associated with Selected Mooring',
-        life: 3000,
-      })
+      const firstLastName = customerBasedOnMooringId.map((item: any) => ({
+        firstName: item?.firstName + ' ' + item?.lastName,
+        id: item?.id,
+      }))
+      setIsLoading(false)
+      setCustomerBasedOnMooringId(firstLastName)
     }
   }, [workOrder?.mooringId?.id])
 
@@ -588,14 +547,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
     const { mooringBasedOnBoatyardId } = await getMooringsBasedOnBoatyardIdData()
     if (mooringBasedOnBoatyardId !== null) {
       setMooringsBasedOnBoatyardIdData(mooringBasedOnBoatyardId)
-      if (mooringBasedOnBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id])
 
@@ -604,14 +555,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
       await getMooringBasedOnCustomerIdAndBoatyardIdData()
     if (mooringbasedOnCustomerIdAndBoatyardId !== null) {
       setbasedOnCustomerIdAndBoatyardId(mooringbasedOnCustomerIdAndBoatyardId)
-      if (mooringbasedOnCustomerIdAndBoatyardId?.length === 0) {
-        toastRef.current?.show({
-          severity: 'info',
-          summary: 'Info',
-          detail: 'No Mooring Associated with Selected Customer and Boatyard',
-          life: 3000,
-        })
-      }
     }
   }, [workOrder?.boatyards?.id, workOrder?.customerName?.id])
 
@@ -927,6 +870,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   border: '1px solid #D5E1EA',
                   fontSize: '0.8rem',
                   padding: '0.5rem',
+                  borderRadius: '0.50rem',
                 }}
               />
             </div>
@@ -981,9 +925,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
           {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Vendor <p className="text-red-600">*</p>
-                </div>
+                <div className="flex gap-1">Vendor</div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -1000,7 +942,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: errorMessage.vendor ? '1px solid red' : '1px solid #D5E1EA',
+                    border: '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -1009,7 +951,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                       <span>{option.vendorName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
                         workOrderData.inventoryResponseDtoList.some(
-                          (item: any) => item?.vendorResponseDto.id === option.id,
+                          (item: any) => item?.vendorResponseDto?.id === option.id,
                         ) && (
                           <i
                             className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
@@ -1019,18 +961,13 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   )}
                 />
               </div>
-              <p>
-                {errorMessage.vendor && <small className="p-error">{errorMessage.vendor}</small>}
-              </p>
             </div>
           ) : null}
           {/* Item Name */}
           {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
             <div className="mt-3">
               <span className="font-medium text-sm text-[#000000]">
-                <div className="flex gap-1">
-                  Item <p className="text-red-600">*</p>
-                </div>
+                <div className="flex gap-1">Item</div>
               </span>
               <div className="mt-1">
                 <Dropdown
@@ -1045,7 +982,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   style={{
                     width: '230px',
                     height: '32px',
-                    border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
+                    border: '1px solid #D5E1EA',
                     borderRadius: '0.50rem',
                     fontSize: '0.8rem',
                   }}
@@ -1054,7 +991,7 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                       <span>{option.itemName}</span>
                       {workOrderData?.inventoryResponseDtoList &&
                         workOrderData.inventoryResponseDtoList.some(
-                          (item: any) => item.id === option.id,
+                          (item: any) => item?.id === option.id,
                         ) && (
                           <i
                             className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
@@ -1064,11 +1001,6 @@ const AddEstimates: React.FC<WorkOrderProps> = ({
                   )}
                 />
               </div>
-              <p>
-                {errorMessage.inventory && (
-                  <small className="p-error">{errorMessage.inventory}</small>
-                )}
-              </p>
             </div>
           ) : null}
           {/* Quantity */}

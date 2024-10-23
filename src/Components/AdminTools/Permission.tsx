@@ -20,7 +20,8 @@ import { Params } from '../../Type/CommonType'
 import { properties } from '../Utils/MeassageProperties'
 import { Dialog } from 'primereact/dialog'
 import ResetPassword from './ResetPassword'
-import { AddNewButtonStyle, DialogStyle } from '../Style'
+import { AddNewButtonStyle, DialogStyle } from '../Utils/Style'
+import { CustomerfirstLastName } from '../Helper/Helper'
 
 const Permission = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -46,11 +47,6 @@ const Permission = () => {
     setPageNumber(event.page)
     setPageNumber1(event.first)
     setPageSize(event.rows)
-  }
-
-  const firstLastName = (data: any) => {
-    if (data.firstName === null) return '-'
-    else return data.firstName + ' ' + data.lastName
   }
 
   const handleEditButtonClick = (rowData: any) => {
@@ -81,7 +77,7 @@ const Permission = () => {
       {
         id: 'name',
         label: 'Name',
-        body: firstLastName,
+        body: CustomerfirstLastName,
         style: columnStyle,
       },
 

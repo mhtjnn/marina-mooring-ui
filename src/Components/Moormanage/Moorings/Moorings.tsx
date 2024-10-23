@@ -11,7 +11,6 @@ import React, {
 import {
   useDeleteMooringsMutation,
   useGetCustomerWithMooringWithMooringImagesMutation,
-  useGetCustomersWithMooringMutation,
   useGetMooringsMutation,
 } from '../../../Services/MoorManage/MoormanageApi'
 import {
@@ -44,7 +43,7 @@ import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
 import AddImage from '../Customer/AddImage'
 import ViewImageDialog from '../../CommonComponent/ViewImageDialog'
 import MooringInformations from '../../CommonComponent/MooringInformations'
-import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle } from '../../Utils/Style'
 import { AppContext } from '../../../Services/ContextApi/AppContext'
 
 const Moorings = () => {
@@ -222,7 +221,16 @@ const Moorings = () => {
     setSelectedCustomer(customerRecordData)
     setIsEditMooring(true)
   }
-
+  const serviceArea = (rowData: any) =>
+    rowData?.serviceAreaResponseDto?.serviceAreaName !== null ? (
+      rowData?.serviceAreaResponseDto?.serviceAreaName
+    ) : (
+      <div className={'ml-5'}>-</div>
+    )
+  const gpsCoordinatesValue = (data: any) => {
+    if (data?.gpsCoordinates === null) return <div className={'ml-8'}>-</div>
+    else return data?.gpsCoordinates
+  }
   const tableColumns = useMemo(
     () => [
       {
@@ -232,6 +240,7 @@ const Moorings = () => {
           borderBottom: '1px solid #C0C0C0',
           fontWeight: '700',
           color: '#000000',
+          width: '3vw',
           backgroundColor: '#FFFFFF',
         },
       },
@@ -248,7 +257,7 @@ const Moorings = () => {
       {
         id: 'customerName',
         label: 'Customer Name',
-        body: (rowData: any) => (rowData.customerName !== null ? rowData.customerName : '-'),
+        body: (rowData: any) => (rowData?.customerName !== null ? rowData?.customerName : '-'),
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',
@@ -259,6 +268,7 @@ const Moorings = () => {
       {
         id: 'serviceAreaResponseDto.serviceAreaName',
         label: 'Service Area',
+        body: serviceArea,
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',
@@ -269,6 +279,7 @@ const Moorings = () => {
       {
         id: 'gpsCoordinates',
         label: 'GPS Coordinates',
+        body: gpsCoordinatesValue,
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',
@@ -289,6 +300,7 @@ const Moorings = () => {
           borderBottom: '1px solid #C0C0C0',
           fontWeight: '700',
           color: '#000000',
+          width: '3vw',
           fontSize: '12px',
           backgroundColor: '#FFFFFF',
         },
@@ -307,6 +319,7 @@ const Moorings = () => {
       {
         id: 'gpsCoordinates',
         label: 'GPS Coordinates:',
+        body: gpsCoordinatesValue,
         style: {
           borderBottom: '1px solid #C0C0C0',
           backgroundColor: '#FFFFFF',
@@ -353,7 +366,7 @@ const Moorings = () => {
           color: 'black',
           label: 'View Image',
           onClick: (data) => {
-            setShowImage((prev) => ({ ...prev, id: data.id, imageData: data.imageData }))
+            setShowImage((prev) => ({ ...prev, id: data?.id, imageData: data?.imageData }))
             setImageVisible(true)
           },
           underline: true,
@@ -489,6 +502,12 @@ const Moorings = () => {
     }
   }
 
+  const getAddress = (customerRecordData: any) => {
+    const { address, city, stateResponseDto, countryResponseDto } = customerRecordData || {}
+    const components = [address, city, stateResponseDto?.name, countryResponseDto?.name]
+    const filteredComponents = components.filter(Boolean)
+    return filteredComponents.length > 0 ? filteredComponents.join(', ') : '-'
+  }
   const CustomerDetails = useMemo(() => {
     return (
       <div className="">
@@ -540,11 +559,7 @@ const Moorings = () => {
           }}>
           <p className="ml-4">
             <span className="address-label">Address: </span>
-            {(customerRecordData?.address || '-') +
-              ', ' +
-              (customerRecordData?.stateResponseDto?.name || '-') +
-              ', ' +
-              (customerRecordData?.countryResponseDto?.name || '-')}
+            {getAddress(customerRecordData)}
           </p>
           <p className="ml-4 mt-3">
             <span className="address-label">Notes: </span>

@@ -25,7 +25,7 @@ import {
   setCustomerName,
 } from '../../Store/Slice/userSlice'
 import { Toast } from 'primereact/toast'
-import { EMAIL_REGEX, NAME_REGEX, PHONE_REGEX } from '../Utils/RegexUtils'
+import { EMAIL_REGEX, formatPhoneNumber, NAME_REGEX } from '../Utils/RegexUtils'
 
 const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
   customerData,
@@ -107,7 +107,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
       const selectedCustomerAdminName = selectedCustomerAdmin
         ? selectedCustomerAdmin.firstName + ' ' + selectedCustomerAdmin.lastName
         : ''
-      if (customerData?.roleResponseDto.id !== 2) {
+      if (customerData?.roleResponseDto?.id !== 2) {
         setSelectedCustomerId(selectedCustomerAdminName)
       }
       dispatch(setCustomerName(selectedCustomerAdminName))
@@ -190,7 +190,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
 
   const handleInputChange = (fieldName: string, value: any) => {
     if (fieldName === 'phone') {
-      value = value.replace(/[^0-9+]/g, '')
+      value = formatPhoneNumber(value)
     }
     switch (fieldName) {
       case 'firstName':
@@ -394,7 +394,6 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
         roleId: role?.id,
         confirmPassword: encodedPassword, // Using base64 encoded password for confirmPassword
       }
-
       // Send the encoded password to the server
       const response = await addCustomer({
         payload: addUserPayload,
@@ -477,7 +476,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
       setState('')
       setStatesData([])
     }
-  }, [country])
+  }, [country?.id, customerData?.countryResponseDto?.id])
 
   const getUserHandler = async () => {
     try {
@@ -490,7 +489,7 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
         setIsLoading(false)
         if (content.length > 0) {
           const firstLastName = content?.map((item) => ({
-            label: item.firstName + ' ' + item.lastName,
+            label: item?.firstName + ' ' + item?.lastName,
             value: item,
           }))
           setgetCustomerOwnerData(firstLastName)
@@ -526,8 +525,8 @@ const AddNewCustomer: React.FC<CustomerAdminDataProps> = ({
   }, [])
 
   useEffect(() => {
-    if (country) fetchStateDataAndUpdate()
-  }, [country])
+    if (country?.id || customerData?.countryResponseDto?.id) fetchStateDataAndUpdate()
+  }, [country?.id, customerData?.countryResponseDto?.id])
 
   useEffect(() => {
     if (editMode || editCustomerMode) {

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import CustomModal from '../../CustomComponent/CustomModal'
 import AddWorkOrders from '../../Moorserve/WorkOrders/AddWorkOrders'
 import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
 import Header from '../../Layout/LayoutComponents/Header'
@@ -7,13 +6,17 @@ import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
 import { Paginator } from 'primereact/paginator'
 import { ProgressSpinner } from 'primereact/progressspinner'
 import PaymentModal from './PaymentModal'
-import ContactModal from './ContactModal'
 import { InputText } from 'primereact/inputtext'
 import { useSelector } from 'react-redux'
+import { selectCustomerId } from '../../../Store/Slice/userSlice'
+import { Toast } from 'primereact/toast'
+import { Params } from '../../../Type/CommonType'
+import ReasonModal from './ReasonModal'
+import ApproveModal from './ApproveModal'
+import { properties } from '../../Utils/MeassageProperties'
 import {
   useGetCompletedWorkOrderWithPendingPayApprovalMutation,
   useGetWorkOrderInvoicesMutation,
-  useGetWorkOrdersMutation,
 } from '../../../Services/MoorServe/MoorserveApi'
 import {
   ErrorResponse,
@@ -21,18 +24,19 @@ import {
   WorkOrderPayload,
   WorkOrderResponse,
 } from '../../../Type/ApiTypes'
-import { selectCustomerId } from '../../../Store/Slice/userSlice'
-import { Toast } from 'primereact/toast'
-import { Params } from '../../../Type/CommonType'
-import { Dialog } from 'primereact/dialog'
-import { Button } from 'primereact/button'
-import ReasonModal from './ReasonModal'
-import ApproveModal from './ApproveModal'
-import { properties } from '../../Utils/MeassageProperties'
+import {
+  AccountRecievableColumnStyle,
+  AccountRecievableHeaderStyle,
+  WorkOrderPendingApprovalDataTableHeaderStyle,
+  WorkOrderPendingApprovalDataTableStyle,
+} from '../../Utils/Style'
+import { firstLastName } from '../../Helper/Helper'
+import PopUpCustomModal from '../../CustomComponent/PopUpCustomModal'
 
 const AccountRecievable = () => {
+  const toast = useRef<Toast>(null)
   const selectedCustomerId = useSelector(selectCustomerId)
-  const [modalVisible, setModalVisible] = useState(false)
+  const [amount, setamount] = useState()
   const [pageNumber, setPageNumber] = useState(0)
   const [pageNumber1, setPageNumber1] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -46,57 +50,43 @@ const AccountRecievable = () => {
   const [approveModalOpen, setApproveModalOpen] = useState(false)
   const [workOrderId, setWorkOrderId] = useState<any>()
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [addWorkOrderModal, setAddWorkOrderModal] = useState(false)
   const [searchApproval, setSearchApproval] = useState('')
   const [searchInvoice, setSearchInvoice] = useState('')
   const [workOrderData, setWorkOrderData] = useState<WorkOrderPayload[]>([])
   const [workOrderDataInvoice, setWorkOrderDataInvoice] = useState<WorkOrderPayload[]>([])
+  const [selectedRowData, setSelectedRowData] = useState<any>()
+  const [selectedWorkOrderRowData, setSelectedWorkOredrRowData] = useState<any>()
+  const [isAccountRecievable, setIsAccountRecievable] = useState(false)
+  const [isInvoice, setIsInvoice] = useState(false)
   const [getCompletedWorkOrderWithPendingPayApproval] =
     useGetCompletedWorkOrderWithPendingPayApprovalMutation()
   const [getWorkOrderInvoice] = useGetWorkOrderInvoicesMutation()
-
-  const toast = useRef<Toast>(null)
-
   const handleSearchApproval = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchApproval(e.target.value)
   }
   const handleSearchInvoice = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInvoice(e.target.value)
   }
-
-  const [visible, setVisible] = useState(false)
-  const [editMode, setEditMode] = useState(false)
-  const [selectedRowData, setSelectedRowData] = useState<any>()
-  const [selectedWorkOrderRowData, setSelectedWorkOredrRowData] = useState<any>()
-  const [isAccountRecievable, setIsAccountRecievable] = useState(false)
-  const [isInvoice, setIsInvoice] = useState(false)
-
   const onPageChange = (event: any) => {
     setPageNumber(event.page)
     setPageNumber1(event.first)
     setPageSize(event.rows)
   }
-
   const onPageChangeTwo = (event: any) => {
     setPageNumberTwo(event.page)
     setPageNumber2(event.first)
     setPageSizeTwo(event.rows)
   }
-
   const handleModalClose = () => {
     setIsPaymentModalOpen(false)
-    setIsContactModalOpen(false)
     setDenyModalOpen(false)
     setAddWorkOrderModal(false)
     setApproveModalOpen(false)
-    setModalVisible(false)
     setSelectedWorkOredrRowData('')
   }
-
   const handleBottomSectionActionClick = (action: string, row: any) => {
     if (action === 'Payments') {
-      setModalVisible(true)
       setIsPaymentModalOpen(true)
       setSelectedWorkOredrRowData(row?.id)
     } else if (action === 'Contact') {
@@ -105,13 +95,11 @@ const AccountRecievable = () => {
       setIsLoading(false)
     } else if (action === 'View') {
       setSelectedWorkOredrRowData(row?.workOrderResponseDto)
-      setModalVisible(true)
       setAddWorkOrderModal(true)
       setIsAccountRecievable(true)
       setIsInvoice(true)
     }
   }
-
   const getWorkOrderWithPendingPayApproval = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -143,7 +131,6 @@ const AccountRecievable = () => {
     } catch (error) {
       const { message: msg } = error as ErrorResponse
       setIsLoading(false)
-      setModalVisible(false)
       console.error('Error occurred while fetching customer data:', msg)
     }
   }, [searchApproval, selectedCustomerId, pageNumber, pageSize])
@@ -178,63 +165,35 @@ const AccountRecievable = () => {
       }
     } catch (error) {
       const { message: msg } = error as ErrorResponse
-      setModalVisible(false)
       setIsLoading(false)
       console.error('Error occurred while fetching customer data:', msg)
     }
   }, [searchInvoice, selectedCustomerId, pageNumberTwo, pageSizeTwo])
 
-  const columnStyle = {
-    backgroundColor: '#FFFFFF',
-    color: '#000000',
-    fontWeight: '700',
-    fontSize: '12px',
-  }
-
-  const firstLastName = (data: any) => {
-    return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
-  }
-
   const accountRecievableTableColumn = useMemo(
     () => [
-      {
-        id: 'workOrderNumber',
-        label: 'Work Order Number',
-        style: columnStyle,
-      },
+      { id: 'workOrderNumber', label: 'Work Order Number', style: AccountRecievableColumnStyle },
       {
         id: 'customerName',
         label: 'Customer Name',
         body: firstLastName,
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
       },
-      {
-        id: 'completedDate',
-        label: 'Completed Date',
-        style: columnStyle,
-      },
-      {
-        id: 'workOrderStatusDto.status',
-        label: 'Status',
-        style: columnStyle,
-      },
+      { id: 'completedDate', label: 'Completed Date', style: AccountRecievableColumnStyle },
+      { id: 'workOrderStatusDto.status', label: 'Status', style: AccountRecievableColumnStyle },
     ],
     [],
   )
 
   const handleActionTopSectionClick = (action: string, row: any) => {
     if (action === 'Approve') {
-      setModalVisible(true)
+      setamount(row.cost)
       setWorkOrderId(row?.id)
       setApproveModalOpen(true)
     } else if (action === 'Deny') {
-      setModalVisible(true)
       setSelectedRowData(row?.id)
       setDenyModalOpen(true)
-      setEditMode(true)
-      setVisible(true)
     } else if (action === 'View') {
-      setModalVisible(true)
       setSelectedWorkOredrRowData(row)
       setAddWorkOrderModal(true)
       setIsAccountRecievable(true)
@@ -247,11 +206,6 @@ const AccountRecievable = () => {
       {
         label: 'Approve',
         filled: true,
-        style: {
-          width: '46px',
-          height: '17px',
-          fontWeight: 700,
-        },
         onClick: (row: any) => handleActionTopSectionClick('Approve', row),
       },
       {
@@ -265,62 +219,59 @@ const AccountRecievable = () => {
         onClick: (row: any) => handleActionTopSectionClick('View', row),
       },
     ],
-    headerStyle: {
-      backgroundColor: '#FFFFFF',
-      height: '3.50rem',
-      fontSize: '14px',
-      color: '#000000',
-      width: '12.7vw',
-      fontWeight: 700,
-    },
+    headerStyle: { ...AccountRecievableHeaderStyle },
     style: { borderBottom: '1px solid #D5E1EA', fontWeight: '400' },
   }
-
   const firstLastNameBottomSection = (data: any) => {
-    return (
-      data?.workOrderResponseDto?.customerResponseDto?.firstName +
-      ' ' +
-      data?.workOrderResponseDto?.customerResponseDto?.lastName
+    if (
+      data?.workOrderResponseDto?.customerResponseDto === null &&
+      data?.workOrderResponseDto?.customerResponseDto === undefined
     )
+      return '-'
+    else if (
+      data?.workOrderResponseDto?.customerResponseDto?.firstName === null &&
+      data?.workOrderResponseDto?.customerResponseDto?.firstName === undefined
+    )
+      return '-'
+    else
+      return (
+        data?.workOrderResponseDto?.customerResponseDto?.firstName +
+        ' ' +
+        data?.workOrderResponseDto?.customerResponseDto?.lastName
+      )
   }
-
   const invoiceAmount = (data: any) => {
     return '$' + '' + data?.invoiceAmount
   }
-
   const outstandingInvoiceTableColumn = useMemo(
     () => [
       {
         id: 'workOrderResponseDto.workOrderNumber',
         label: 'Work Order Number',
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
       },
       {
         id: 'customerResponseDto',
         label: 'Customer Name',
         body: firstLastNameBottomSection,
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
       },
-      {
-        id: 'invoiceDate',
-        label: 'Invoice Date',
-        style: columnStyle,
-      },
+      { id: 'invoiceDate', label: 'Invoice Date', style: AccountRecievableColumnStyle },
       {
         id: 'invoiceAmount',
         label: 'Invoice Amount',
         body: invoiceAmount,
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
       },
       {
         id: 'workOrderInvoiceStatusDto.lastModifiedBy',
         label: 'Last Contact Time',
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
       },
       {
         id: 'workOrderInvoiceStatusDto.status',
         label: 'Status',
-        style: columnStyle,
+        style: AccountRecievableColumnStyle,
       },
     ],
     [],
@@ -334,10 +285,6 @@ const AccountRecievable = () => {
         label: 'Payments',
         filled: true,
         fontWeight: 400,
-        style: {
-          width: '46px',
-          height: '17px',
-        },
         onClick: (row) => handleBottomSectionActionClick('Payments', row),
       },
       {
@@ -353,15 +300,8 @@ const AccountRecievable = () => {
         onClick: (row) => handleBottomSectionActionClick('View', row),
       },
     ],
-    headerStyle: {
-      backgroundColor: '#FFFFFF',
-      height: '3.50rem',
-      fontSize: '14px',
-      fontWeight: 700,
-      color: '#000000',
-      width: '13.5rem',
-    },
-    style: { borderBottom: '1px solid #D5E1EA', fontWeight: '' },
+    headerStyle: { ...AccountRecievableHeaderStyle },
+    style: { borderBottom: '1px solid #D5E1EA' },
   }
 
   useEffect(() => {
@@ -383,33 +323,26 @@ const AccountRecievable = () => {
   }, [searchInvoice, pageNumberTwo, pageSizeTwo, selectedCustomerId, getOutStandingInvoice])
 
   return (
-    <div style={{ height: '150vh' }} className={modalVisible ? 'backdrop-blur-lg' : ''}>
+    <div
+      style={{ height: '100vh' }}
+      className={
+        isPaymentModalOpen || approveModalOpen || denyModalOpen || addWorkOrderModal
+          ? 'backdrop-blur-lg'
+          : ''
+      }>
       <Header header="MOORPAY/Account Receivable" />
       <Toast ref={toast} />
-
+      {/* Work Orders Pending Approval Data Table  */}
       <div
-        style={{
-          height: 'auto',
-          gap: '0px',
-          borderRadius: '10px',
-          border: '1px solid #D5E1EA',
-          opacity: '0px',
-          backgroundColor: '#FFFFFF',
-        }}
-        className="bg-[F2F2F2]  ml-12  mt-6 mr-14">
+        style={{ ...WorkOrderPendingApprovalDataTableStyle }}
+        className="bg-[F2F2F2] ml-12 mt-6 mr-14">
         <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2   rounded-tl-[10px] rounded-tr-[10px]">
           <span
             style={{
-              fontSize: '18px',
-              fontWeight: '700',
-              lineHeight: '21.09px',
-              letterSpacing: '0.4837472140789032px',
-              color: '#FFFFFF',
-              padding: '8px',
+              ...WorkOrderPendingApprovalDataTableHeaderStyle,
             }}>
-            Work Orders Pending Approval
+            {properties.WorkOrdersPendingApprovalHeaders}
           </span>
-
           <div className="relative inline-block">
             <div className="relative">
               <img
@@ -439,7 +372,6 @@ const AccountRecievable = () => {
             columns={accountRecievableTableColumn}
             actionButtons={ActionButtonColumn}
             style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
-            scrollable
             emptyMessage={
               <div className="text-center mt-10">
                 <img
@@ -452,7 +384,6 @@ const AccountRecievable = () => {
             }
           />
         </div>
-
         <div>
           <Paginator
             first={pageNumber1}
@@ -473,29 +404,19 @@ const AccountRecievable = () => {
           />
         </div>
       </div>
-      {/* second data table  */}
+      {/* Outstanding Invoices Data Table  */}
       <div
         style={{
-          height: 'auto',
-          gap: '0px',
-          borderRadius: '10px',
-          border: '1px solid #D5E1EA',
-          opacity: '0px',
-          backgroundColor: '#FFFFFF',
+          ...WorkOrderPendingApprovalDataTableStyle,
           marginBottom: '20px',
         }}
-        className="bg-[F2F2F2]  ml-12  mt-6 mr-14">
+        className="bg-[F2F2F2] ml-12 mt-6 mr-14">
         <div className="flex flex-wrap align-items-center justify-between  bg-[#00426F] p-2   rounded-tl-[10px] rounded-tr-[10px]">
           <span
             style={{
-              fontSize: '18px',
-              fontWeight: '700',
-              lineHeight: '21.09px',
-              letterSpacing: '0.4837472140789032px',
-              color: '#FFFFFF',
-              padding: '8px',
+              ...WorkOrderPendingApprovalDataTableHeaderStyle,
             }}>
-            Outstanding Invoices
+            {properties.OutstandingInvoicesHeader}{' '}
           </span>
 
           <div className="relative inline-block">
@@ -538,7 +459,6 @@ const AccountRecievable = () => {
               </div>
             }
           />
-
           <div className="text-center">
             {isLoading && (
               <ProgressSpinner
@@ -555,8 +475,7 @@ const AccountRecievable = () => {
             )}
           </div>
         </div>
-
-        <div className="">
+        <div>
           <Paginator
             first={pageNumber2}
             rows={pageSizeTwo}
@@ -578,170 +497,105 @@ const AccountRecievable = () => {
           />
         </div>
       </div>
-
-      <Dialog
-        position="center"
+      {/* Payment Modal */}
+      <PopUpCustomModal
         style={{
           width: '600px',
           minWidth: '600px',
           height: '270px',
           minHeight: '270px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={isPaymentModalOpen}
+        header="Payment"
         onHide={handleModalClose}
-        header="Payment">
-        <PaymentModal
-          onHide={handleModalClose}
-          workOrderInvoiceId={selectedWorkOrderRowData}
-          onSavePayment={() => {
-            setIsPaymentModalOpen(false)
-          }}
-        />
-      </Dialog>
-
-      <Dialog
-        position="center"
-        style={{
-          width: '800px',
-          minWidth: '800px',
-          height: '580px',
-          minHeight: '580px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
-        }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
-        visible={isContactModalOpen}
-        onHide={handleModalClose}
-        header="Contact Customer">
-        <ContactModal
-          onHide={handleModalClose}
-          onSendEmail={() => {
-            setIsContactModalOpen(false)
-          }}
-        />
-        <div className={`flex gap-4 ml-4 bottom-5 absolute left-6 ${isLoading ? 'blurred' : ''}`}>
-          <Button
-            label={'Close'}
-            onClick={() => setIsContactModalOpen(false)}
-            style={{
-              width: '89px',
-              height: '42px',
-              backgroundColor: '#0098FF',
-              cursor: 'pointer',
-              fontWeight: 'bolder',
-              fontSize: '1rem',
-              boxShadow: 'none',
-              color: 'white',
-              borderRadius: '0.5rem',
+        children={
+          <PaymentModal
+            onHide={handleModalClose}
+            workOrderInvoiceId={selectedWorkOrderRowData}
+            onSavePayment={() => {
+              setIsPaymentModalOpen(false)
             }}
           />
-        </div>
-      </Dialog>
-
-      <Dialog
-        position="center"
+        }></PopUpCustomModal>
+      {/* Approve Modal */}
+      <PopUpCustomModal
         style={{
           width: '520px',
           minWidth: '520px',
           height: '260px',
           minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={approveModalOpen}
+        header="Approve"
         onHide={handleModalClose}
-        header="Approve">
-        <ApproveModal
-          id={workOrderId}
-          setVisible={() => {
-            setApproveModalOpen(false)
-            setModalVisible(false)
-          }}
-          getWorkOrderWithPendingPayApproval={getWorkOrderWithPendingPayApproval}
-          getOutStandingInvoice={getOutStandingInvoice}
-          closeModal={() => {
-            handleModalClose()
-            setModalVisible(false)
-          }}
-        />
-      </Dialog>
-
-      <Dialog
-        position="center"
+        children={
+          <ApproveModal
+            id={workOrderId}
+            toast={toast}
+            amountValue={amount}
+            setVisible={() => {
+              setApproveModalOpen(false)
+            }}
+            getWorkOrderWithPendingPayApproval={getWorkOrderWithPendingPayApproval}
+            getOutStandingInvoice={getOutStandingInvoice}
+            closeModal={() => {
+              handleModalClose()
+            }}
+          />
+        }></PopUpCustomModal>
+      {/* Reason Modal */}
+      <PopUpCustomModal
         style={{
           width: '520px',
           minWidth: '520px',
           height: '260px',
           minHeight: '260px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={denyModalOpen}
+        header="Deny"
         onHide={handleModalClose}
-        header="Deny">
-        <ReasonModal
-          selectedRowData={selectedRowData}
-          setVisible={() => {
-            setDenyModalOpen(false)
-            setModalVisible(false)
-          }}
-          getWorkOrderWithPendingPayApproval={getWorkOrderWithPendingPayApproval}
-          getOutStandingInvoice={getOutStandingInvoice}
-          closeModal={() => {
-            handleModalClose()
-            setModalVisible(false)
-          }}
-        />
-      </Dialog>
-
-      {/* for view button */}
-      <Dialog
-        position="center"
+        children={
+          <ReasonModal
+            selectedRowData={selectedRowData}
+            toast={toast}
+            setVisible={() => {
+              setDenyModalOpen(false)
+            }}
+            getWorkOrderWithPendingPayApproval={getWorkOrderWithPendingPayApproval}
+            getOutStandingInvoice={getOutStandingInvoice}
+            closeModal={() => {
+              handleModalClose()
+            }}
+          />
+        }></PopUpCustomModal>
+      {/*view button */}
+      <PopUpCustomModal
         style={{
           width: '851px',
           minWidth: '851px',
           height: '526px',
           minHeight: '526px',
-          borderRadius: '1rem',
-          fontWeight: '400',
-          cursor: 'alias',
         }}
-        draggable={false}
-        headerStyle={{ cursor: 'alias' }}
         visible={addWorkOrderModal}
+        header={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}
         onHide={handleModalClose}
-        header={<h1 className="text-xl font-extrabold text-black ml-4">Work Order</h1>}>
-        <AddWorkOrders
-          workOrderData={selectedWorkOrderRowData}
-          isAccountRecievable={isAccountRecievable}
-          getWorkOrderWithPendingPayApproval={getWorkOrderWithPendingPayApproval}
-          getOutStandingInvoice={getOutStandingInvoice}
-          editModeWorkOrder={true}
-          isInvoice={isInvoice}
-          isTechnician={true}
-          setVisible={() => {
-            setAddWorkOrderModal(false)
-            setModalVisible(false)
-          }}
-          closeModal={() => {
-            handleModalClose()
-            setModalVisible(false)
-          }}
-        />
-      </Dialog>
+        children={
+          <AddWorkOrders
+            workOrderData={selectedWorkOrderRowData}
+            isAccountRecievable={isAccountRecievable}
+            getWorkOrderWithPendingPayApproval={getWorkOrderWithPendingPayApproval}
+            getOutStandingInvoice={getOutStandingInvoice}
+            editModeWorkOrder={true}
+            isInvoice={isInvoice}
+            isTechnician={true}
+            setVisible={() => {
+              setAddWorkOrderModal(false)
+            }}
+            closeModal={() => {
+              handleModalClose()
+            }}
+          />
+        }></PopUpCustomModal>
     </div>
   )
 }

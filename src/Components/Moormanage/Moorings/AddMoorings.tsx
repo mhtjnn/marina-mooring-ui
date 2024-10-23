@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { InputText } from 'primereact/inputtext'
 import { Dropdown } from 'primereact/dropdown'
 import InputComponent from '../../CommonComponent/InputComponent'
@@ -34,6 +34,8 @@ import { Dialog } from 'primereact/dialog'
 import UploadImages from '../../CommonComponent/UploadImages'
 import { debounce } from 'lodash'
 import { formatGpsCoordinates, normalizeGpsCoordinates, validateFiles } from '../../Helper/Helper'
+import { validateFieldsForMoorings } from '../../Utils/RegexUtils'
+import { formatDate, parseDate } from '../../Utils/CommonMethod'
 
 const AddMoorings: React.FC<AddMooringProps> = ({
   moorings,
@@ -57,7 +59,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   const { getCustomersData } = CustomersData(selectedCustomerId)
   const { getBoatYardNameData } = BoatyardNameData(selectedCustomerId)
   const { getServiceAreaData } = ServiceAreaData()
-
   const [type, setType] = useState<MetaData[]>([])
   const [mooringStatus, setMooringStatus] = useState<MetaData[]>([])
   const [weightData, setWeightData] = useState<MetaData[]>([])
@@ -82,14 +83,11 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     { imageName: string; imageData: string; note: string }[]
   >([])
   const firstErrorRef = useRef<HTMLDivElement>(null)
-  console.log('gpsCoordinatesValue', gpsCoordinatesValue)
-
   const [center, setCenter] = useState<any>(
     mooringRowData?.gpsCoordinates || gpsCoordinatesValue
       ? formatGpsCoordinates(mooringRowData?.gpsCoordinates || gpsCoordinatesValue)
       : [39.4926173, -117.5714859],
   )
-
   const [saveMoorings] = useAddMooringsMutation()
   const [updateMooring] = useUpdateMooringsMutation()
   const [isLoading, setIsLoading] = useState(true)
@@ -176,8 +174,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
     if (customersData !== null) {
       setIsLoading(false)
       const firstLastName = customersData.map((item) => ({
-        label: item.firstName + ' ' + item.lastName,
-        value: item.id,
+        label: item?.firstName + ' ' + item?.lastName,
+        value: item?.id,
       }))
       setcustomerName(firstLastName)
     }
@@ -192,49 +190,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       setServiceArea(serviceAreaData)
     }
   }, [])
-
-  const validateFields = () => {
-    const alphanumericRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/
-    const errors: { [key: string]: string } = {}
-    let firstError = ''
-
-    if (!formData?.customerName) {
-      errors.customerName = 'Customer Name is required'
-      if (!firstError) firstError = 'customerName'
-    }
-
-    if (!formData?.mooringNumber) {
-      errors.mooringNumber = 'Mooring Number is required'
-      if (!firstError) firstError = 'mooringNumber'
-    } else if (!alphanumericRegex.test(formData?.mooringNumber)) {
-      errors.mooringNumber = 'Mooring Number must be alphanumeric'
-      if (!firstError) firstError = 'mooringNumber'
-    }
-
-    if (!formData?.mooringStatus) {
-      errors.mooringStatus = 'Mooring Status id required'
-      if (!firstError) firstError = 'mooringStatus'
-    }
-    setFirstErrorField(firstError)
-    setFieldErrors(errors)
-
-    return errors
-  }
-
-  const formatDate = (date: any) => {
-    if (!date) return null
-    const d = new Date(date)
-    const month = ('0' + (d.getMonth() + 1)).slice(-2)
-    const day = ('0' + d.getDate()).slice(-2)
-    const year = d.getFullYear()
-    return `${month}/${day}/${year}`
-  }
-
-  const parseDate = (dateString: any) => {
-    if (!dateString) return null
-    const [month, day, year] = dateString?.split('/')
-    return new Date(year, month - 1, day)
-  }
 
   const handleInputChange = (field: string, value: any) => {
     const numberRegex = /^\d+$/
@@ -271,11 +226,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       })
     }
   }
-
-  const uploadImages = () => {
-    setImageVisible(true)
-  }
-
   const handleRemoveImage = (index: number) => {
     setMooringImages((prevImages) => prevImages.filter((_, i) => i !== index))
     setEncodedImages((prevEncoded) => prevEncoded.filter((_, i) => i !== index))
@@ -373,7 +323,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       serviceAreaId: mooringRowData?.serviceAreaResponseDto?.serviceAreaName || '',
       mooringStatus: mooringRowData?.mooringStatus?.status || '',
     }))
-
     if (mooringRowData?.mooringStatus?.id !== 2) {
       setFormData((prevData: any) => ({
         ...prevData,
@@ -384,7 +333,8 @@ const AddMoorings: React.FC<AddMooringProps> = ({
   }
 
   const SaveMoorings = async () => {
-    const errors = validateFields()
+    const errors = validateFieldsForMoorings(formData, setFirstErrorField, setFieldErrors)
+    setFieldErrors(errors)
     if (Object.keys(errors).length > 0) {
       if (firstErrorRef.current) {
         firstErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -573,16 +523,6 @@ const AddMoorings: React.FC<AddMooringProps> = ({
       })
     }
   }
-
-  // const handlePositionChange = (lat: number, lng: number) => {
-  //   setCenter([lat, lng])
-  //   console.log('lat.lng', lat, lng)
-
-  //   const formattedLat = lat.toFixed((window as any).latDecimalCount ?? 6)
-  //   const formattedLng = lng.toFixed((window as any).lngDecimalCount ?? 6)
-  //   const concatenatedValue = `${formattedLat} ${formattedLng}`
-  //   setGpsCoordinatesValue(concatenatedValue)
-  // }
 
   const handlePositionChange = (lat: number, lng: number) => {
     setCenter([lat, lng])
@@ -816,7 +756,7 @@ const AddMoorings: React.FC<AddMooringProps> = ({
                     paddingLeft: '0.5rem',
                     cursor: 'pointer',
                   }}>
-                  <div onClick={uploadImages} className="flex gap-3 text-center">
+                  <div onClick={() => setImageVisible(true)} className="flex gap-3 text-center">
                     <FaFileUpload
                       style={{ fontSize: '22px', color: '#0098FF', marginTop: '3px' }}
                     />

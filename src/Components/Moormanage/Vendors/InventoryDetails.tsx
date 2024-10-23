@@ -22,7 +22,7 @@ import { ProgressSpinner } from 'primereact/progressspinner'
 import { useSelector } from 'react-redux'
 import { selectCustomerId } from '../../../Store/Slice/userSlice'
 import { properties } from '../../Utils/MeassageProperties'
-import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle } from '../../Utils/Style'
 import { Paginator } from 'primereact/paginator'
 
 const InventoryDetails: React.FC = () => {

@@ -7,7 +7,6 @@ import {
 } from '../../../Services/MoorServe/MoorserveApi'
 import { ActionButtonColumnProps } from '../../../Type/Components/TableTypes'
 import Header from '../../Layout/LayoutComponents/Header'
-import { boatyardMooring, vendor } from '../../Utils/CustomData'
 import { InputText } from 'primereact/inputtext'
 import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
 import CustomModal from '../../CustomComponent/CustomModal'
@@ -20,8 +19,9 @@ import { ProgressSpinner } from 'primereact/progressspinner'
 import { utils, writeFile } from 'xlsx'
 import React from 'react'
 import { properties } from '../../Utils/MeassageProperties'
-import { AddNewButtonStyle } from '../../Style'
+import { AddNewButtonStyle } from '../../Utils/Style'
 import AddEstimates from './AddEstimates'
+import { TechnicianfirstLastName, firstLastName } from '../../Helper/Helper'
 
 const Estimates = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -83,15 +83,6 @@ const Estimates = () => {
     color: '#000000',
     fontWeight: '700',
     fontSize: '12px',
-  }
-
-  const firstLastName = (data: any) => {
-    return data.customerResponseDto.firstName + ' ' + data.customerResponseDto.lastName
-  }
-  const TechnicianfirstLastName = (data: any) => {
-    return (
-      data?.technicianUserResponseDto?.firstName + ' ' + data?.technicianUserResponseDto?.lastName
-    )
   }
 
   const workOrderColumns = useMemo(
@@ -204,15 +195,27 @@ const Estimates = () => {
 
   const dataToXlsx = (data: WorkOrderPayload[], fileName = 'EstimateData.xlsx') => {
     const formattedData = data?.map((item) => ({
-      CustomerName: `${item.customerResponseDto.firstName} ${item.customerResponseDto.lastName}`,
-      MooringNumber: item.mooringResponseDto.mooringNumber,
-      Boatyard: item.boatyardResponseDto.boatyardId,
-      AssignedTo: `${item.technicianUserResponseDto.firstName} ${item.technicianUserResponseDto.lastName}`,
-      DueDate: item.dueDate,
-      Status: item.workOrderStatusDto.status,
+      CustomerName: item?.customerResponseDto
+        ? `${item?.customerResponseDto?.firstName} ${item?.customerResponseDto?.lastName}`
+        : '-',
+      MooringNumber: item?.mooringResponseDto?.mooringNumber || '-',
+      Boatyard: item?.boatyardResponseDto?.boatyardId || '-',
+      AssignedTo: item?.technicianUserResponseDto
+        ? `${item?.technicianUserResponseDto?.firstName} ${item?.technicianUserResponseDto?.lastName}`
+        : '-',
+      DueDate: item?.dueDate || '-',
+      Status: item?.workOrderStatusDto?.status || '-',
     }))
 
     const worksheet = utils.json_to_sheet(formattedData)
+    worksheet['!cols'] = [
+      { wch: 30 }, // Customer Name
+      { wch: 20 }, // Mooring Number
+      { wch: 20 }, // Boatyard
+      { wch: 30 }, // Assigned To
+      { wch: 15 }, // Due Date
+      { wch: 20 }, // Status
+    ]
     const workbook = utils.book_new()
     utils.book_append_sheet(workbook, worksheet, 'Estimates')
     writeFile(workbook, fileName)
@@ -299,7 +302,7 @@ const Estimates = () => {
 
         <div
           style={{
-            height: 'calc(100vh - 150px)',
+            height: 'calc(100vh - 160px)',
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: '#FFFFFF',
@@ -332,67 +335,61 @@ const Estimates = () => {
             </div>
           </div>
 
-          <div
-            data-testid="customer-admin-data"
-            className="flex flex-col"
-            style={{ height: 'calc(100vh - 250px)' }}>
-            <div className="flex-grow relative overflow-auto">
-              <DataTableComponent
-                tableStyle={{
-                  fontSize: '12px',
-                  color: '#000000',
-                  fontWeight: 600,
-                  backgroundColor: '#F9FAFB',
-                }}
-                data={estimateData}
-                columns={workOrderColumns}
-                actionButtons={ActionButtonColumn}
-                style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
-                emptyMessage={
-                  <div className="text-center mt-28">
-                    <img
-                      src="/assets/images/empty.png"
-                      alt="Empty Data"
-                      className="w-28 mx-auto mb-4"
-                    />
-                    <p className="text-gray-500 font-[600] text-lg">{properties.noDataMessage}</p>
-                  </div>
-                }
-              />
+          <div className="flex-grow relative overflow-auto">
+            <DataTableComponent
+              tableStyle={{
+                fontSize: '12px',
+                color: '#000000',
+                fontWeight: 600,
+                backgroundColor: '#F9FAFB',
+              }}
+              data={estimateData}
+              columns={workOrderColumns}
+              actionButtons={ActionButtonColumn}
+              style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
+              emptyMessage={
+                <div className="text-center mt-28">
+                  <img
+                    src="/assets/images/empty.png"
+                    alt="Empty Data"
+                    className="w-28 mx-auto mb-4"
+                  />
+                  <p className="text-gray-500 font-[600] text-lg">{properties.noDataMessage}</p>
+                </div>
+              }
+            />
 
-              {isLoading && (
-                <ProgressSpinner
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '50px',
-                    height: '50px',
-                  }}
-                  strokeWidth="4"
-                />
-              )}
-            </div>
-
-            <div>
-              <Paginator
-                first={pageNumber1}
-                rows={pageSize}
-                totalRecords={totalRecords}
-                rowsPerPageOptions={[5, 10, 20, 30]}
-                onPageChange={onPageChange}
+            {isLoading && (
+              <ProgressSpinner
                 style={{
-                  position: 'sticky',
-                  bottom: 0,
-                  zIndex: 1,
-                  backgroundColor: 'white',
-                  borderTop: '1px solid #D5E1EA',
-                  padding: '0.5rem',
-                  height: '10px',
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '50px',
+                  height: '50px',
                 }}
+                strokeWidth="4"
               />
-            </div>
+            )}
+          </div>
+
+          <div style={{ position: 'relative' }}>
+            <Paginator
+              first={pageNumber1}
+              rows={pageSize}
+              totalRecords={totalRecords}
+              rowsPerPageOptions={[5, 10, 20, 30]}
+              onPageChange={onPageChange}
+              style={{
+                position: 'sticky',
+                bottom: 0,
+                zIndex: 1,
+                backgroundColor: 'white',
+                borderTop: '1px solid #D5E1EA',
+                padding: '0.5rem',
+              }}
+            />
           </div>
         </div>
       </div>

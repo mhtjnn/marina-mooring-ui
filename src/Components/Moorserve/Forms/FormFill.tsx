@@ -7,9 +7,7 @@ import { Toast } from 'primereact/toast'
 import { FormFillProps } from '../../../Type/ComponentBasedType'
 import { ProgressSpinner } from 'primereact/progressspinner'
 
-const FormFill: React.FC<FormFillProps> = ({
-formOpen
-}) => {
+const FormFill: React.FC<FormFillProps> = ({ formOpen }) => {
   const [getCustomer] = useGetCustomerMutation()
 
   const [isLoading, setIsLoading] = useState(true)
@@ -50,10 +48,10 @@ formOpen
         if (content?.length > 0) {
           setIsLoading(false)
           const extractedData = content.map((item) => {
-            const fullname = `${item.firstName} ${item.lastName}`
+            const fullname = `${item?.firstName} ${item?.lastName}`
             return {
               label: fullname,
-              id: item.id,
+              id: item?.id,
             }
           })
           setCustomerData(extractedData)
@@ -116,67 +114,67 @@ formOpen
   return (
     <>
       <div className={`"w-full h-full ml-4" ${isLoading ? 'blurred' : ''}`}>
-      <div className="flex gap-6">
-        <div>
-          <span className="font-medium text-sm text-[#000000]">
-            <div className="flex gap-1">
-              Form
-              <p className="text-red-600">*</p>
+        <div className="flex gap-6">
+          <div>
+            <span className="font-medium text-sm text-[#000000]">
+              <div className="flex gap-1">
+                Form
+                <p className="text-red-600">*</p>
+              </div>
+            </span>
+            <div className="mt-1">
+              <Dropdown
+                // value={formData.customerName}
+                onChange={(e) => handleInputChange('form', e.value)}
+                options={[]}
+                optionLabel="label"
+                disabled={isLoading}
+                style={{
+                  width: '230px',
+                  height: '32px',
+                  border: fieldsError.form ? '1px solid red' : '1px solid #D5E1EA',
+                  borderRadius: '0.50rem',
+                  fontSize: '0.8rem',
+                  paddingLeft: '0.5rem',
+                }}
+              />
+              <p className="" id="form">
+                {fieldsError.form && <small className="p-error">{fieldsError.form}</small>}
+              </p>
             </div>
-          </span>
-          <div className="mt-1">
-            <Dropdown
-              // value={formData.customerName}
-              onChange={(e) => handleInputChange('form', e.value)}
-              options={[]}
-              optionLabel="label"
-              disabled={isLoading}
-              style={{
-                width: '230px',
-                height: '32px',
-                border: fieldsError.form ? '1px solid red' : '1px solid #D5E1EA',
-                borderRadius: '0.50rem',
-                fontSize: '0.8rem',
-                paddingLeft: '0.5rem',
-              }}
-            />
-            <p className="" id="form">
-              {fieldsError.form && <small className="p-error">{fieldsError.form}</small>}
-            </p>
           </div>
-        </div>
-        <div>
-          <span className="font-medium text-sm text-[#000000]">
-            <div className="flex gap-1">
-              Customer
-              <p className="text-red-600">*</p>
+          <div>
+            <span className="font-medium text-sm text-[#000000]">
+              <div className="flex gap-1">
+                Customer
+                <p className="text-red-600">*</p>
+              </div>
+            </span>
+            <div className="mt-1">
+              <Dropdown
+                value={formData.customerName}
+                onChange={(e) => handleInputChange('customerName', e.value)}
+                options={customerData}
+                optionLabel="label"
+                disabled={isLoading}
+                style={{
+                  width: '230px',
+                  height: '32px',
+                  border: fieldsError.customerName ? '1px solid red' : '1px solid #D5E1EA',
+                  borderRadius: '0.50rem',
+                  fontSize: '0.8rem',
+                  paddingLeft: '0.5rem',
+                }}
+              />
+              <p className="" id="customerName">
+                {fieldsError.customerName && (
+                  <small className="p-error">{fieldsError.customerName}</small>
+                )}
+              </p>
             </div>
-          </span>
-          <div className="mt-1">
-            <Dropdown
-              value={formData.customerName}
-              onChange={(e) => handleInputChange('customerName', e.value)}
-              options={customerData}
-              optionLabel="label"
-              disabled={isLoading}
-              style={{
-                width: '230px',
-                height: '32px',
-                border: fieldsError.customerName ? '1px solid red' : '1px solid #D5E1EA',
-                borderRadius: '0.50rem',
-                fontSize: '0.8rem',
-                paddingLeft: '0.5rem',
-              }}
-            />
-            <p className="" id="customerName">
-              {fieldsError.customerName && (
-                <small className="p-error">{fieldsError.customerName}</small>
-              )}
-            </p>
           </div>
-        </div>
 
-        {isLoading && (
+          {isLoading && (
             <ProgressSpinner
               style={{
                 position: 'absolute',
@@ -190,35 +188,35 @@ formOpen
             />
           )}
 
-        <div>
-          <span className="font-medium text-sm text-[#000000]">
-            <div className="flex gap-1">
-              Mooring
-              <p className="text-red-600">*</p>
+          <div>
+            <span className="font-medium text-sm text-[#000000]">
+              <div className="flex gap-1">
+                Mooring
+                <p className="text-red-600">*</p>
+              </div>
+            </span>
+            <div className="mt-1">
+              <Dropdown
+                // value={formData.mooring}
+                onChange={(e) => handleInputChange('mooring', e.value)}
+                options={[]}
+                optionLabel="label"
+                disabled={isLoading}
+                style={{
+                  width: '230px',
+                  height: '32px',
+                  border: fieldsError.mooring ? '1px solid red' : '1px solid #D5E1EA',
+                  borderRadius: '0.50rem',
+                  fontSize: '0.8rem',
+                  paddingLeft: '0.5rem',
+                }}
+              />
+              <p className="" id="mooringName">
+                {fieldsError.mooring && <small className="p-error">{fieldsError.mooring}</small>}
+              </p>
             </div>
-          </span>
-          <div className="mt-1">
-            <Dropdown
-              // value={formData.mooring}
-              onChange={(e) => handleInputChange('mooring', e.value)}
-               options={[]}
-              optionLabel="label"
-              disabled={isLoading}
-              style={{
-                width: '230px',
-                height: '32px',
-                border: fieldsError.mooring ? '1px solid red' : '1px solid #D5E1EA',
-                borderRadius: '0.50rem',
-                fontSize: '0.8rem',
-                paddingLeft: '0.5rem',
-              }}
-            />
-            <p className="" id="mooringName">
-              {fieldsError.mooring && <small className="p-error">{fieldsError.mooring}</small>}
-            </p>
           </div>
         </div>
-      </div>
       </div>
       <div
         className={`"flex gap-6 bottom-2 absolute left-6" ${isLoading ? 'blurred' : ''}`}
@@ -246,7 +244,7 @@ formOpen
           }}
         />
         <Button
-        onClick={() => {
+          onClick={() => {
             formOpen()
           }}
           label={'Back'}

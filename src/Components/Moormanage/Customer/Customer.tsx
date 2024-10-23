@@ -42,9 +42,10 @@ import { PositionType } from '../../../Type/Components/MapTypes'
 import AddImage from './AddImage'
 import MooringInformations from '../../CommonComponent/MooringInformations'
 import ViewImageDialog from '../../CommonComponent/ViewImageDialog'
-import { AddNewButtonStyle, DialogStyle, MooringTableColumnStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle, MooringTableColumnStyle } from '../../Utils/Style'
 import { AppContext } from '../../../Services/ContextApi/AppContext'
 import AddMoorings from '../Moorings/AddMoorings'
+import { CustomerfirstLastName } from '../../Helper/Helper'
 
 const Customer = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -210,8 +211,8 @@ const Customer = () => {
   }
 
   const handleCustomerTableRowClick = (rowData: any) => {
-    setCustomerId(rowData.data.id)
-    getCustomersWithMooring(rowData.data.id)
+    setCustomerId(rowData.data?.id)
+    getCustomersWithMooring(rowData.data?.id)
   }
 
   const handleMooringTableRowClick = (rowData: any) => {
@@ -219,15 +220,10 @@ const Customer = () => {
     setMooringRowData(rowData.data)
   }
 
-  const firstLastName = (data: any) => {
-    if (data.firstName === null) return '-'
-    else return data.firstName + ' ' + data.lastName
+  const customerType = (data: any) => {
+    if (data?.customerTypeDto?.type === null) return <div className={'ml-5'}>-</div>
+    else return data?.customerTypeDto?.type
   }
-
-  const handleHeaderClick = (columnId: any) => {
-    setSortable(!sortable)
-  }
-
   const CustomerTableColumns = useMemo(
     () => [
       {
@@ -239,58 +235,65 @@ const Customer = () => {
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
       {
         id: 'customerTypeDto.type',
         label: 'Customer Type:',
+        body: customerType,
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
           fontSize: '12px',
           color: '#000000',
         },
-        onHeaderClick: () => handleHeaderClick('customerType'),
-        // sortable: true,
+        onHeaderClick: () => setSortable(!sortable),
       },
       {
         id: 'firstName',
         label: 'Name:',
-        body: firstLastName,
+        body: CustomerfirstLastName,
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
       {
         id: 'emailAddress',
         label: 'Email:',
+        body: (rowData: any) => {
+          if (rowData?.emailAddress === null) return <div className={'ml-5'}>-</div>
+          else return rowData?.emailAddress
+        },
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
       {
         id: 'phone',
         label: 'Phone:',
+        body: (rowData: any) => {
+          if (rowData?.phone === '') return <div className={'ml-5'}>-</div>
+          else return rowData?.phone
+        },
         style: {
           backgroundColor: '#FFFFFF',
           fontWeight: '700',
           fontSize: '12px',
           color: '#000000',
         },
-        sortable: false,
       },
     ],
     [],
   )
-
+  const gpsCoordinatesValue = (data: any) => {
+    if (data?.gpsCoordinates === null) return <div className={'ml-14'}>-</div>
+    else return data?.gpsCoordinates
+  }
   const MooringTableColumn = useMemo(
     () => [
       {
@@ -312,6 +315,7 @@ const Customer = () => {
       {
         id: 'gpsCoordinates',
         label: 'GPS Coordinates',
+        body: gpsCoordinatesValue,
         style: MooringTableColumnStyle,
       },
     ],
@@ -342,7 +346,7 @@ const Customer = () => {
           color: 'black',
           label: 'View Image',
           onClick: (data) => {
-            setShowImage((prev) => ({ ...prev, id: data.id, imageData: data.imageData }))
+            setShowImage((prev) => ({ ...prev, id: data?.id, imageData: data?.imageData }))
             setImageVisible(true)
           },
           underline: true,
@@ -629,6 +633,13 @@ const Customer = () => {
     )
   }, [selectedCustomer, customerRecordData])
 
+  const getAddress = (customerRecordData: any) => {
+    const { address, city, stateResponseDto, countryResponseDto } = customerRecordData || {}
+    const components = [address, city, stateResponseDto?.name, countryResponseDto?.name]
+    const filteredComponents = components.filter(Boolean)
+    return filteredComponents.length > 0 ? filteredComponents.join(', ') : '-'
+  }
+
   const CustomerDetails = useMemo(() => {
     return (
       <div>
@@ -679,13 +690,7 @@ const Customer = () => {
           }}>
           <p className="ml-4">
             <span className="address-label">Address: </span>
-            {(customerRecordData?.address || '-') +
-              ', ' +
-              (customerRecordData?.city || '-') +
-              ', ' +
-              (customerRecordData?.stateResponseDto?.name || '-') +
-              ', ' +
-              (customerRecordData?.countryResponseDto?.name || '-')}
+            {getAddress(customerRecordData)}
           </p>
           <p className="ml-4 mt-3">
             <span className="address-label">Notes: </span>
@@ -881,7 +886,7 @@ const Customer = () => {
             />
           </div>
 
-          {/* last container */}
+          {/* Right container */}
           {rightContainerWidth ? (
             <div
               style={{
@@ -1006,6 +1011,7 @@ const Customer = () => {
                       </div>
                     </div>
                   </label>
+                  {/* Mooring Data Table */}
                   <div
                     className={`content transition-all ease-in-out duration-500 ${accordion === 'faq2' ? '' : 'hidden'}`}>
                     <div style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -1460,6 +1466,7 @@ const Customer = () => {
                       </div>
                     </div>
                   </label>
+                  {/* Images */}
                   <div
                     className={`content mt-5 transition-all ease-in-out duration-500 ${accordion === 'faq7' ? '' : 'hidden'}`}>
                     <div

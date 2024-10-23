@@ -146,10 +146,12 @@ export interface AuthenticationData {
 export interface ErrorResponse {
   status: number
   message: string
+  error: any
   data: {
     content: string
     message: string
     status: number
+    error: any
   }
 }
 
@@ -325,7 +327,7 @@ export interface MooringPayload {
   lastName: string
   harborOrArea: string
   waterDepth: string
-  gpsCoordinates: string
+  gpsCoordinates: any
   boatyardName: string
   boatName: string
   boatSize: string
@@ -428,7 +430,7 @@ export interface MooringWithGpsCoordinates {
   id: number
   mooringId: string
   mooringNumber: string
-  gpsCoordinates: string
+  gpsCoordinates: any
   statusId: number
 }
 export interface MooringResponse {
@@ -990,12 +992,19 @@ export interface WorkOrderStatusDto {
   description: string
 }
 
+export interface voiceMEMOResponseList {
+  encodedData: any
+  id: number
+  name: string
+  userResponseDto: any
+}
 export interface WorkOrderResponse {
   message: string
   status: number
   currentSize: number
   totalSize: number
   errorList: []
+  error: any
   time: string
   content: {
     id: number
@@ -1009,6 +1018,8 @@ export interface WorkOrderResponse {
     technicianUserResponseDto: TechnicianUserResponseDto
     customerOwnerUserResponseDto: CustomerOwnerUserResponseDto
     workOrderStatusDto: WorkOrderStatusDto
+    imageResponseDtoList: ImageDtoList
+    voiceMEMOResponseDtoList: voiceMEMOResponseList
   }
 }
 

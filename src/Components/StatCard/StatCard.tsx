@@ -1,12 +1,9 @@
 import React from 'react'
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts'
-import { GoArrowUpRight, GoArrowDown, GoArrowDownLeft, GoArrowDownRight } from 'react-icons/go'
+import { GoArrowUpRight, GoArrowDownRight } from 'react-icons/go'
 import { StatCardProps } from '../../Type/ComponentBasedType'
 
 const StatCard: React.FC<StatCardProps> = ({ items }) => {
-  const color1 = items[0].percentage < 0 ? 'red' : '#01BF2E'
-  const color2 = 'rgba(255, 255, 255, 0)'
-
   return (
     <div className="">
       <div className="flex justify-between items-center mb-2">

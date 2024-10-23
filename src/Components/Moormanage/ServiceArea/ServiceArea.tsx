@@ -33,7 +33,7 @@ import { Paginator } from 'primereact/paginator'
 import React from 'react'
 import AddServiceModal from './AddServiceModal'
 import MooringInformations from '../../CommonComponent/MooringInformations'
-import { AddNewButtonStyle, DialogStyle } from '../../Style'
+import { AddNewButtonStyle, DialogStyle } from '../../Utils/Style'
 import CustomServiceAreaMoorinMap from '../../Map/CustomServiceAreaMoorinMap'
 import { PositionType } from '../../../Type/Components/MapTypes'
 
@@ -307,7 +307,7 @@ const ServiceArea = () => {
             setSelectedMooring(content[0])
             setTotalRecords(totalSize)
             if (selectedServiceArea) {
-              const data = content.find((data) => data.id === selectedServiceArea.id)
+              const data = content.find((data) => data?.id === selectedServiceArea.id)
               if (data) {
                 setSelectedServiceArea(data)
               }
@@ -649,7 +649,7 @@ const ServiceArea = () => {
                 iconStyle={{
                   position: 'absolute',
                   left: '15px',
-                  top: '65%',
+                  top: '60%',
                   transform: 'translateY(-50%)',
                   width: '16px',
                   height: '16px',

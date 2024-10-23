@@ -7,6 +7,7 @@ import { useGetMooringByIdMutation } from '../../Services/MoorManage/MoormanageA
 import { ErrorResponse, MooringResponse } from '../../Type/ApiTypes'
 import { Toast } from 'primereact/toast'
 import { ProgressSpinner } from 'primereact/progressspinner'
+import { formatCoordinates } from '../Helper/Helper'
 
 const MooringMapModal: React.FC<TimeLineProps> = ({
   gpsValue,
@@ -55,7 +56,6 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
     setMapModalOpen((prevState: any) => ({ ...prevState, editMode: false }))
     setCustomerModalVisible(false)
   }
-
   return (
     <>
       <Toast ref={toastRef} />
@@ -64,17 +64,9 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
           <div>
             <p className="text-sm m-0 font-bold text-white">
               {mooringPage ? (
-                <>
-                  {mooringData?.boatId != null && mooringData?.boatId}
-                  <br />
-                  {mooringData?.boatName != null && mooringData?.boatName}
-                </>
+                <>{mooringData?.mooringNumber != null && mooringData?.mooringNumber}</>
               ) : (
-                <>
-                  {boatId != null && boatId}
-                  <br />
-                  {boatName != null && boatName}
-                </>
+                <>{boatId != null && boatId}</>
               )}
             </p>
           </div>
@@ -82,7 +74,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
             <p className="text-xs text-white mt-2">
               GPS Coordinates:
               <br />
-              {gpsValue}
+              {formatCoordinates(gpsValue)}
             </p>
           </div>
         </div>
@@ -92,7 +84,6 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
             onClick={viewEdit}>
             View/edit
           </p>
-          <p className="text-xs text-white">ID: {mooringId}</p>
         </div>
 
         {customerModalVisible && (

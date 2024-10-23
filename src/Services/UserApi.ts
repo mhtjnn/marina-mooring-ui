@@ -85,8 +85,8 @@ const refreshToken = async (refreshToken: string) => {
     }
     const data = await response.json()
     if (data?.status === 200) {
-      sessionStorage.setItem('getRefreshToken', data.token)
-      return data.token
+      sessionStorage.setItem('getRefreshToken', data?.token)
+      return data?.token
     }
   } catch (error) {
     console.error('Error refreshing token:', error)

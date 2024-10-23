@@ -49,7 +49,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ onHide, workOrderInvoiceId 
     if (Object.keys(errors).length > 0) {
       return
     }
-
     try {
       setIsLoading(true)
       const savePaymentPayload = {
@@ -98,8 +97,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ onHide, workOrderInvoiceId 
   return (
     <>
       <Toast ref={toastRef} />
-
-      <div style={{ paddingBottom: '50px' }} className={isLoading ? 'blurred' : ''}>
+      <div className={isLoading ? 'blurred' : ''}>
         <div className="flex gap-6">
           <div className="mt-">
             <span className="font-medium text-sm text-[#000000]">
@@ -179,49 +177,39 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ onHide, workOrderInvoiceId 
             strokeWidth="4"
           />
         )}
-        <div className="flex gap-6 ml-1 mt-40">
-          <div
-            className={`"flex gap-6 bottom-2 absolute left-7"`}
+        <div className={`"flex gap-6 mt-12 absolute left-7"`}>
+          <Button
+            label={'Save'}
+            onClick={handleSavePayment}
             style={{
-              width: '100%',
-              height: '65px',
-              backgroundColor: 'white',
-              padding: '0 12px',
-              bottom: '0px',
-            }}>
-            <Button
-              label={'Save'}
-              onClick={handleSavePayment}
-              style={{
-                width: '89px',
-                height: '42px',
-                backgroundColor: '#0098FF',
-                cursor: 'pointer',
-                fontWeight: 'bolder',
-                fontSize: '1rem',
-                boxShadow: 'none',
-                color: 'white',
-                borderRadius: '0.50rem',
-                marginTop: '4px',
-              }}
-            />
+              width: '89px',
+              height: '42px',
+              backgroundColor: '#0098FF',
+              cursor: 'pointer',
+              fontWeight: 'bolder',
+              fontSize: '1rem',
+              boxShadow: 'none',
+              color: 'white',
+              borderRadius: '0.50rem',
+              marginTop: '4px',
+            }}
+          />
 
-            <Button
-              onClick={onHide}
-              label="CANCEL"
-              severity="danger"
-              text={true}
-              style={{
-                backgroundColor: 'white',
-                color: '#000000',
-                border: 'none',
-                width: '89px',
-                height: '42px',
-                marginTop: '4px',
-              }}
-            />
-            <Toast ref={toastRef} />
-          </div>
+          <Button
+            onClick={onHide}
+            label="CANCEL"
+            severity="danger"
+            text={true}
+            style={{
+              backgroundColor: 'white',
+              color: '#000000',
+              border: 'none',
+              width: '89px',
+              height: '42px',
+              marginTop: '4px',
+            }}
+          />
+          <Toast ref={toastRef} />
         </div>
       </div>
     </>
