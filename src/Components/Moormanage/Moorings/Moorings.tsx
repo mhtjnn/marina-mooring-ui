@@ -497,8 +497,6 @@ const Moorings = () => {
     } catch (error) {
       setIsLoading(false)
       setIsLoader(false)
-      const { message } = error as ErrorResponse
-      console.error('Error fetching moorings data:', error)
     }
   }
 

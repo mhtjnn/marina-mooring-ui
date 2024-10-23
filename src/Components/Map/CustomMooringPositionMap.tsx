@@ -143,8 +143,6 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                           mooringId={mooring?.mooringNumber}
                           mooringData={mooring}
                           selectedMooring={mooring}
-                          boatId={mooring?.mooringNumber}
-                          boatName={mooring?.boatName}
                         />
                       </Popup>
                     </Marker>
@@ -158,7 +156,6 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                   const position: LatLngExpression = coordinates
                   const iconKey = mooring?.statusId as keyof typeof iconsByStatusId
                   const icon = iconsByStatusId[iconKey] || DefaultIcon
-
                   return (
                     <Marker key={index} position={position} icon={icon} ref={mapRef}>
                       <Popup>
@@ -167,7 +164,6 @@ const CustomMooringPositionMap: React.FC<CustomMooringPositionMapProps> = ({
                           mooringId={mooring?.mooringNumber}
                           selectedMooring={mooring}
                           mooringData={mooringData}
-                          mooringPage={true}
                         />
                       </Popup>
                     </Marker>
