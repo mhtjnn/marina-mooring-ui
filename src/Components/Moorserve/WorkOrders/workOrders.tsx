@@ -378,19 +378,18 @@ const WorkOrders: React.FC<WorkOrderValue> = ({ report }) => {
             
 
 
-
                <div className="items-center">
               <CustomModal
                 buttonText={'ADD NEW'}
                 icon={
                   <img src="/assets/images/Plus.png" alt="icon" className="w-3.8 h-3.8 mb-0.5" />
                 }
-                children={<AddWorkOrder2 
+                children={<AddWorkOrder2  
                    workOrderData={selectedCustomer}
                   setWorkOrderData={setSelectedCustomer}
                   editModeWorkOrder={editMode}
                   setVisible={setVisible}
-                  visible={visible}
+                  visible={visible} 
                   toastRef={toast}
                   closeModal={handleModalClose}
                   isAccountRecievable={false}/>}

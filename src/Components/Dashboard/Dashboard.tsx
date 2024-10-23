@@ -158,7 +158,7 @@ const Dashboard = () => {
 
   const firstLastName = (data: any) => {
     if (data.customerResponseDto.firstName === null) return '-'
-    else return data.customerResponseDto.firstName + ' ' + data.customerResponseDto.lastName
+    else return data?.customerResponseDto?.firstName + ' ' + data?.customerResponseDto?.lastName
   }
 
   const Mooringcolumns: TableColumnProps[] = useMemo(

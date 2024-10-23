@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState , useContext } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useContext } from 'react'
+import DataTableComponent from '../../CommonComponent/Table/DataTableComponent'
+import { properties } from '../../Utils/MeassageProperties'
 import { FaClipboardList } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
@@ -7,8 +9,8 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { IoIosAdd } from 'react-icons/io'
 import { GrFormSubtract } from 'react-icons/gr'
 import { FaFileUpload, FaLessThanEqual } from 'react-icons/fa'
+import { FaRedo, FaEllipsisV } from 'react-icons/fa';
 import { Dialog } from 'primereact/dialog'
-
 import {
   ErrorResponse,
   MooringResponse,
@@ -61,7 +63,7 @@ import { MultiSelect } from 'primereact/multiselect'
 import { useGetMooringByIdMutation } from '../../../Services/MoorManage/MoormanageApi'
 import { validateFiles } from '../../Helper/Helper'
 
-type Tab = 'General' | 'Employees' | 'Costs' | 'Comments' | 'Attachments' | 'Additional Information';
+type Tab = 'General' | 'Technicians' | 'Costs' | 'Comments' | 'Attachments' | 'Modifications';
 
 const AddWorkOrder2: React.FC<WorkOrderProps> = ({
   workOrderData,
@@ -79,6 +81,12 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
   setWorkOrderData,
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>('General');
+  const [showAddHours, setShowAddHours] = useState(false)
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [showMaterialForm, setShowMaterialForm] = useState(false);
+  const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+  const [workOrderStatus, setWorkOrderStatus] = useState("");
   const [workOrder, setWorkOrder] = useState<any>({
     customerName: '',
     mooringId: '',
@@ -122,7 +130,7 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
   const [denyModalOpen, setDenyModalOpen] = useState(false)
   const [statusChanged, setStatusChanged] = useState(
     workOrderData?.inventoryResponseDtoList?.length > 0 &&
-      workOrderData?.workOrderStatusDto?.id === 10,
+    workOrderData?.workOrderStatusDto?.id === 10,
   )
   const [formsData, setFormsData] = useState<any[]>([])
   const { formData, setFormData } = useContext(FormDataContext)
@@ -300,8 +308,8 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
     }))
     setVendorId(
       workOrderData?.workOrderStatusDto?.id === 10 &&
-        workOrderData?.inventoryResponseDtoList &&
-        workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.id,
+      workOrderData?.inventoryResponseDtoList &&
+      workOrderData?.inventoryResponseDtoList?.[0]?.vendorResponseDto?.id,
     )
     const parseTime = (timeString: any) => {
       const [hours, minutes, seconds] = timeString?.split(':')?.map(Number)
@@ -985,89 +993,155 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
     }
   }, [visible])
 
- 
+  //my code starts here 
 
 
-  return(
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedRows([]); // Deselect all rows
+    } else {
+      const allRowIds = modificationsData.map((row, index) => index); // Select all rows
+      setSelectedRows(allRowIds);
+    }
+    setSelectAll(!selectAll); // Toggle select all state
+  };
+
+  const handleCheckboxClick = (index: number) => {
+    const isSelected = selectedRows.includes(index);
+    const updatedSelectedRows = isSelected
+      ? selectedRows.filter((id) => id !== index)
+      : [...selectedRows, index];
+    setSelectedRows(updatedSelectedRows);
+  };
+
+
+  const modificationsData = useMemo(() => [
+    {
+      id: 1,
+      employee: 'abc',
+      time: '2024-10-21 14:00',
+      field: 'Comments',
+      from: 'bye',
+      to: 'hello',
+    },
+    {
+      id: 2,
+      employee: 'xyz',
+      time: '2024-10-21 14:30',
+      field: 'Hours',
+      from: 'code',
+      to: 'marina',
+    },
+    {
+      id: 3,
+      employee: 'Alex',
+      time: '2024-10-21 15:00',
+      field: 'Status',
+      from: 'Open',
+      to: 'Complete',
+    },
+  ], []);
+
+
+  const columns = [
+    {
+      id: "checkbox",
+      field: "checkbox",
+      body: () => (
+        <input
+          type="checkbox"
+          className="w-4 h-4"
+        />
+      ),
+    },
+    { id: "employee", field: "employee", header: "Modification: Employee" },
+    { id: "time", field: "time", header: "Modification: Time" },
+    { id: "field", field: "field", header: "Modification: Field" },
+    { id: "from", field: "from", header: "Modification: From" },
+    { id: "to", field: "to", header: "Modification: To" },
+  ];
+
+
+
+  return (
     <>
-    <Toast ref={toastRef} />
-    <div className="bg-white min-h-screen flex flex-col">
-      <div className="sticky top-0 z-20 w-full">
-        <div className="bg-[#00426F] h-10 w-full flex items-center justify-between px-2">
-          <h1 className="text-2xl font-bold text-white">Work Order</h1>
-          <IoMdSave className="text-white text-2xl ml-auto mt-2" />
-          <button className="text-4xl text-white hover:text-gray-300"
-            onClick={handleButtonClose}>
-            &times;
-          </button>
+      <Toast ref={toastRef} />
+      <div className="bg-white min-h-screen flex flex-col">
+        <div className="sticky top-0 z-20 w-full">
+          <div className="bg-[#00426F] h-10 w-full flex items-center justify-between px-2">
+            <h1 className="text-2xl font-bold text-white">Work Order</h1>
+            <button
+              onClick={handleSave}
+              disabled={isInvoice}
+              className={`text-white text-2xl ml-auto mt-2 ${isInvoice ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <IoMdSave />
+            </button>
+            <button className="text-4xl text-white hover:text-gray-300"
+              onClick={handleButtonClose}>
+              &times;
+            </button>
+          </div>
+
+          <div className="bg-[#959697] h-14 w-full flex items-center justify-between px-2">
+            <FaClipboardList className="text-white text-3xl" />
+            <h1 className="text-white text-2xl font-bold mr-auto">Create Work Order</h1>
+            <MdDashboard className="text-white text-2xl" />
+          </div>
+
+          <div className="bg-[#959697] w-full">
+            <ul className="flex space-x-4 px-4 py-2">
+              <li
+                className={`cursor-pointer pb-2 border-b-2 ${activeTab === 'General' ? 'border-[#00426F] text-black' : 'border-transparent'
+                  }`}
+                onClick={() => setActiveTab('General')}
+              >
+                General
+              </li>
+              <li
+                className={`cursor-pointer pb-2 border-b-2 ${activeTab === 'Technicians' ? 'border-[#00426F] text-black' : 'border-transparent'
+                  }`}
+                onClick={() => setActiveTab('Technicians')}
+              >
+                Technicians
+              </li>
+              <li
+                className={`cursor-pointer pb-2 border-b-2 ${activeTab === 'Costs' ? 'border-[#00426F] text-black' : 'border-transparent'
+                  }`}
+                onClick={() => setActiveTab('Costs')}
+              >
+                Costs
+              </li>
+              <li
+                className={`cursor-pointer pb-2 border-b-2 ${activeTab === 'Comments' ? 'border-[#00426F] text-black' : 'border-transparent'
+                  }`}
+                onClick={() => setActiveTab('Comments')}
+              >
+                Comments
+              </li>
+              <li
+                className={`cursor-pointer pb-2 border-b-2 ${activeTab === 'Attachments' ? 'border-[#00426F] text-black' : 'border-transparent'
+                  }`}
+                onClick={() => setActiveTab('Attachments')}
+              >
+                Attachments
+              </li>
+              <li
+                className={`cursor-pointer pb-2 border-b-2 ${activeTab === 'Modifications' ? 'border-[#00426F] text-black' : 'border-transparent'
+                  }`}
+                onClick={() => setActiveTab('Modifications')}
+              >
+                Modifications
+              </li>
+            </ul>
+          </div>
         </div>
-  
-        <div className="bg-[#959697] h-14 w-full flex items-center justify-between px-2">
-          <FaClipboardList className="text-white text-3xl" />
-          <h1 className="text-white text-2xl font-bold mr-auto">Create Work Order</h1>
-          <MdDashboard className="text-white text-2xl" />
-        </div>
-  
-        <div className="bg-[#959697] w-full">
-          <ul className="flex space-x-4 px-4 py-2">
-            <li
-              className={`cursor-pointer pb-2 border-b-2 ${
-                activeTab === 'General' ? 'border-[#00426F] text-black' : 'border-transparent'
-              }`}
-              onClick={() => setActiveTab('General')}
-            >
-              General
-            </li>
-            <li
-              className={`cursor-pointer pb-2 border-b-2 ${
-                activeTab === 'Employees' ? 'border-[#00426F] text-black' : 'border-transparent'
-              }`}
-              onClick={() => setActiveTab('Employees')}
-            >
-              Employees
-            </li>
-            <li
-              className={`cursor-pointer pb-2 border-b-2 ${
-                activeTab === 'Costs' ? 'border-[#00426F] text-black' : 'border-transparent'
-              }`}
-              onClick={() => setActiveTab('Costs')}
-            >
-              Costs
-            </li>
-            <li
-              className={`cursor-pointer pb-2 border-b-2 ${
-                activeTab === 'Comments' ? 'border-[#00426F] text-black' : 'border-transparent'
-              }`}
-              onClick={() => setActiveTab('Comments')}
-            >
-              Comments
-            </li>
-            <li
-              className={`cursor-pointer pb-2 border-b-2 ${
-                activeTab === 'Attachments' ? 'border-[#00426F] text-black' : 'border-transparent'
-              }`}
-              onClick={() => setActiveTab('Attachments')}
-            >
-              Attachments
-            </li>
-            <li
-              className={`cursor-pointer pb-2 border-b-2 ${
-                activeTab === 'Additional Information' ? 'border-[#00426F] text-black' : 'border-transparent'
-              }`}
-              onClick={() => setActiveTab('Additional Information')}
-            >
-              Additional Information
-            </li>
-          </ul>
-        </div>
-      </div>
-  
-      <div className="flex-grow overflow-auto mt-1">
-        {activeTab === 'General' && (
-          <div className="p-4">
-                  {/*  Customer Name     */}
-            
-            <div>
+
+        <div className="flex-grow overflow-auto mt-1">
+          {activeTab === 'General' && (
+            <div className="p-4">
+              {/*Customer Name*/}
+             <div>
             <span className="font-medium text-sm text-[#000000]">
               <div className="flex gap-1">
                 Customer Name
@@ -1098,93 +1172,198 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
               )}
             </p>
           </div>
-            
-  
+             
 
-            {/* Mooring Input Field */}
-           <div>
-           <span className="font-medium text-sm text-[#000000]">
-             <div className="flex gap-1">
-               Mooring Number
-               <p className="text-red-600">*</p>
-             </div>
-           </span>
-           <div className="mt-1">
-             <Dropdown
-               value={workOrder.mooringId?.mooringNumber || workOrder.mooringId}
-               onChange={(e) => handleInputChange('mooringId', e.target.value)}
-               options={MooringNameOptions}
-               optionLabel="mooringNumber"
-               editable
-               disabled={isLoading || isAccountRecievable || isTechnician}
-               style={{
-                 width: '100%',
-                 height: '32px',
-                 border: errorMessage.mooringId ? '1px solid red' : '1px solid #D5E1EA',
-                 borderRadius: '0.50rem',
-                 fontSize: '0.8rem',
-               }}
-             />
-           </div>
-           <p>
-             {errorMessage.mooringId && (
-               <small className="p-error">{errorMessage.mooringId}</small>
-             )}
-           </p>
-         </div>
 
-            {/* Description Input Field */}
-            <div className="mb-4">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <input
-                type="text"
-                id="description"
-                name="description"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="Enter a description"
-              />
-            </div>
-
-             {/* Status */}
-              <div>
+              {/* Mooring Number */}
+          <div>
             <span className="font-medium text-sm text-[#000000]">
               <div className="flex gap-1">
-                Status
+                Mooring Number
                 <p className="text-red-600">*</p>
               </div>
             </span>
             <div className="mt-1">
               <Dropdown
-                value={workOrder.workOrderStatus}
-                onChange={(e) => {
-                  handleInputChange('workOrderStatus', e.target.value)
-                }}
-                options={workOrderStatusValue}
-                optionLabel="status"
+                value={workOrder.mooringId?.mooringNumber || workOrder.mooringId}
+                onChange={(e) => handleInputChange('mooringId', e.target.value)}
+                options={MooringNameOptions}
+                optionLabel="mooringNumber"
                 editable
                 disabled={isLoading || isAccountRecievable || isTechnician}
                 style={{
                   width: '100%',
-                  height: '34px',
-                  border: errorMessage.workOrderStatus ? '1px solid red' : '1px solid #D5E1EA',
+                  height: '32px',
+                  border: errorMessage.mooringId ? '1px solid red' : '1px solid #D5E1EA',
                   borderRadius: '0.50rem',
                   fontSize: '0.8rem',
                 }}
               />
             </div>
             <p>
-              {errorMessage.workOrderStatus && (
-                <small className="p-error">{errorMessage.workOrderStatus}</small>
+              {errorMessage.mooringId && (
+                <small className="p-error">{errorMessage.mooringId}</small>
               )}
             </p>
           </div>
 
+              {/* Description */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Description 
+                </label>
+                <input
+                  type="text"
+                  id="description"
+                  className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter a description"
+                  style={{
+                    height: '36px',
+                    fontSize: '0.8rem',
+                  }}
+                />
+              </div>
 
+              {/* Type */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Type 
+                </label>
+                <Dropdown
+                  options={[
+                  ]}
+                  optionLabel="label"
+                  style={{
+                    width: '100%',
+                    height: '36px',
+                    border: '1px solid #D5E1EA',
+                    borderRadius: '0.50rem',
+                    fontSize: '0.8rem',
+                    paddingLeft: '0.5rem',
+                  }}
+                />
+              </div>
+
+              {/* Status */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Status <span className="text-red-600">*</span>
+                </label>
+                <Dropdown
+                  value={workOrder.workOrderStatus}
+                  onChange={(e) => handleInputChange('workOrderStatus', e.target.value)}
+                  options={workOrderStatusValue}
+                  optionLabel="status"
+                  style={{
+                    width: '100%',
+                    height: '36px',
+                    border: errorMessage.workOrderStatus ? '1px solid red' : '1px solid #D5E1EA',
+                    borderRadius: '0.50rem',
+                    fontSize: '0.8rem',
+                    paddingLeft: '0.5rem',
+                  }}
+                />
+                <p>
+                  {errorMessage.workOrderStatus && <small className="p-error">{errorMessage.workOrderStatus}</small>}
+                </p>
+              </div>
+
+              {/* Notes */}
+              {workOrder?.workOrderStatus?.id === 7 || statusChanged ? (
+                <div className="mt-4">
+                  <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+                    Notes <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="notes"
+                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Enter Notes"
+                    style={{
+                      height: '36px',
+                      fontSize: '0.8rem',
+                    }}
+                   
+                  />
+                </div>
+              ) : null}
+
+              {/* Priority */}
+              <div>
+            <span className="font-medium text-sm text-[#000000]">
+              <div className="flex gap-1">
+                Priority
+                <p className="text-red-600">*</p>
+              </div>
+            </span>
+            <div className="mt-1">
+              <Dropdown
+                options={[<h2>Emergency</h2>,
+                <h2>High</h2>,
+                <h2>Medium</h2>,
+                <h2>Low</h2>]}
+                optionLabel="priority"
+                style={{
+                  width: '100%',
+                  height: '32px',
+                  border: '1px solid #D5E1EA',
+                  borderRadius: '0.50rem',
+                  fontSize: '0.8rem',
+                }}
+              />
+            </div>
           </div>
-   )}
-  
+
+
+              {/* Specialty */}
+              <div className="mb-4">
+                <label htmlFor="speciality" className="block text-sm font-medium text-gray-700">
+                  Speciality 
+                </label>
+                <input
+                  type="text"
+                  id="speciality"
+                  className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter Speciality"
+                  style={{
+                    height: '36px',
+                    fontSize: '0.8rem',
+                  }}
+                />
+              </div>
+
+              {/* Due Date */}
+              <div className="">
+                <span className="font-medium text-sm text-[#000000]">
+                  <div className="flex gap-1">
+                    Due Date
+                    <p className="text-red-600">*</p>
+                  </div>
+                </span>
+                <div className="mt-1">
+                  <Calendar
+                    value={parseDate(workOrder.dueDate)}
+                    onChange={(e) => handleInputChange('dueDate', formatDate(e.target.value))}
+                    dateFormat="mm/dd/yy"
+                    disabled={isLoading || isAccountRecievable || isTechnician}
+                    style={{
+                      width: '50%',
+                      height: '32px',
+                      border: errorMessage.dueDate ? '1px solid red' : '1px solid #D5E1EA',
+                      borderRadius: '0.50rem',
+                      fontSize: '0.8rem',
+                      paddingLeft: '0.5rem',
+                      paddingRight: '0.5rem',
+                    }}
+                  />
+                </div>
+                <p>
+                  {errorMessage.dueDate && <small className="p-error">{errorMessage.dueDate}</small>}
+                </p>
+              </div>
+            </div>
+
+          )}
 
 
 
@@ -1195,7 +1374,150 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-        {activeTab === 'Employees' && <div> employees content goes here</div>}
+
+          {activeTab === 'Technicians' && <div>
+            <div className="p-4">
+              {/* Assigned to */}
+              <div>
+                <span className="font-medium text-sm text-[#000000]">
+                  <div className="flex gap-1">
+                    Assigned to
+                    <p className="text-red-600">*</p>
+                  </div>
+                </span>
+                <div className="mt-1">
+                  <Dropdown
+                    value={workOrder.assignedTo}
+                    onChange={(e) => handleInputChange('assignedTo', e.target.value)}
+                    options={technicians}
+                    optionLabel="firstName"
+                    editable
+                    disabled={isLoading || isAccountRecievable || isTechnician}
+                    style={{
+                      width: '100%',
+                      height: '32px',
+                      border: errorMessage.assignedTo ? '1px solid red' : '1px solid #D5E1EA',
+                      borderRadius: '0.50rem',
+                      fontSize: '0.8rem',
+                    }}
+                  />
+                </div>
+                <p>
+                  {errorMessage.assignedTo && (
+                    <small className="p-error">{errorMessage.assignedTo}</small>
+                  )}
+                </p>
+              </div>
+
+              {/* Estimated Hours */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Estimated Hours
+                </label>
+                <input
+                  type="text"
+                  id="estimatedHours"
+                  className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  placeholder="Enter estimated hours"
+                />
+              </div>
+
+              {/* Add Hours Button */}
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => setShowAddHours(true)}
+                  className="bg-gray-200 p-2 rounded-lg hover:bg-gray-300"
+                >
+                  + Add Hours (Manually)
+                </button>
+              </div>
+
+              {/* Add Hours Box */}
+              {showAddHours && (
+                <div className="mt-4 p-4 border rounded-lg shadow-md relative">
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setShowAddHours(false)}
+                    className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                  >
+                    &times;
+                  </button>
+
+                  <div className="mb-4 flex space-x-4">
+                    {/* Date Field */}
+                    <div className="w-1/2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+
+                    {/* Time Field */}
+                    <div className="w-1/2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Time
+                      </label>
+                      <input
+                        type="time"
+                        className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        defaultValue={new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                      />
+                    </div>
+                  </div>
+
+
+
+                  {/* Time (in minutes) */}
+                  <div className="card  ">
+                    <span>
+                      <div className="flex flex-wrap gap-1">
+                        <p className="font-medium text-sm text-[#000000]"> Time </p>
+                        <span style={{ fontSize: '0.8rem' }}>(in minutes)</span>
+                      </div>
+                    </span>
+                    <div
+                      style={{
+                        maxWidth: '44%',
+                        height: '32px',
+                        border: '1px solid #D5E1EA',
+                        borderRadius: '0.50rem',
+                      }}>
+                      <div className="flex justify-around text-center">
+                        <h1
+                          className="mt-1 p-[0.1rem] ml-2 mr-2 bg-slate-300 rounded-md cursor-pointer"
+                          onClick={() => {
+                            !isTechnician && handleDecrement()
+                          }}>
+                          <GrFormSubtract />
+                        </h1>
+                        <input
+                          type="text"
+                          value={formatTime(time.minutes, time.seconds)}
+                          onChange={handleTimeChange}
+                          disabled={isLoading || isAccountRecievable || isTechnician}
+                          className="text-center w-16"
+                          style={{
+                            boxShadow: 'none',
+                          }}
+                        />
+                        <h1
+                          className="mt-1 ml-2 mr-2 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
+                          onClick={() => {
+                            !isTechnician && handleIncrement()
+                          }}>
+                          <IoIosAdd />
+                        </h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+          </div>}
 
 
 
@@ -1203,7 +1525,220 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-        {activeTab === 'Costs' && <div>Costs content goes here...</div>}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          {activeTab === 'Costs' && <div>
+            <div className="p-4 bg-gray-100">
+
+              {/* Add Material Section */}
+              <div className="bg-white shadow-md rounded-lg p-4 mb-6 border border-gray-300">
+                <button
+                  onClick={() => setShowMaterialForm(!showMaterialForm)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 w-full text-left"
+                >
+                  + ADD MATERIALS
+                </button>
+
+                {showMaterialForm && (
+                  <div className="mt-4">
+
+
+                    {/* Vendor */}
+                    {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
+                      <div className="mt-3">
+                        <span className="font-medium text-sm text-[#000000]">
+                          <div className="flex gap-1">
+                            Vendor <p className="text-red-600">*</p>
+                          </div>
+                        </span>
+                        <div className="mt-1">
+                          <Dropdown
+                            value={workOrder.vendor}
+                            onChange={(e) => {
+                              handleInputChange('vendor', e.target.value)
+                              setVendorId(e.target.value.id)
+                              setIsDirty(true)
+                            }}
+                            options={vendorsName}
+                            optionLabel="vendorName"
+                            editable
+                            disabled={isLoading || isAccountRecievable || isTechnician}
+                            style={{
+                              width: '100%',
+                              height: '32px',
+                              border: errorMessage.vendor ? '1px solid red' : '1px solid #D5E1EA',
+                              borderRadius: '0.50rem',
+                              fontSize: '0.8rem',
+                            }}
+                            itemTemplate={(option) => (
+                              <div className="flex justify-between items-center">
+                                <span>{option.vendorName}</span>
+                                {workOrderData?.inventoryResponseDtoList &&
+                                  workOrderData.inventoryResponseDtoList.some(
+                                    (item: any) => item?.vendorResponseDto?.id === option.id,
+                                  ) && (
+                                    <i
+                                      className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
+                                      style={{ color: 'green' }}></i>
+                                  )}
+                              </div>
+                            )}
+                          />
+                        </div>
+                        <p>
+                          {errorMessage.vendor && <small className="p-error">{errorMessage.vendor}</small>}
+                        </p>
+                      </div>
+                    ) : null}
+
+
+
+
+
+                    {/* Item Name */}
+                    {(workOrder?.workOrderStatus?.id === 10 && vendorId) || statusChanged ? (
+                      <div className="mt-3">
+                        <span className="font-medium text-sm text-[#000000]">
+                          <div className="flex gap-1">
+                            Item <p className="text-red-600">*</p>
+                          </div>
+                        </span>
+                        <div className="mt-1">
+                          <Dropdown
+                            value={workOrder.inventory}
+                            onChange={(e) => {
+                              handleInputChange('inventory', e.target.value)
+                            }}
+                            options={inventory}
+                            optionLabel="itemName"
+                            editable
+                            disabled={isLoading || isAccountRecievable || isTechnician}
+                            style={{
+                              width: '100%',
+                              height: '32px',
+                              border: errorMessage.inventory ? '1px solid red' : '1px solid #D5E1EA',
+                              borderRadius: '0.50rem',
+                              fontSize: '0.8rem',
+                            }}
+                            itemTemplate={(option) => (
+                              <div className="flex justify-between items-center">
+                                <span>{option.itemName}</span>
+                                {workOrderData?.inventoryResponseDtoList &&
+                                  workOrderData.inventoryResponseDtoList.some(
+                                    (item: any) => item.id === option.id,
+                                  ) && (
+                                    <i
+                                      className="pi pi-check-circle ml-2 hover:bg-gray-200 rounded-full"
+                                      style={{ color: 'green' }}></i>
+                                  )}
+                              </div>
+                            )}
+                          />
+                        </div>
+                        <p>
+                          {errorMessage.inventory && (
+                            <small className="p-error">{errorMessage.inventory}</small>
+                          )}
+                        </p>
+                      </div>
+                    ) : null}
+
+
+
+
+
+
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Quantity */}
+                      {(workOrder?.workOrderStatus?.id === 10 && workOrder?.inventory?.quantity) ||
+                        statusChanged ? (
+                        <div>
+                          <span className="font-medium text-sm text-[#000000]">
+                            <div className="flex gap-1">Quantity (Available)</div>
+                          </span>
+                          <div className="mt-1">
+                            <InputComponent
+                              value={workOrder.quantity}
+                              onChange={(e) => {
+                                handleInputChange('quantity', e.target.value)
+                              }}
+                              type="number"
+                              disabled={isLoading || isAccountRecievable || isTechnician}
+                              style={{
+                                width: '230px',
+                                height: '42px',
+                                border: '1px solid #D5E1EA',
+                                borderRadius: '0.50rem',
+                                fontSize: '0.8rem',
+                                paddingLeft: '0.5rem',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ) : null}
+
+
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">Cost</label>
+                        <input
+                          type="text"
+                          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                          placeholder="$0.00"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1231,36 +1766,35 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-        {activeTab === 'Attachments' && <div>
-        <div className="p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-md">
-  {/* Title for Image Upload */}
-  <span className="font-medium text-sm text-black">
-    <div className="flex gap-1">Image</div>
-  </span>
 
-  {/* Upload Area */}
-  <div className="mt-4">
-    <div
-      className="border-2 border-dashed border-white rounded-lg h-32 w-full flex items-center justify-center cursor-pointer hover:bg-gray-50"
-      onClick={() => {
-        !isTechnician && setImageVisible(true)
-      }}
-    >
-      <FaFileUpload className="text-4xl text-gray-500" />
-      <p className="ml-2 text-gray-500">
-        Drag and drop files here or <span className="text-blue-500">click</span>
-      </p>
-    </div>
 
-    {/* Hidden File Input */}
-    <input
-      type="file"
-      accept="image/*"
-      id="file-upload"
-      style={{ display: 'none' }}
-    />
-  </div>
-</div>
+
+
+
+
+
+          {activeTab === 'Attachments' && <div>
+            <div className="p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-md">
+              {/* Title for Image Upload */}
+              <span className="font-medium text-sm text-black">
+                <div className="flex gap-1">Image</div>
+              </span>
+
+              {/* Upload Area */}
+              <div className="mt-4">
+                <div
+                  className="border-2 border-dashed border-white rounded-lg h-32 w-full flex items-center justify-center cursor-pointer hover:bg-gray-50"
+                  onClick={() => {
+                    !isTechnician && setImageVisible(true)
+                  }}
+                >
+                  <FaFileUpload className="text-4xl text-gray-500" />
+                  <p className="ml-2 text-gray-500">
+                    Drag and drop files here or <span className="text-blue-500">click</span>
+                  </p>
+                </div>
+              </div>
+            </div>
 
           </div>}
 
@@ -1283,11 +1817,84 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-        {activeTab === 'Additional Information' && <div>Additional Information content goes here...</div>}
+          {activeTab === 'Modifications' && <div>
+
+            <div className="w-full max-w-5xl mx-auto">
+              {/* Header Section with Title and Icons */}
+              <div className="w-full flex justify-between items-center bg-gray-100 px-4 py-3 border-b border-gray-300">
+                <h2 className="font-semibold text-lg">Modifications</h2>
+                <div className="flex space-x-4">
+                  <FaRedo className="text-gray-500 cursor-pointer" />
+                  <FaEllipsisV className="text-gray-500 cursor-pointer" />
+                </div>
+              </div>
+
+              {/* Table Section */}
+              <div className="overflow-x-auto">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th><input className="w-4 h-4" type="checkbox" /></th>
+                    <th className=" border-gray-300 px-4 py-2 text-left">Modification: Employee</th>
+                    <th className=" border-gray-300 px-4 py-2 text-left">Modification: Time</th>
+                    <th className=" border-gray-300 px-4 py-2 text-left">Modification: Field</th>
+                    <th className=" border-gray-300 px-4 py-2 text-left">Modification: From</th>
+                    <th className=" border-gray-300 px-4 py-2 text-left">Modification: To</th>
+                  </tr>
+                </thead>
+                <DataTableComponent
+                  tableStyle={{
+                    fontSize: '10px',
+                    color: '#000000',
+                    fontWeight: 600,
+                    backgroundColor: '#F9FAFB',
+                  }}
+                  data={modificationsData}
+                  columns={columns}
+                  style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
+                  emptyMessage={
+                    <div className="text-center mt-28">
+                      <img
+                        src="/assets/images/empty.png"
+                        alt="Empty Data"
+                        className="w-28 mx-auto mb-4"
+                      />
+                      <p className="text-gray-500 font-[600] text-lg">No data available</p>
+                    </div>
+                  }
+                />
+              </div>
+            </div>
+          </div>}
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
       </div>
-    </div>
-    
-    <Dialog
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <Dialog
         position="center"
         style={{
           width: '800px',
