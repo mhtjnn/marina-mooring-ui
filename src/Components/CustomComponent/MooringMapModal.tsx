@@ -6,32 +6,21 @@ import { AppContext } from '../../Services/ContextApi/AppContext'
 import { useGetMooringByIdMutation } from '../../Services/MoorManage/MoormanageApi'
 import { ErrorResponse, MooringResponse } from '../../Type/ApiTypes'
 import { Toast } from 'primereact/toast'
-import { ProgressSpinner } from 'primereact/progressspinner'
 import { formatCoordinates } from '../Helper/Helper'
 
-const MooringMapModal: React.FC<TimeLineProps> = ({
-  gpsValue,
-  mooringId,
-  mooringData,
-  boatId,
-  boatName,
-  mooringPage,
-  selectedMooring,
-}) => {
-  const [customerModalVisible, setCustomerModalVisible] = useState(false)
+const MooringMapModal: React.FC<TimeLineProps> = ({ gpsValue, mooringId, selectedMooring }) => {
+  const [customModalVisible, setCustomModalVisible] = useState(false)
   const { isMapModalOpen, setMapModalOpen } = useContext(AppContext)
   const [mooringDetails, setmooringDetails] = useState<any>()
-  const [isLoading, setIsLoading] = useState(true)
   const [getMooringDetails] = useGetMooringByIdMutation()
   const toastRef = useRef<Toast>(null)
   const getMooringDataById = useCallback(async (id: any) => {
     try {
       const response = await getMooringDetails({ id: id }).unwrap()
-      const { status, content, message, totalSize } = response as MooringResponse
+      const { status, content, message } = response as MooringResponse
       if (status === 200) {
         setmooringDetails(content)
       } else {
-        setIsLoading(false)
         toastRef?.current?.show({
           severity: 'error',
           summary: 'Error',
@@ -41,7 +30,6 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
       }
     } catch (error) {
       const { message: msg } = error as ErrorResponse
-      setIsLoading(false)
       console.error('Error occurred while fetching customer data:', msg)
     }
   }, [])
@@ -49,12 +37,12 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
   const viewEdit = () => {
     getMooringDataById(selectedMooring.id)
     setMapModalOpen((prevState: any) => ({ ...prevState, editMode: true }))
-    setCustomerModalVisible(true)
+    setCustomModalVisible(true)
   }
 
   const handleModalClose = () => {
     setMapModalOpen((prevState: any) => ({ ...prevState, editMode: false }))
-    setCustomerModalVisible(false)
+    setCustomModalVisible(false)
   }
   return (
     <>
@@ -62,13 +50,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
       <div className="rounded-sm flex gap-20">
         <div>
           <div>
-            <p className="text-sm m-0 font-bold text-white">
-              {mooringPage ? (
-                <>{mooringData?.mooringNumber != null && mooringData?.mooringNumber}</>
-              ) : (
-                <>{boatId != null && boatId}</>
-              )}
-            </p>
+            <p className="text-sm m-0 font-bold text-white">{mooringId != null && mooringId}</p>
           </div>
           <div>
             <p className="text-xs text-white mt-2">
@@ -86,7 +68,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
           </p>
         </div>
 
-        {customerModalVisible && (
+        {customModalVisible && (
           <CustomModal
             button={true}
             children={
@@ -100,7 +82,7 @@ const MooringMapModal: React.FC<TimeLineProps> = ({
               />
             }
             headerText={<h1 className="text-xxl font-bold text-black">Mooring Information</h1>}
-            visible={customerModalVisible}
+            visible={customModalVisible}
             onHide={handleModalClose}
             dialogStyle={{
               width: '800px',

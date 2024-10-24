@@ -107,8 +107,6 @@ const CustomServiceAreaMoorinMap: React.FC<CustomServiceAreaMoorinMapProps> = ({
                           mooringId={mooring?.mooringNumber}
                           mooringData={mooring}
                           selectedMooring={mooring}
-                          boatId={mooring?.mooringNumber}
-                          boatName={mooring?.boatName}
                         />
                       </Popup>
                     </Marker>
