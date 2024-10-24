@@ -49,6 +49,8 @@ import { CustomerfirstLastName } from '../../Helper/Helper'
 import MooringSection from './CustomerAccordians/MooringSection'
 import WorkOrderSection from './CustomerAccordians/WorkOrderSection'
 import EstimatesSection from './CustomerAccordians/EstimatesSection'
+import BillingSection from './CustomerAccordians/BillingSection'
+import ImagesSection from './CustomerAccordians/ImagesSection'
 
 const Customer = () => {
   const selectedCustomerId = useSelector(selectCustomerId)
@@ -985,7 +987,7 @@ const Customer = () => {
                   onPageChangeTwo={onPageChangeTwo}
                 />
                 {/* Images Section */}
-                <div
+                {/* <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
                   style={{
                     width: '450px',
@@ -1065,7 +1067,12 @@ const Customer = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
+                <ImagesSection
+                  accordion={accordion}
+                  handleToggle={handleToggle}
+                  customerImage={customerImage}
+                />
                 {/* WorkOrder Section */}
                 {/* <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
@@ -1152,7 +1159,7 @@ const Customer = () => {
                 {/* Estimates Section */}
                 <EstimatesSection accordion={accordion} handleToggle={handleToggle} />
                 {/* Billing Section */}
-                <div
+                {/* <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"
                   style={{
                     width: '450px',
@@ -1232,7 +1239,8 @@ const Customer = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
+                <BillingSection accordion={accordion} handleToggle={handleToggle} />
                 {/* Notes Section */}
                 <div
                   className="tab relative bg-[#FFFFFF] border-[1px] border-[#D5E1EA] mr-8"

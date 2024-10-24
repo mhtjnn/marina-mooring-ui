@@ -15,11 +15,12 @@ export interface ImagesAccordianProps {
   accordion: any
   handleToggle: any
   customerImage: any
-  customerImagesColumns: any
-  ActionButtonColumn: any
-  selectedMooring: any
 }
 export interface WorkOrdersAccordianProps {
+  accordion: any
+  handleToggle: any
+}
+export interface BillingAccordianProps {
   accordion: any
   handleToggle: any
 }
