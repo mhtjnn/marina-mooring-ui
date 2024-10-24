@@ -1455,10 +1455,10 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
           {activeTab === 'Costs' && <div className='px-12'>
             <div className="p-4  bg-gray-50">
               {/* Add Material Section */}
-              <div className="bg-white w-full shadow-md rounded-lg p-1 mb-6 border border-gray-100">
+              <div className= "  bg-gray-50 shadow-md rounded-lg p-1 mb-6 border border-gray-200">
                 <button
                   onClick={() => setShowMaterialForm(!showMaterialForm)}
-                  className="w-full  bg-gray-200 p-2 rounded-lg hover:bg-gray-300"
+                  className="w-40px bg-gray-200 p-2 rounded-lg hover:bg-gray-300"
                 >
                   + ADD MATERIALS
                 </button>
