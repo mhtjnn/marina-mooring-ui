@@ -1083,14 +1083,14 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
             </button>
           </div>
 
-          <div className="bg-[#959697] h-14 w-full flex items-center justify-between px-2">
+          <div className="bg-gray-200 h-14 w-full flex items-center justify-between px-2">
             <FaClipboardList className="text-white text-3xl" />
-            <h1 className="text-white text-2xl font-bold mr-auto">Create Work Order</h1>
+            <h1 className="text-gray-700 ml-5 text-2xl font-bold mr-auto">Create Work Order</h1>
             <MdDashboard className="text-white text-2xl" />
           </div>
 
-          <div className="bg-[#959697] w-full">
-            <ul className="flex space-x-4 px-4 py-2">
+          <div className="bg-gray-200  w-full">
+            <ul className="flex ml-8 space-x-4 px-4 py-2">
               <li
                 className={`cursor-pointer pb-2 border-b-2 ${activeTab === 'General' ? 'border-[#00426F] text-black' : 'border-transparent'
                   }`}
@@ -1137,232 +1137,171 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
           </div>
         </div>
 
-        <div className="flex-grow overflow-auto mt-1">
+        <div className="flex-grow  mt-1">
           {activeTab === 'General' && (
-            <div className="p-4">
-              {/*Customer Name*/}
-             <div>
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Customer Name
-                <p className="text-red-600">*</p>
-              </div>
-            </span>
-            <div className="mt-1">
-              <Dropdown
-                value={workOrder.customerName?.firstName || workOrder.customerName}
-                onChange={(e) => handleInputChange('customerName', e.target.value)}
-                options={CustomerNameOptions}
-                optionLabel="firstName"
-                editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: errorMessage.customerName ? '1px solid red' : '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                  paddingLeft: '0.5rem',
-                }}
-              />
-            </div>
-            <p>
-              {errorMessage.customerName && (
-                <small className="p-error">{errorMessage.customerName}</small>
-              )}
-            </p>
-          </div>
-             
+            <div className="px-4 ">
+              <div className="p-4">
+                {/* Customer Name */}
+                <div className="mb-4 mx-4">
+                  <span className="block text-sm font-medium text-black">
+                    <div className="flex gap-1">
+                      Customer Name
+                      <p className="text-red-600">*</p>
+                    </div>
+                  </span>
+                  <div className="mt-1">
+                    <Dropdown
+                      value={workOrder.customerName?.firstName || workOrder.customerName}
+                      onChange={(e) => handleInputChange('customerName', e.target.value)}
+                      options={CustomerNameOptions}
+                      optionLabel="firstName"
+                      editable
+                      disabled={isLoading || isAccountRecievable || isTechnician}
+                      className="w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                    />
+                  </div>
+                  {errorMessage.customerName && (
+                    <small className="text-red-600">{errorMessage.customerName}</small>
+                  )}
+                </div>
 
+                {/* Mooring Number */}
+                <div className="mb-4 mx-4">
+                  <span className="block text-sm font-medium text-black">
+                    <div className="flex gap-1">
+                      Mooring Number
+                      <p className="text-red-600">*</p>
+                    </div>
+                  </span>
+                  <div className="mt-1">
+                    <Dropdown
+                      value={workOrder.mooringId?.mooringNumber || workOrder.mooringId}
+                      onChange={(e) => handleInputChange('mooringId', e.target.value)}
+                      options={MooringNameOptions}
+                      optionLabel="mooringNumber"
+                      editable
+                      disabled={isLoading || isAccountRecievable || isTechnician}
+                      className="w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                    />
+                  </div>
+                  {errorMessage.mooringId && (
+                    <small className="text-red-600">{errorMessage.mooringId}</small>
+                  )}
+                </div>
 
-              {/* Mooring Number */}
-          <div>
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Mooring Number
-                <p className="text-red-600">*</p>
-              </div>
-            </span>
-            <div className="mt-1">
-              <Dropdown
-                value={workOrder.mooringId?.mooringNumber || workOrder.mooringId}
-                onChange={(e) => handleInputChange('mooringId', e.target.value)}
-                options={MooringNameOptions}
-                optionLabel="mooringNumber"
-                editable
-                disabled={isLoading || isAccountRecievable || isTechnician}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: errorMessage.mooringId ? '1px solid red' : '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                }}
-              />
-            </div>
-            <p>
-              {errorMessage.mooringId && (
-                <small className="p-error">{errorMessage.mooringId}</small>
-              )}
-            </p>
-          </div>
-
-              {/* Description */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Description 
-                </label>
-                <input
-                  type="text"
-                  id="description"
-                  className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter a description"
-                  style={{
-                    height: '36px',
-                    fontSize: '0.8rem',
-                  }}
-                />
-              </div>
-
-              {/* Type */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Type 
-                </label>
-                <Dropdown
-                  options={[
-                  ]}
-                  optionLabel="label"
-                  style={{
-                    width: '100%',
-                    height: '36px',
-                    border: '1px solid #D5E1EA',
-                    borderRadius: '0.50rem',
-                    fontSize: '0.8rem',
-                    paddingLeft: '0.5rem',
-                  }}
-                />
-              </div>
-
-              {/* Status */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Status <span className="text-red-600">*</span>
-                </label>
-                <Dropdown
-                  value={workOrder.workOrderStatus}
-                  onChange={(e) => handleInputChange('workOrderStatus', e.target.value)}
-                  options={workOrderStatusValue}
-                  optionLabel="status"
-                  style={{
-                    width: '100%',
-                    height: '36px',
-                    border: errorMessage.workOrderStatus ? '1px solid red' : '1px solid #D5E1EA',
-                    borderRadius: '0.50rem',
-                    fontSize: '0.8rem',
-                    paddingLeft: '0.5rem',
-                  }}
-                />
-                <p>
-                  {errorMessage.workOrderStatus && <small className="p-error">{errorMessage.workOrderStatus}</small>}
-                </p>
-              </div>
-
-              {/* Notes */}
-              {workOrder?.workOrderStatus?.id === 7 || statusChanged ? (
-                <div className="mt-4">
-                  <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
-                    Notes <span className="text-red-600">*</span>
-                  </label>
+                {/* Description */}
+                <div className="mb-4 mx-4">
+                  <label className="block text-sm font-medium text-black">Description</label>
                   <input
                     type="text"
-                    id="notes"
-                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="Enter Notes"
-                    style={{
-                      height: '36px',
-                      fontSize: '0.8rem',
-                    }}
+                    id="description"
+                    className="block w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
                    
                   />
                 </div>
-              ) : null}
 
-              {/* Priority */}
-              <div>
-            <span className="font-medium text-sm text-[#000000]">
-              <div className="flex gap-1">
-                Priority
-                <p className="text-red-600">*</p>
-              </div>
-            </span>
-            <div className="mt-1">
-              <Dropdown
-                options={[<h2>Emergency</h2>,
-                <h2>High</h2>,
-                <h2>Medium</h2>,
-                <h2>Low</h2>]}
-                optionLabel="priority"
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #D5E1EA',
-                  borderRadius: '0.50rem',
-                  fontSize: '0.8rem',
-                }}
-              />
-            </div>
-          </div>
-
-
-              {/* Specialty */}
-              <div className="mb-4">
-                <label htmlFor="speciality" className="block text-sm font-medium text-gray-700">
-                  Speciality 
-                </label>
-                <input
-                  type="text"
-                  id="speciality"
-                  className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter Speciality"
-                  style={{
-                    height: '36px',
-                    fontSize: '0.8rem',
-                  }}
-                />
-              </div>
-
-              {/* Due Date */}
-              <div className="">
-                <span className="font-medium text-sm text-[#000000]">
-                  <div className="flex gap-1">
-                    Due Date
-                    <p className="text-red-600">*</p>
-                  </div>
-                </span>
-                <div className="mt-1">
-                  <Calendar
-                    value={parseDate(workOrder.dueDate)}
-                    onChange={(e) => handleInputChange('dueDate', formatDate(e.target.value))}
-                    dateFormat="mm/dd/yy"
-                    disabled={isLoading || isAccountRecievable || isTechnician}
-                    style={{
-                      width: '50%',
-                      height: '32px',
-                      border: errorMessage.dueDate ? '1px solid red' : '1px solid #D5E1EA',
-                      borderRadius: '0.50rem',
-                      fontSize: '0.8rem',
-                      paddingLeft: '0.5rem',
-                      paddingRight: '0.5rem',
-                    }}
+                {/* Type */}
+                <div className="mb-4 mx-4">
+                  <label className="block text-sm font-medium text-black">Type</label>
+                  <Dropdown
+                    options={[]}
+                    optionLabel="label"
+                    className="w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                    
                   />
                 </div>
-                <p>
-                  {errorMessage.dueDate && <small className="p-error">{errorMessage.dueDate}</small>}
-                </p>
+
+                {/* Status */}
+                <div className="mb-4 mx-4">
+                  <label className="block text-sm font-medium text-black">
+                    Status <span className="text-red-600">*</span>
+                  </label>
+                  <Dropdown
+                    value={workOrder.workOrderStatus}
+                    onChange={(e) => handleInputChange('workOrderStatus', e.target.value)}
+                    options={workOrderStatusValue}
+                    optionLabel="status"
+                    className="w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                    
+                  />
+                  {errorMessage.workOrderStatus && (
+                    <small className="text-red-600">{errorMessage.workOrderStatus}</small>
+                  )}
+                </div>
+
+                {/* Notes */}
+                {workOrder?.workOrderStatus?.id === 7 || statusChanged ? (
+                  <div className="mb-4 mx-4">
+                    <label className="block text-sm font-medium text-black">
+                      Notes <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="notes"
+                      className="block w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                      
+                    />
+                  </div>
+                ) : null}
+
+                {/* Priority */}
+                <div className="mb-4 mx-4">
+                  <span className="block text-sm font-medium text-black">
+                    <div className="flex gap-1">
+                      Priority
+                      <p className="text-red-600">*</p>
+                    </div>
+                  </span>
+                  <div className="mt-1">
+                    <Dropdown
+                      options={[
+                        <h2>Emergency</h2>,
+                        <h2>High</h2>,
+                        <h2>Medium</h2>,
+                        <h2>Low</h2>,
+                      ]}
+                      optionLabel="priority"
+                      className="w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                      
+                    />
+                  </div>
+                </div>
+
+                {/* Speciality */}
+                <div className="mb-4 mx-4">
+                  <label className="block text-sm font-medium text-black">Speciality</label>
+                  <input
+                    type="text"
+                    id="speciality"
+                    className="block w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                    
+                  />
+                </div>
+
+                {/* Due Date */}
+                <div className="mb-4 mx-4">
+                  <span className="block text-sm font-medium text-black">
+                    <div className="flex gap-1">
+                      Due Date
+                      <p className="text-red-600">*</p>
+                    </div>
+                  </span>
+                  <div className="mt-1">
+                    <Calendar
+                      value={parseDate(workOrder.dueDate)}
+                      onChange={(e) => handleInputChange('dueDate', formatDate(e.target.value))}
+                      dateFormat="mm/dd/yy"
+                      disabled={isLoading || isAccountRecievable || isTechnician}
+                      className="w-1/2 h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
+                      
+                    />
+                  </div>
+                  {errorMessage.dueDate && (
+                    <small className="text-red-600">{errorMessage.dueDate}</small>
+                  )}
+                </div>
               </div>
             </div>
-
           )}
 
 
@@ -1375,188 +1314,159 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-          {activeTab === 'Technicians' && <div>
-            <div className="p-4">
-              {/* Assigned to */}
-              <div>
-                <span className="font-medium text-sm text-[#000000]">
-                  <div className="flex gap-1">
-                    Assigned to
-                    <p className="text-red-600">*</p>
-                  </div>
-                </span>
-                <div className="mt-1">
-                  <Dropdown
-                    value={workOrder.assignedTo}
-                    onChange={(e) => handleInputChange('assignedTo', e.target.value)}
-                    options={technicians}
-                    optionLabel="firstName"
-                    editable
-                    disabled={isLoading || isAccountRecievable || isTechnician}
-                    style={{
-                      width: '100%',
-                      height: '32px',
-                      border: errorMessage.assignedTo ? '1px solid red' : '1px solid #D5E1EA',
-                      borderRadius: '0.50rem',
-                      fontSize: '0.8rem',
-                    }}
-                  />
+          {activeTab === 'Technicians' && <div className="p-4 px-12 space-y-3">
+            {/* Assigned to */}
+            <div>
+              <span className="font-medium text-sm text-[#000000]">
+                <div className="flex gap-1">
+                  Assigned to
+                  <p className="text-red-600">*</p>
                 </div>
-                <p>
-                  {errorMessage.assignedTo && (
-                    <small className="p-error">{errorMessage.assignedTo}</small>
-                  )}
-                </p>
-              </div>
-
-              {/* Estimated Hours */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Estimated Hours
-                </label>
-                <input
-                  type="text"
-                  id="estimatedHours"
-                  className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter estimated hours"
+              </span>
+              <div className="mt-1">
+                <Dropdown
+                  value={workOrder.assignedTo}
+                  onChange={(e) => handleInputChange('assignedTo', e.target.value)}
+                  options={technicians}
+                  optionLabel="firstName"
+                  editable
+                  disabled={isLoading || isAccountRecievable || isTechnician}
+                  className="w-full h-9 border border-gray-300 rounded-md text-sm px-2 focus:outline-none focus:border-gray-300"
                 />
               </div>
-
-              {/* Add Hours Button */}
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setShowAddHours(true)}
-                  className="bg-gray-200 p-2 rounded-lg hover:bg-gray-300"
-                >
-                  + Add Hours (Manually)
-                </button>
-              </div>
-
-              {/* Add Hours Box */}
-              {showAddHours && (
-                <div className="mt-4 p-4 border rounded-lg shadow-md relative">
-                  {/* Close Button */}
-                  <button
-                    onClick={() => setShowAddHours(false)}
-                    className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  >
-                    &times;
-                  </button>
-
-                  <div className="mb-4 flex space-x-4">
-                    {/* Date Field */}
-                    <div className="w-1/2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Date
-                      </label>
-                      <input
-                        type="date"
-                        className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
-                    </div>
-
-                    {/* Time Field */}
-                    <div className="w-1/2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Time
-                      </label>
-                      <input
-                        type="time"
-                        className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        defaultValue={new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-                      />
-                    </div>
-                  </div>
-
-
-
-                  {/* Time (in minutes) */}
-                  <div className="card  ">
-                    <span>
-                      <div className="flex flex-wrap gap-1">
-                        <p className="font-medium text-sm text-[#000000]"> Time </p>
-                        <span style={{ fontSize: '0.8rem' }}>(in minutes)</span>
-                      </div>
-                    </span>
-                    <div
-                      style={{
-                        maxWidth: '44%',
-                        height: '32px',
-                        border: '1px solid #D5E1EA',
-                        borderRadius: '0.50rem',
-                      }}>
-                      <div className="flex justify-around text-center">
-                        <h1
-                          className="mt-1 p-[0.1rem] ml-2 mr-2 bg-slate-300 rounded-md cursor-pointer"
-                          onClick={() => {
-                            !isTechnician && handleDecrement()
-                          }}>
-                          <GrFormSubtract />
-                        </h1>
-                        <input
-                          type="text"
-                          value={formatTime(time.minutes, time.seconds)}
-                          onChange={handleTimeChange}
-                          disabled={isLoading || isAccountRecievable || isTechnician}
-                          className="text-center w-16"
-                          style={{
-                            boxShadow: 'none',
-                          }}
-                        />
-                        <h1
-                          className="mt-1 ml-2 mr-2 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
-                          onClick={() => {
-                            !isTechnician && handleIncrement()
-                          }}>
-                          <IoIosAdd />
-                        </h1>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              {errorMessage.assignedTo && (
+                <small className="text-red-600">{errorMessage.assignedTo}</small>
               )}
             </div>
 
-          </div>}
+            {/* Estimated Hours */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Estimated Hours
+              </label>
+              <input
+                type="text"
+                id="estimatedHours"
+                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Enter estimated hours"
+              />
+            </div>
+
+            {/* Add Hours Button */}
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowAddHours(true)}
+                className="w-40px  bg-gray-200 p-2 rounded-lg hover:bg-gray-300"
+              >
+                + Add Hours (Manually)
+              </button>
+            </div>
+
+            {/* Add Hours Box */}
+            {showAddHours && (
+              <div className="mt-4 p-4 border rounded-lg shadow-md relative">
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowAddHours(false)}
+                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                >
+                  &times;
+                </button>
+
+                <div className="mb-4 flex space-x-4">
+                  {/* Date Field */}
+                  <div className="w-1/2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#00426F] focus:border-[#00426F]sm:text-sm"
+                    />
+                  </div>
+
+                  {/* Time Field */}
+                  <div className="w-1/2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Time
+                    </label>
+                    <input
+                      type="time"
+                      className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-100 focus:border-green-100 sm:text-sm selection:bg-green-100 selection:text-green-900"
+                      defaultValue={new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                    />
+                  </div>
+                </div>
+
+                {/* Duration (hh:mm) */}
+                <div className="card space-y-2"> {/* Added spacing between elements */}
+                  <span>
+                    <div className="flex flex-wrap gap-1">
+                      <p className="font-medium text-sm text-[#000000]"> Duration </p>
+                      <span style={{ fontSize: '0.8rem' }}>(in HH:MM)</span>
+                    </div>
+                  </span>
+                  <div
+                    style={{
+                      maxWidth: '44%',
+                      height: '32px',
+                      border: '1px solid #D5E1EA',
+                      borderRadius: '0.50rem',
+                    }}
+                  >
+                    <div className="flex justify-around text-center">
+                      <h1
+                        className="mt-1 p-[0.1rem] ml-2 mr-2 bg-slate-300 rounded-md cursor-pointer"
+                        onClick={() => {
+                          !isTechnician && handleDecrement()
+                        }}
+                      >
+                        <GrFormSubtract />
+                      </h1>
+                      <input
+                        type="text"
+                        value={formatTime(time.minutes, time.seconds)}
+                        onChange={handleTimeChange}
+                        disabled={isLoading || isAccountRecievable || isTechnician}
+                        className="text-center w-16 focus:outline-none"
+                        style={{
+                          boxShadow: 'none',
+                        }}
+                      />
+                      <h1
+                        className="mt-1 ml-2 mr-2 p-[0.1rem] bg-slate-300 rounded-md cursor-pointer"
+                        onClick={() => {
+                          !isTechnician && handleIncrement()
+                        }}
+                      >
+                        <IoIosAdd />
+                      </h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div> }
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          {activeTab === 'Costs' && <div>
-            <div className="p-4 bg-gray-100">
-
+          {activeTab === 'Costs' && <div className='px-12'>
+            <div className="p-4  bg-gray-50">
               {/* Add Material Section */}
-              <div className="bg-white shadow-md rounded-lg p-4 mb-6 border border-gray-300">
+              <div className="bg-white w-full shadow-md rounded-lg p-1 mb-6 border border-gray-100">
                 <button
                   onClick={() => setShowMaterialForm(!showMaterialForm)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 w-full text-left"
+                  className="w-full  bg-gray-200 p-2 rounded-lg hover:bg-gray-300"
                 >
                   + ADD MATERIALS
                 </button>
 
+
+
                 {showMaterialForm && (
                   <div className="mt-4">
-
 
                     {/* Vendor */}
                     {workOrder?.workOrderStatus?.id === 10 || statusChanged ? (
@@ -1745,21 +1655,23 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-          {activeTab === 'Comments' && <div><div className="bg-white p-3 rounded-lg shadow-md border border-gray-300">
-            {/* Comments Section */}
-            <div className="mb-4">
-              <label className="block text-lg font-semibold text-gray-900 mb-2">
-                Add Comment
-              </label>
-              <textarea
-                className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Worked on this order"
-              ></textarea>
-              <small className="block mt-1 text-sm text-gray-500">
-                Comments are visible to all users
-              </small>
+          {activeTab === 'Comments' && <div className='px-10 '>
+            <div className="bg-gray-100 p-3 rounded-lg shadow-md border border-gray-300">
+              {/* Comments Section */}
+              <div className="mb-4">
+                <label className="block text-lg font-semibold text-gray-900 mb-2">
+                  Add Comment
+                </label>
+                <p>Worked on This Order</p>
+                <textarea
+                  className="w-full overflow-hidden p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none resize-none"
+                ></textarea>
+                <small className="block mt-1 text-sm text-gray-500">
+                  Comments are visible to all users
+                </small>
+              </div>
             </div>
-          </div></div>}
+          </div>}
 
 
 
@@ -1773,15 +1685,10 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-          {activeTab === 'Attachments' && <div>
-            <div className="p-6 bg-gray-100 border border-gray-300 rounded-lg shadow-md">
-              {/* Title for Image Upload */}
-              <span className="font-medium text-sm text-black">
-                <div className="flex gap-1">Image</div>
-              </span>
-
+          {activeTab === 'Attachments' && <div className="px-12">
+            <div className="p-6  bg-gray-100 border border-gray-100 rounded-lg shadow-md">
               {/* Upload Area */}
-              <div className="mt-4">
+              <div className="mt-1">
                 <div
                   className="border-2 border-dashed border-white rounded-lg h-32 w-full flex items-center justify-center cursor-pointer hover:bg-gray-50"
                   onClick={() => {
@@ -1817,9 +1724,9 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
 
 
 
-          {activeTab === 'Modifications' && <div>
+          {activeTab === 'Modifications' && <div className='px-12'>
 
-            <div className="w-full max-w-5xl mx-auto">
+            <div className="w-full ">
               {/* Header Section with Title and Icons */}
               <div className="w-full flex justify-between items-center bg-gray-100 px-4 py-3 border-b border-gray-300">
                 <h2 className="font-semibold text-lg">Modifications</h2>
@@ -1830,10 +1737,10 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
               </div>
 
               {/* Table Section */}
-              <div className="overflow-x-auto">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th><input className="w-4 h-4" type="checkbox" /></th>
+              <div className="overflow-x-hidden">
+                <thead className='w-full'>
+                  <tr className=" bg-gray-100">
+                    <th><input className=" ml-3 w-4 h-5" type="checkbox" /></th>
                     <th className=" border-gray-300 px-4 py-2 text-left">Modification: Employee</th>
                     <th className=" border-gray-300 px-4 py-2 text-left">Modification: Time</th>
                     <th className=" border-gray-300 px-4 py-2 text-left">Modification: Field</th>
@@ -1841,8 +1748,9 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
                     <th className=" border-gray-300 px-4 py-2 text-left">Modification: To</th>
                   </tr>
                 </thead>
-                <DataTableComponent
+                <DataTableComponent 
                   tableStyle={{
+                  
                     fontSize: '10px',
                     color: '#000000',
                     fontWeight: 600,
@@ -1850,7 +1758,7 @@ const AddWorkOrder2: React.FC<WorkOrderProps> = ({
                   }}
                   data={modificationsData}
                   columns={columns}
-                  style={{ borderBottom: '1px solid #D5E1EA', fontWeight: '400' }}
+                  style={{  fontWeight: '400' }}
                   emptyMessage={
                     <div className="text-center mt-28">
                       <img
